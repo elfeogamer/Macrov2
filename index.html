@@ -123,7 +123,7 @@ select:disabled{opacity:.35;}
 .cat-block{background:#fff;border:1.5px solid var(--borde);border-radius:8px;margin-bottom:8px;overflow:hidden;}
 .cat-head{background:var(--azul);color:#fff;padding:5px 9px;display:flex;align-items:center;gap:6px;cursor:grab;}
 .cat-drag{font-size:.9rem;opacity:.55;flex-shrink:0;}
-.cat-name-inp{background:transparent;border:none;color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;flex:1;outline:none;}
+.cat-name-inp{background:transparent;border:1.5px solid transparent;border-radius:4px;color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;flex:1;outline:none;padding:1px 5px;cursor:text;}.cat-name-inp:hover{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.1);}.cat-name-inp:focus{border-color:var(--amarillo);background:rgba(255,255,255,.15);}
 .cat-count{font-size:.63rem;opacity:.7;flex-shrink:0;}
 .cat-acts{display:flex;gap:3px;flex-shrink:0;}
 .cat-acts button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:2px 6px;border-radius:4px;font-size:.63rem;cursor:pointer;}
@@ -138,6 +138,9 @@ select:disabled{opacity:.35;}
 .cbadge{font-size:.54rem;background:var(--amarillo);color:#000;padding:1px 4px;border-radius:3px;font-weight:700;flex-shrink:0;}
 .del-it{background:none;border:none;color:#ccc;cursor:pointer;font-size:.78rem;padding:0 2px;flex-shrink:0;}
 .del-it:hover{color:var(--rojo);}
+.item-name-inp{flex:1;font-size:.74rem;font-family:"DM Sans",sans-serif;color:var(--texto);background:transparent;border:1.5px solid transparent;border-radius:4px;padding:1px 4px;cursor:text;min-width:0;}
+.item-name-inp:hover{border-color:#d0d7e3;background:#fff;}
+.item-name-inp:focus{outline:none;border-color:var(--azul);background:#fff;}
 .add-row{display:flex;gap:4px;padding:3px 4px 5px;border-top:1px dashed #e5e7eb;}
 .add-row input{flex:1;padding:4px 6px;border:1.5px solid var(--borde);border-radius:5px;font-size:.72rem;font-family:"DM Sans",sans-serif;background:var(--gris);}
 .add-row input:focus{outline:none;border-color:var(--azul);}
@@ -898,7 +901,7 @@ function makeCatBlock(catObj, ci) {
   block.className = 'cat-block'; block.draggable = true; block.dataset.ci = ci;
   block.innerHTML =
     '<div class="cat-head"><span class="cat-drag">⠿</span>' +
-    '<input class="cat-name-inp" value="' + catObj.cat + '" placeholder="Nombre..." onchange="maestro['+ci+'].cat=this.value;renderMaestroPreview();">' +
+    '<input class="cat-name-inp" value="' + catObj.cat + '" placeholder="Nombre..." title="Clic para editar nombre de categoría" onchange="maestro['+ci+'].cat=this.value;renderMaestroPreview();">' +
     '<span class="cat-count">' + catObj.items.length + ' prod</span>' +
     '<div class="cat-acts">' +
     '<button onclick="moverCat('+ci+',-1)">▲</button>' +
@@ -908,42 +911,87 @@ function makeCatBlock(catObj, ci) {
     '<div class="add-row"><input class="inp-n" type="text" placeholder="Agregar producto..." id="an-'+ci+'"><button onclick="agregarItem('+ci+')">+</button></div>';
   const list = block.querySelector('#sl-' + ci);
   catObj.items.forEach((it, ii) => list.appendChild(makeItemEl(it, ci, ii)));
+
+  // Permite recibir items de CUALQUIER categoría
   list.addEventListener('dragover', e => {
     e.preventDefault(); e.stopPropagation();
     if (!dragSrc || dragSrc.classList.contains('cat-block')) return;
     list.style.background = '#dbeafe';
     const after = getDragAfter(list, e.clientY);
-    if (after == null) list.appendChild(dragSrc); else list.insertBefore(dragSrc, after);
+    if (after == null) list.appendChild(dragSrc);
+    else list.insertBefore(dragSrc, after);
   });
-  list.addEventListener('dragleave', e => { if (!list.contains(e.relatedTarget)) list.style.background = ''; });
-  list.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); list.style.background = ''; if (!dragSrc) return; syncFromDOM(); });
+  list.addEventListener('dragleave', e => {
+    if (!list.contains(e.relatedTarget)) list.style.background = '';
+  });
+  list.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    list.style.background = '';
+  });
   return block;
 }
 
 function makeItemEl(it, ci, ii) {
   const el = document.createElement('div');
   el.className = 'sort-item'; el.draggable = true; el.dataset.ci = ci; el.dataset.ii = ii;
-  el.innerHTML = '<span class="drag-h">⠿</span><span class="item-lbl">' + it.nombre + '</span>' +
-    (it.custom ? '<span class="cbadge">+</span>' : '') +
-    '<button class="del-it" onclick="eliminarItem('+ci+','+ii+')">✕</button>';
-  el.addEventListener('dragstart', () => { dragSrc = el; dragSrcBlock = null; setTimeout(() => el.classList.add('dragging'), 0); });
-  el.addEventListener('dragend', () => { el.classList.remove('dragging'); syncFromDOM(); });
+  el._itemData = {...it};
+
+  const dragH = document.createElement('span');
+  dragH.className = 'drag-h'; dragH.textContent = '⠿';
+
+  const inp = document.createElement('input');
+  inp.type = 'text'; inp.value = it.nombre; inp.className = 'item-name-inp';
+  inp.title = 'Clic para editar nombre';
+  inp.addEventListener('change', () => { el._itemData.nombre = inp.value.trim() || el._itemData.nombre; inp.value = el._itemData.nombre; });
+  inp.addEventListener('mousedown', e => e.stopPropagation());
+  inp.addEventListener('dragstart', e => e.preventDefault());
+
+  const del = document.createElement('button');
+  del.className = 'del-it'; del.textContent = '✕';
+  del.onclick = () => eliminarItem(ci, ii);
+
+  el.appendChild(dragH);
+  el.appendChild(inp);
+  if (it.custom) { const b = document.createElement('span'); b.className = 'cbadge'; b.textContent = '+'; el.appendChild(b); }
+  el.appendChild(del);
+
+  el.addEventListener('dragstart', e => {
+    if (e.target === inp) { e.preventDefault(); return; }
+    e.stopPropagation();
+    dragSrc = el; dragSrcBlock = null;
+    setTimeout(() => el.classList.add('dragging'), 0);
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    dragSrc = null;
+    syncFromDOM();
+  });
   return el;
 }
 
 function initCatDrag() {
   document.querySelectorAll('.cat-block').forEach(block => {
-    block.addEventListener('dragstart', e => { if (e.target.tagName==='INPUT') return; dragSrcBlock=block; dragSrc=null; setTimeout(()=>block.style.opacity='.4',0); });
-    block.addEventListener('dragend', () => { block.style.opacity=''; dragSrcBlock=null; syncFromDOM(); });
+    block.addEventListener('dragstart', e => {
+      // Solo actuar si el drag viene del cat-head, no de un item hijo
+      if (e.target.closest('.sort-item')) return;
+      if (e.target.tagName === 'INPUT') return;
+      dragSrcBlock = block; dragSrc = null;
+      setTimeout(() => block.style.opacity = '.4', 0);
+    });
+    block.addEventListener('dragend', () => {
+      block.style.opacity = '';
+      if (dragSrcBlock) { dragSrcBlock = null; syncFromDOM(); }
+    });
     block.addEventListener('dragover', e => {
-      if (!dragSrcBlock || dragSrcBlock===block) return; e.preventDefault();
+      if (!dragSrcBlock || dragSrcBlock === block) return;
+      e.preventDefault();
       const c = document.getElementById('maestro-cat-container');
       const rect = block.getBoundingClientRect();
-      if (e.clientY < rect.top+rect.height/2) c.insertBefore(dragSrcBlock, block);
+      if (e.clientY < rect.top + rect.height / 2) c.insertBefore(dragSrcBlock, block);
       else if (block.nextSibling) c.insertBefore(dragSrcBlock, block.nextSibling);
       else c.appendChild(dragSrcBlock);
     });
-    block.addEventListener('drop', e => { e.preventDefault(); if (dragSrcBlock) syncFromDOM(); });
+    block.addEventListener('drop', e => { e.preventDefault(); });
   });
 }
 
@@ -962,8 +1010,12 @@ function syncFromDOM() {
     const catNom = block.querySelector('.cat-name-inp').value;
     const items = [];
     block.querySelectorAll('.sort-item').forEach(el => {
-      const oci = parseInt(el.dataset.ci), oii = parseInt(el.dataset.ii);
-      if (maestro[oci]?.items[oii]) items.push({...maestro[oci].items[oii]});
+      const data = el._itemData ? {...el._itemData} : null;
+      if (!data) return;
+      // Leer nombre actualizado del input si existe
+      const nameInp = el.querySelector('.item-name-inp');
+      if (nameInp) data.nombre = nameInp.value.trim() || data.nombre;
+      items.push(data);
     });
     return {cat: catNom, items};
   });
