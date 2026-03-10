@@ -11,49 +11,50 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--gris);color:var(--texto);min-height:100vh;}
 
-.topbar{background:var(--azul-os);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.25);}
-.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;}
+/* ── Topbar ── */
+.topbar{background:var(--azul-os);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:#fff;}
 .brand span{color:var(--amarillo);}
-.topbar-right{display:flex;align-items:center;gap:14px;}
-.save-status{font-size:.7rem;color:rgba(255,255,255,.5);transition:.3s;}
-.save-status.saved{color:#86efac;}
-.topbar-ver{font-size:.68rem;color:rgba(255,255,255,.35);}
+.save-pill{font-size:.68rem;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);transition:.3s;}
+.save-pill.ok{background:rgba(22,163,74,.25);color:#86efac;}
 
-.tabs-bar{background:#fff;border-bottom:2px solid var(--borde);display:flex;padding:0 20px;}
-.tab-btn{padding:11px 18px;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;color:#9ca3af;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s;}
+/* ── Tabs ── */
+.tabs-bar{background:#fff;border-bottom:2px solid var(--borde);display:flex;padding:0 18px;}
+.tab-btn{padding:10px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:#9ca3af;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s;white-space:nowrap;}
 .tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
 .tab-btn:hover:not(.active){color:var(--texto);}
 
 .tab-panel{display:none;}
-.tab-panel.active{display:flex;min-height:calc(100vh - 90px);}
+.tab-panel.active{display:flex;min-height:calc(100vh - 88px);}
 
-/* ── Sidebar ── */
-.sidebar{background:#fff;border-right:1px solid var(--borde);padding:16px 14px;width:280px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:11px;}
-.sidebar h3,.pane-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:var(--azul-os);padding-bottom:8px;border-bottom:2px solid var(--amarillo);margin-bottom:2px;}
+/* ── Sidebar común ── */
+.sidebar{background:#fff;border-right:1px solid var(--borde);padding:15px 13px;width:272px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;color:var(--azul-os);padding-bottom:7px;border-bottom:2px solid var(--amarillo);}
 
-.upload-zone{border:2px dashed var(--borde);border-radius:9px;padding:15px 10px;text-align:center;cursor:pointer;transition:.2s;}
+/* Upload */
+.upload-zone{border:2px dashed var(--borde);border-radius:8px;padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;}
 .upload-zone:hover{border-color:var(--azul);background:#eef3fb;}
-.upload-zone .icon{font-size:1.6rem;margin-bottom:3px;}
-.upload-zone p{font-size:.74rem;color:#6b7280;}
+.upload-zone .icon{font-size:1.5rem;margin-bottom:3px;}
+.upload-zone p{font-size:.72rem;color:#6b7280;}
 .upload-zone p strong{color:var(--azul);}
 .upload-zone.loaded{border-color:var(--verde);background:#f0fdf4;cursor:default;}
 .upload-zone.loaded p,.upload-zone.loaded p strong{color:var(--verde);}
 #file-input{display:none;}
+.info-box{background:#eef3fb;border-left:3px solid var(--azul);border-radius:0 5px 5px 0;padding:6px 9px;font-size:.7rem;color:var(--azul-os);display:none;}
+.info-box b{display:block;font-size:.73rem;}
 
-.info-box{background:#eef3fb;border-left:3px solid var(--azul);border-radius:0 5px 5px 0;padding:6px 9px;font-size:.71rem;color:var(--azul-os);display:none;}
-.info-box b{display:block;font-size:.74rem;margin-bottom:1px;}
-
-.field label{display:block;font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
-.field select,.field input{width:100%;padding:7px 8px;border:1.5px solid var(--borde);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.83rem;color:var(--texto);background:var(--gris);transition:.15s;}
+/* Fields */
+.field label{display:block;font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.field select,.field input{width:100%;padding:7px 8px;border:1.5px solid var(--borde);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--texto);background:var(--gris);transition:.15s;}
 .field select:focus,.field input:focus{outline:none;border-color:var(--azul);background:#fff;}
-select:disabled{opacity:.38;}
-
-.rango-grid{display:grid;grid-template-columns:1fr 14px 1fr;gap:5px;align-items:center;}
-.rango-sep{text-align:center;font-size:.7rem;color:#9ca3af;}
-.badge{font-size:.67rem;margin-top:4px;padding:3px 7px;border-radius:4px;background:#eef3fb;color:var(--azul);display:none;}
+select:disabled{opacity:.35;}
+.rango-grid{display:grid;grid-template-columns:1fr 12px 1fr;gap:4px;align-items:center;}
+.rango-sep{text-align:center;font-size:.68rem;color:#9ca3af;}
+.badge{font-size:.65rem;margin-top:3px;padding:3px 7px;border-radius:4px;background:#eef3fb;color:var(--azul);display:none;}
 .badge.warn{background:#fff1f1;color:var(--rojo);}
 
-.btn{width:100%;padding:10px;border:none;border-radius:7px;font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;cursor:pointer;transition:.15s;}
+/* Buttons */
+.btn{width:100%;padding:9px;border:none;border-radius:7px;font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;cursor:pointer;transition:.15s;}
 .btn-azul{background:var(--azul);color:#fff;}
 .btn-azul:hover:not(:disabled){background:var(--azul-os);}
 .btn-azul:disabled{background:#9ca3af;cursor:not-allowed;}
@@ -61,76 +62,73 @@ select:disabled{opacity:.38;}
 .btn-rojo:hover{background:#b80410;}
 .btn-verde{background:var(--verde);color:#fff;}
 .btn-verde:hover{background:#15803d;}
-.btn-outline{background:#fff;color:var(--rojo);border:1.5px solid var(--rojo);font-size:.78rem;padding:7px;}
-.btn-outline:hover{background:#fff1f1;}
+.btn-sm{font-size:.72rem;padding:6px 10px;border-radius:5px;}
+.btn-ghost{background:transparent;color:#6b7280;border:1.5px solid var(--borde);}
+.btn-ghost:hover{background:var(--gris);color:var(--texto);}
 
-/* ── Preview principal ── */
-.preview-main{flex:1;padding:20px;overflow-y:auto;}
-.preview-label{font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:#9ca3af;margin-bottom:12px;display:none;}
-.tickets-wrap{display:flex;flex-wrap:wrap;gap:16px;}
-.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 3px 14px rgba(0,61,122,.07);width:292px;flex-shrink:0;}
+/* ── TAB TICKETS ── */
+.preview-main{flex:1;padding:18px;overflow-y:auto;}
+.preview-label{font-family:'Syne',sans-serif;font-weight:700;font-size:.76rem;color:#9ca3af;margin-bottom:10px;display:none;}
+.tickets-wrap{display:flex;flex-wrap:wrap;gap:14px;}
+.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,61,122,.07);width:288px;flex-shrink:0;}
 .card-footer{background:#f8f9fb;border-top:1px solid var(--borde);padding:6px 9px;display:flex;gap:5px;}
-.card-footer button{flex:1;padding:5px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
+.card-footer button{flex:1;padding:4px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.68rem;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;}
 .card-footer button:hover{background:var(--azul-os);}
+.placeholder{padding:46px 18px;text-align:center;color:#9ca3af;font-size:.82rem;line-height:2.2;}
+.placeholder .big{font-size:2rem;display:block;margin-bottom:8px;}
 
-.placeholder{padding:50px 20px;text-align:center;color:#9ca3af;font-size:.83rem;line-height:2.2;}
-.placeholder .big{font-size:2.2rem;display:block;margin-bottom:8px;}
+/* ── TAB MAESTRO ── */
+.maestro-layout{flex:1;display:grid;grid-template-columns:1fr 300px;}
+.maestro-editor{padding:18px;overflow-y:auto;border-right:1px solid var(--borde);}
+.maestro-preview{padding:18px;overflow-y:auto;background:#fff;}
 
-/* ══ EDITOR ══ */
-.editor-wrap{flex:1;display:grid;grid-template-columns:1fr 290px;min-height:calc(100vh - 90px);}
-.editor-left{padding:18px;overflow-y:auto;border-right:1px solid var(--borde);}
-.editor-right{padding:18px;overflow-y:auto;background:#fff;}
+.toolbar{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;}
+.toolbar .btn{width:auto;flex:1;}
 
-.editor-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
-.editor-toolbar .btn{width:auto;padding:8px 14px;font-size:.78rem;}
-
-.note{font-size:.72rem;color:#6b7280;background:#f8f9fb;border-radius:6px;padding:9px 11px;line-height:1.65;margin-bottom:12px;}
+.note{font-size:.7rem;color:#6b7280;background:#f8f9fb;border:1px solid var(--borde);border-radius:6px;padding:9px 11px;line-height:1.7;margin-bottom:12px;}
 .note strong{color:var(--azul-os);}
 
-/* Bloques de categoría */
-.cat-block{background:#fff;border:1.5px solid var(--borde);border-radius:8px;margin-bottom:10px;overflow:hidden;transition:.15s;}
-.cat-block.drag-over-cat{border-color:var(--azul);box-shadow:0 0 0 2px rgba(0,85,164,.15);}
-.cat-head{background:var(--azul);color:#fff;padding:7px 11px;display:flex;align-items:center;gap:8px;cursor:grab;}
+/* Cat blocks */
+.cat-block{background:#fff;border:1.5px solid var(--borde);border-radius:8px;margin-bottom:9px;overflow:hidden;}
+.cat-block.drag-over{border-color:var(--azul);box-shadow:0 0 0 2px rgba(0,85,164,.12);}
+.cat-head{background:var(--azul);color:#fff;padding:6px 10px;display:flex;align-items:center;gap:7px;cursor:grab;}
 .cat-head:active{cursor:grabbing;}
-.cat-drag{font-size:1rem;opacity:.6;flex-shrink:0;}
-.cat-name-input{background:transparent;border:none;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.3px;flex:1;outline:none;min-width:60px;}
-.cat-name-input::placeholder{color:rgba(255,255,255,.5);}
-.cat-btns{display:flex;gap:4px;flex-shrink:0;}
-.cat-btns button{background:rgba(255,255,255,.18);border:none;color:#fff;padding:3px 7px;border-radius:4px;font-size:.68rem;cursor:pointer;transition:.15s;}
-.cat-btns button:hover{background:rgba(255,255,255,.32);}
-.cat-btns .del{background:rgba(227,6,19,.4);}
-.cat-btns .del:hover{background:rgba(227,6,19,.7);}
+.cat-drag{font-size:.9rem;opacity:.55;flex-shrink:0;}
+.cat-name-inp{background:transparent;border:none;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.3px;flex:1;outline:none;}
+.cat-name-inp::placeholder{color:rgba(255,255,255,.45);}
+.cat-acts{display:flex;gap:3px;flex-shrink:0;}
+.cat-acts button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:2px 7px;border-radius:4px;font-size:.65rem;cursor:pointer;transition:.15s;}
+.cat-acts button:hover{background:rgba(255,255,255,.3);}
+.cat-acts .del{background:rgba(227,6,19,.35);}
+.cat-acts .del:hover{background:rgba(227,6,19,.65);}
 
-.sortable-list{min-height:28px;padding:5px 6px;}
-.sort-item{display:flex;align-items:center;gap:6px;padding:4px 6px;margin-bottom:3px;background:var(--gris);border:1px solid var(--borde);border-radius:5px;cursor:grab;user-select:none;transition:.1s;}
+.sort-list{min-height:24px;padding:4px 5px;}
+.sort-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:var(--gris);border:1px solid var(--borde);border-radius:5px;cursor:grab;user-select:none;transition:.1s;}
 .sort-item:hover{background:#e8edf5;border-color:#aab4c8;}
-.sort-item.dragging{opacity:.35;border:2px dashed var(--azul);}
-.drag-handle{color:#bbb;font-size:.85rem;flex-shrink:0;}
-.item-name{flex:1;font-size:.78rem;color:var(--texto);word-break:break-word;}
-.item-qty{display:flex;align-items:center;gap:3px;flex-shrink:0;}
-.item-qty input{width:40px;padding:2px 4px;border:1px solid var(--borde);border-radius:4px;font-size:.75rem;text-align:center;background:#fff;}
-.item-qty label{font-size:.65rem;color:#9ca3af;}
-.cbadge{font-size:.58rem;background:var(--amarillo);color:#000;padding:1px 4px;border-radius:3px;font-weight:700;flex-shrink:0;}
-.del-item{background:none;border:none;color:#ccc;cursor:pointer;font-size:.82rem;padding:0 1px;flex-shrink:0;}
-.del-item:hover{color:var(--rojo);}
+.sort-item.dragging{opacity:.3;border:2px dashed var(--azul);}
+.drag-h{color:#bbb;font-size:.82rem;flex-shrink:0;}
+.item-lbl{flex:1;font-size:.76rem;word-break:break-word;}
+.cbadge{font-size:.56rem;background:var(--amarillo);color:#000;padding:1px 4px;border-radius:3px;font-weight:700;flex-shrink:0;}
+.del-it{background:none;border:none;color:#ccc;cursor:pointer;font-size:.8rem;padding:0 2px;flex-shrink:0;}
+.del-it:hover{color:var(--rojo);}
 
-.add-row{display:flex;gap:4px;padding:4px 6px 6px;border-top:1px dashed #e5e7eb;margin-top:2px;}
-.add-row input{padding:5px 6px;border:1.5px solid var(--borde);border-radius:5px;font-size:.75rem;font-family:'DM Sans',sans-serif;background:var(--gris);}
+.add-row{display:flex;gap:4px;padding:4px 5px 6px;border-top:1px dashed #e5e7eb;}
+.add-row input{padding:4px 6px;border:1.5px solid var(--borde);border-radius:5px;font-size:.73rem;font-family:'DM Sans',sans-serif;background:var(--gris);}
 .add-row input:focus{outline:none;border-color:var(--azul);background:#fff;}
-.add-row .inp-name{flex:1;}
-.add-row .inp-qty{width:42px;}
-.add-row button{padding:5px 9px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.add-row .inp-n{flex:1;}
+.add-row button{padding:4px 8px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.73rem;font-weight:700;cursor:pointer;}
 .add-row button:hover{background:var(--azul-os);}
 
-.new-cat-bar{display:flex;gap:7px;align-items:center;margin-top:4px;}
-.new-cat-bar input{flex:1;padding:8px 10px;border:1.5px solid var(--borde);border-radius:6px;font-size:.82rem;font-family:'DM Sans',sans-serif;}
-.new-cat-bar input:focus{outline:none;border-color:var(--azul);}
-.new-cat-bar button{padding:8px 14px;background:var(--azul);color:#fff;border:none;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap;}
-.new-cat-bar button:hover{background:var(--azul-os);}
+.new-cat-row{display:flex;gap:6px;}
+.new-cat-row input{flex:1;padding:7px 9px;border:1.5px solid var(--borde);border-radius:6px;font-size:.8rem;font-family:'DM Sans',sans-serif;}
+.new-cat-row input:focus{outline:none;border-color:var(--azul);}
+.new-cat-row button{padding:7px 12px;background:var(--azul);color:#fff;border:none;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.new-cat-row button:hover{background:var(--azul-os);}
 
-/* ── Preview del editor ── */
-.preview-label2{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;color:var(--azul-os);margin-bottom:8px;}
-#ed-preview{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,61,122,.06);}
+/* Maestro preview */
+.prev-label{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;color:var(--azul-os);margin-bottom:8px;}
+.prev-note{font-size:.68rem;color:#9ca3af;margin-bottom:10px;line-height:1.5;}
+#maestro-preview-box{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,61,122,.06);}
 
 /* ══ TICKET TÉRMICO 80mm ══ */
 .thermal{font-family:'Courier New',Courier,monospace;font-size:11px;color:#000;background:#fff;width:100%;padding:7px 5px;}
@@ -154,7 +152,7 @@ select:disabled{opacity:.38;}
 /* ══ PRINT ══ */
 @media print{
   body{background:#fff;}
-  .topbar,.tabs-bar,.sidebar,.editor-wrap,.preview-label,.card-footer{display:none!important;}
+  .topbar,.tabs-bar,.sidebar,.maestro-layout,.preview-label,.card-footer{display:none!important;}
   .tab-panel{display:block!important;}
   #tab-tickets{display:block!important;}
   .tickets-wrap{display:block;}
@@ -162,8 +160,6 @@ select:disabled{opacity:.38;}
   .ticket-card{width:80mm;border:none;border-radius:0;box-shadow:none;page-break-after:always;break-after:page;}
   .ticket-card:last-child{page-break-after:avoid;break-after:avoid;}
   .thermal{font-size:10px;padding:3px 2px;}
-  .th-tit{font-size:12px;}
-  .th-tbl{font-size:9px;}
 }
 </style>
 </head>
@@ -171,26 +167,23 @@ select:disabled{opacity:.38;}
 
 <div class="topbar">
   <div class="brand">Bimbo <span>Tickets de Carga</span></div>
-  <div class="topbar-right">
-    <span class="save-status" id="save-status">⬤ Sin guardar</span>
-    <span class="topbar-ver">Térmico 80mm</span>
-  </div>
+  <span class="save-pill" id="save-pill">sin guardar</span>
 </div>
 
 <div class="tabs-bar">
-  <button class="tab-btn active" onclick="showTab('tickets')">🗒 Tickets</button>
-  <button class="tab-btn" onclick="showTab('editor')">✏️ Editor de Orden</button>
+  <button class="tab-btn active"  onclick="showTab('tickets')">🗒 Tickets por Ruta</button>
+  <button class="tab-btn"         onclick="showTab('maestro')">📋 Ticket Maestro</button>
 </div>
 
-<!-- ══════════ TAB 1: TICKETS ══════════ -->
+<!-- ══════════ TAB TICKETS ══════════ -->
 <div class="tab-panel active" id="tab-tickets">
   <div class="sidebar">
-    <h3>Configurar</h3>
+    <div class="sec-title">Configurar</div>
 
     <div class="upload-zone" id="upload-zone" onclick="triggerUpload()">
       <div class="icon">📂</div>
-      <p><strong>Clic aquí</strong> para subir archivo</p>
-      <p style="font-size:.67rem;margin-top:2px;">OLA_vta_DDMMMAAAA.xlsx</p>
+      <p><strong>Clic aquí</strong> para subir archivo OLA</p>
+      <p style="font-size:.66rem;margin-top:2px;">OLA_vta_DDMMMAAAA.xlsx</p>
     </div>
     <input type="file" id="file-input" accept=".xlsx,.xls">
 
@@ -203,7 +196,6 @@ select:disabled{opacity:.38;}
       <label>Fecha</label>
       <select id="sel-fecha" disabled><option>— carga el archivo —</option></select>
     </div>
-
     <div class="field">
       <label>Rango de rutas</label>
       <div class="rango-grid">
@@ -213,133 +205,147 @@ select:disabled{opacity:.38;}
       </div>
       <div class="badge" id="rutas-badge">—</div>
     </div>
-
     <div class="field"><label>Folio</label><input type="text" id="f-folio" value="F1"></div>
     <div class="field"><label>Hora</label><input type="time" id="f-hora"></div>
 
     <button class="btn btn-azul" id="btn-gen" disabled onclick="generarTodos()">⟳ Generar Tickets</button>
     <button class="btn btn-rojo" id="btn-print" style="display:none" onclick="window.print()">🖨 Imprimir Todos</button>
-    <button class="btn btn-outline" id="btn-reset-orden" onclick="resetOrden()">🗑 Borrar orden guardado</button>
+
+    <!-- Estado del maestro -->
+    <div id="maestro-status" style="font-size:.68rem;padding:7px 9px;background:#eef3fb;border-radius:6px;color:var(--azul-os);display:none;">
+      📋 Usando orden del <strong>Ticket Maestro</strong>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="resetMaestro()" style="font-size:.7rem;">🗑 Borrar maestro guardado</button>
   </div>
 
   <div class="preview-main">
-    <div class="preview-label" id="preview-label">Vista previa — tickets generados</div>
+    <div class="preview-label" id="preview-label">Vista previa — un ticket por ruta</div>
     <div class="tickets-wrap" id="tickets-wrap">
-      <div class="placeholder"><span class="big">🗒</span>Sube el archivo OLA, elige el rango de rutas<br>y presiona <strong>Generar Tickets</strong></div>
+      <div class="placeholder">
+        <span class="big">🗒</span>
+        Sube el archivo OLA, configura el rango<br>y presiona <strong>Generar Tickets</strong>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════ TAB 2: EDITOR ══════════ -->
-<div class="tab-panel" id="tab-editor">
-  <div class="editor-wrap">
+<!-- ══════════ TAB MAESTRO ══════════ -->
+<div class="tab-panel" id="tab-maestro">
+  <div class="maestro-editor">
+    <div class="sec-title" style="margin-bottom:12px;">📋 Ticket Maestro — Plantilla de Orden</div>
 
-    <!-- IZQUIERDO -->
-    <div class="editor-left">
-      <div class="pane-title" style="margin-bottom:12px;">Editor de Orden y Contenido</div>
+    <div class="note">
+      <strong>¿Qué es el Ticket Maestro?</strong><br>
+      Es la plantilla de referencia con <em>todos</em> los productos en el orden que tú defines.
+      Cuando generes los tickets por ruta, cada uno respetará exactamente este orden —
+      si la ruta no lleva un producto, simplemente se omite, pero la posición de los demás no cambia.<br><br>
+      <strong>⠿ Arrastra</strong> productos o categorías para reordenarlos.<br>
+      <strong>➕ Agrega</strong> productos extra que quieras incluir siempre.<br>
+      <strong>💾 Guarda</strong> — se mantiene aunque cierres el navegador.
+    </div>
 
-      <div class="editor-toolbar">
-        <button class="btn btn-verde" style="flex:1;" onclick="guardarOrden()">💾 Guardar orden</button>
-        <button class="btn btn-azul" style="flex:1;" onclick="aplicarYGenerar()">▶ Aplicar y generar</button>
-      </div>
+    <div class="toolbar">
+      <button class="btn btn-verde" onclick="guardarMaestro()">💾 Guardar Maestro</button>
+      <button class="btn btn-azul" onclick="aplicarYGenerar()">▶ Aplicar y Generar</button>
+    </div>
 
-      <div class="note">
-        <strong>⠿ Arrastra</strong> categorías completas para reordenarlas.<br>
-        <strong>⠿ Arrastra</strong> productos dentro de su categoría.<br>
-        <strong>✏️ Edita</strong> el nombre de la categoría directo en el encabezado azul.<br>
-        <strong>➕ Agrega</strong> artículos personalizados en cada categoría.<br>
-        <strong>💾 Guarda</strong> — el orden se mantiene al subir nuevos archivos OLA.<br>
-        Los productos nuevos del Excel se agregan automáticamente sin perder tu orden.
-      </div>
+    <!-- Carga desde archivo para construir el maestro -->
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:9px 11px;font-size:.72rem;color:#92400e;margin-bottom:12px;" id="maestro-hint">
+      💡 <strong>Tip:</strong> Sube primero el archivo OLA en la pestaña Tickets para que el maestro
+      se construya automáticamente con todos los productos. Luego regresa aquí a ordenarlos.
+    </div>
 
-      <div id="cat-container"></div>
-
-      <div style="margin-top:10px;">
-        <label style="display:block;font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">➕ Nueva categoría</label>
-        <div class="new-cat-bar">
-          <input type="text" id="new-cat-input" placeholder="Ej: ESPECIALES, TORTILLAS...">
-          <button onclick="agregarCategoria()">+ Crear</button>
-        </div>
+    <div id="maestro-cat-container">
+      <div class="placeholder" style="padding:30px 10px;font-size:.78rem;">
+        Carga un archivo OLA y genera tickets una vez para poblar el maestro.
       </div>
     </div>
 
-    <!-- DERECHO: preview -->
-    <div class="editor-right">
-      <div class="pane-title" style="margin-bottom:10px;">Vista Previa del Ticket</div>
-      <div class="note" style="margin-bottom:12px;">Muestra la estructura actual.<br>Las cantidades reales se aplican al generar.</div>
-      <div class="preview-label2">Estructura guardada</div>
-      <div id="ed-preview">
-        <div class="placeholder" style="padding:30px 15px;font-size:.76rem;">Genera tickets o agrega categorías para ver la estructura aquí.</div>
+    <div style="margin-top:10px;">
+      <label style="display:block;font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Nueva categoría</label>
+      <div class="new-cat-row">
+        <input type="text" id="new-cat-input" placeholder="Ej: TORTILLAS, ESPECIALES...">
+        <button onclick="agregarCategoria()">+ Crear</button>
       </div>
     </div>
+  </div>
 
+  <div class="maestro-preview">
+    <div class="prev-label">Vista del Ticket Maestro</div>
+    <div class="prev-note">
+      Todos los productos en tu orden.<br>
+      Cada ticket por ruta hereda esta posición.
+    </div>
+    <div id="maestro-preview-box">
+      <div class="placeholder" style="padding:28px 12px;font-size:.76rem;">
+        El maestro aparecerá aquí una vez que lo configures.
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-/* ══════════════════════════════════
-   ESTADO
-══════════════════════════════════ */
-let allData   = [];
-let estructura = [];   // [{cat, items:[{nombre,tinas,pzas,custom,visible}]}]
-let dragSrc   = null;
-let dragSrcCat= null;  // para drag de bloques enteros
-const STORAGE_KEY = 'bimbo_ticket_orden_v2';
+/* ══════════════════════
+   ESTADO GLOBAL
+══════════════════════ */
+let allData  = [];
+// maestro: [{cat, items:[{nombre, custom}]}]
+// Es solo la ESTRUCTURA (orden), sin cantidades
+// Las cantidades vienen siempre del Excel en el momento de generar
+let maestro  = [];
+let dragSrc  = null;
+let dragSrcBlock = null;
+
+const STORAGE_KEY = 'bimbo_maestro_v1';
 
 document.getElementById('f-hora').value = new Date().toTimeString().slice(0,5);
 
 /* ══ PERSISTENCIA ══ */
-function guardarOrden() {
+function guardarMaestro() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estructura));
-    setSaveStatus('✔ Orden guardado', true);
-  } catch(e) {
-    setSaveStatus('⚠ No se pudo guardar', false);
-  }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(maestro));
+    setPill('💾 Maestro guardado', true);
+    document.getElementById('maestro-status').style.display = 'block';
+  } catch(e) { alert('No se pudo guardar. Intenta de nuevo.'); }
 }
-
-function cargarOrdenGuardado() {
+function cargarMaestroGuardado() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { estructura = JSON.parse(raw); return true; }
+    if (raw) { maestro = JSON.parse(raw); return true; }
   } catch(e) {}
   return false;
 }
-
-function resetOrden() {
-  if (!confirm('¿Borrar el orden guardado? Se usará el orden automático del próximo archivo.')) return;
+function resetMaestro() {
+  if (!confirm('¿Borrar el Ticket Maestro guardado? Los próximos tickets usarán el orden automático.')) return;
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-  estructura = [];
-  setSaveStatus('⬤ Sin guardar', false);
-  document.getElementById('cat-container').innerHTML = '';
-  renderEditorPlaceholder();
-  alert('Orden borrado. Al generar tickets se usará el orden automático.');
+  maestro = [];
+  setPill('sin guardar', false);
+  document.getElementById('maestro-status').style.display = 'none';
+  renderMaestro();
 }
-
-function setSaveStatus(msg, ok) {
-  const el = document.getElementById('save-status');
-  el.textContent = msg;
-  el.className = 'save-status' + (ok ? ' saved' : '');
+function setPill(msg, ok) {
+  const p = document.getElementById('save-pill');
+  p.textContent = msg;
+  p.className = 'save-pill' + (ok ? ' ok' : '');
 }
 
 /* ══ TABS ══ */
 function showTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  const idx = id==='tickets'?0:1;
-  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-  if (id==='editor') renderEditor();
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn')[id === 'tickets' ? 0 : 1].classList.add('active');
+  if (id === 'maestro') renderMaestro();
 }
 
-/* ══ CATEGORÍAS ══ */
+/* ══ CATEGORÍAS / CLASIFICACIÓN ══ */
 const CATS_DEF = ['BOLLERÍA','SALADOS','TÍA ROSA','MARINELA','BIMBO DULCE','GALLETAS','OTROS'];
 const CAT_RULES = [
   { cat:'BOLLERÍA',    fn: p => /Bimbol|SuperBoll|SupeBol|MediNoc|MediaNoch|BolBrioch|BolSupAjo|BollCarl|BimParr.*516|BimParr.*1032|BimParr.*688|BimbBrio|HotDog|SupHDog/i.test(p) },
   { cat:'TÍA ROSA',   fn: p => /Concha|Bigot|BigoC|SemtPil|Cuern|MantVai|MantNue|TiritDor|PasCua|MantNja|MantecBico|MantecaVai|MantecaNue|MadCuadr|TiraDor|Doradit|GalletaAve|Muffv|MiPol|TarPin|TarZar|TarFre|EmpanCaj|FavNuez|FavVain|FavorVain|MagnasCPT|ManHer|RockTir|RolesC|RolGlas|DecaRosq|PolvoPan|DelicBetun|DelicBomb|DelicVain|DelicChoc|DonEsp|Donad|Donas[^i]|Doners/i.test(p) },
   { cat:'MARINELA',   fn: p => /Gans[io5]|Gans50|Pingu|ChocRole|RolloFres|DuoNapol|DuoNitoSP|DuoPy|Dalmat|Bomb.*55g|ChocotFre|Mobi|PastH|PastC|PastBoca|PastiOri|PayF|PingH|ChRolCe|MinGansi|MinChRol|MinPing|TriGans|TuboGans|MiGansi|MiPingu|GalletPing|2PackGans|LechGans|LecheNito|FrutSpo|Nito[1M]|SubChoSP|SubFsa|SubVai|SubmFsa|SubmVai|SubmCho/i.test(p) },
-  { cat:'BIMBO DULCE',fn: p => /Bimbunue|CrossCho|CrossMH|CrosH|Panque|DuoNito[^S]|Sponch|Trik|Donas\b|Doner[s]|ConchVain|BraFrut|BranFrut|BFrGrn|MiPanN|Mada|ManVa[26]|Colch|MChisp|LBSo|LBi|Barrit|BarFre|BarPin|BesoN|PnqctoChoco|MiBarrFre|MinBarF|MinBarP|MiniBar|PromBarr|PromPing|PromRoll|MaxC|MaxP|MaxTr|Maxit|AnimKar|ManV6p/i.test(p) },
-  { cat:'GALLETAS',   fn: p => /Canap|Crem.*LAR|Gallet[aP]|Salada|Salmas|FPSalmas|STostN|Lors|Maria[sS]|Decad|TostaCl|GallMolid|Snack|Cors|Caña/i.test(p) },
+  { cat:'BIMBO DULCE',fn: p => /Bimbunue|CrossCho|CrossMH|CrosH|Panque|DuoNito[^S]|Sponch|Trik|Donas\b|ConchVain|BraFrut|BranFrut|BFrGrn|MiPanN|Mada|ManVa[26]|Colch|MChisp|LBSo|LBi|Barrit|BarFre|BarPin|BesoN|PnqctoChoco|MiBarrFre|MinBarF|MinBarP|MiniBar|PromBarr|PromPing|PromRoll|MaxC|MaxP|MaxTr|Maxit|AnimKar|ManV6p/i.test(p) },
+  { cat:'GALLETAS',   fn: p => /Canap|Crem.*LAR|Gallet[aP]|Salada|Salmas|FPSalmas|STostN|Lors|Maria[sS]|Decad|TostaCl|GallMolid|Snack/i.test(p) },
   { cat:'SALADOS',    fn: p => /PBlanc|PBla3|PanInt|PnArte|PanCer|MulCer|PanLin|PNatur|PanMultig|Pan12Gran|WonAjon|PMolid|Molido|Pan100pct|PInteg|PBlanco|PBlanca|Tort|Tost|Reban|PanRel/i.test(p) },
 ];
 function categorizar(prod) {
@@ -352,13 +358,11 @@ function triggerUpload() {
   if (!document.getElementById('upload-zone').classList.contains('loaded'))
     document.getElementById('file-input').click();
 }
-
 document.getElementById('file-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const wb = XLSX.read(ev.target.result, {type:'array',cellDates:true});
+    const wb = XLSX.read(ev.target.result, {type:'array', cellDates:true});
     const ws = wb.Sheets[wb.SheetNames[0]];
     allData = XLSX.utils.sheet_to_json(ws, {raw:false, dateNF:'yyyy-mm-dd'});
 
@@ -374,13 +378,16 @@ document.getElementById('file-input').addEventListener('change', function(e) {
     const sf = document.getElementById('sel-fecha');
     sf.innerHTML = '<option value="">— fecha —</option>' + fechas.map(f=>`<option value="${f}">${fmtF(f)}</option>`).join('');
     sf.disabled = false;
-    if (fechas.length===1){sf.value=fechas[0];sf.dispatchEvent(new Event('change'));}
+    if (fechas.length===1) { sf.value=fechas[0]; sf.dispatchEvent(new Event('change')); }
+
+    // Fusionar productos del Excel con el maestro
+    fusionarExcelEnMaestro();
   };
   reader.readAsArrayBuffer(file);
 });
 
 document.getElementById('sel-fecha').addEventListener('change', function(){
-  const f=this.value,si=document.getElementById('sel-ini'),sf=document.getElementById('sel-fin');
+  const f=this.value, si=document.getElementById('sel-ini'), sf=document.getElementById('sel-fin');
   document.getElementById('btn-gen').disabled=true;
   document.getElementById('rutas-badge').style.display='none';
   if(!f){si.innerHTML='<option>—</option>';si.disabled=true;sf.innerHTML='<option>—</option>';sf.disabled=true;return;}
@@ -388,11 +395,11 @@ document.getElementById('sel-fecha').addEventListener('change', function(){
   const opts=rutas.map(r=>`<option value="${r}">${r}</option>`).join('');
   si.innerHTML='<option value="">— desde —</option>'+opts;
   sf.innerHTML='<option value="">— hasta —</option>'+opts;
-  si.disabled=false;sf.disabled=false;
+  si.disabled=false; sf.disabled=false;
   if(rutas.length){si.value=rutas[0];sf.value=rutas[rutas.length-1];actualizarBadge();}
 });
-document.getElementById('sel-ini').addEventListener('change',actualizarBadge);
-document.getElementById('sel-fin').addEventListener('change',actualizarBadge);
+document.getElementById('sel-ini').addEventListener('change', actualizarBadge);
+document.getElementById('sel-fin').addEventListener('change', actualizarBadge);
 
 function rutasEnRango(fecha,ini,fin){
   return [...new Set(allData.filter(r=>r['Fecha']&&r['Fecha'].toString().startsWith(fecha)).map(r=>r['Ruta']).filter(Boolean))]
@@ -413,73 +420,53 @@ function actualizarBadge(){
 }
 function fmtF(iso){if(!iso)return'';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`;}
 
-/* ══════════════════════════════════
-   LÓGICA CENTRAL: FUSIONAR EXCEL + ORDEN GUARDADO
-   
-   Si hay orden guardado:
-     - Respeta el orden de categorías y productos guardado
-     - Actualiza las cantidades con los datos nuevos del Excel
-     - Agrega productos NUEVOS (que no estaban antes) a su categoría
-     - Los items custom permanecen siempre
-   Si no hay orden guardado:
-     - Construye desde cero con el Excel
-══════════════════════════════════ */
-function fusionarConExcel(fecha, ini, fin) {
-  const rutas = rutasEnRango(fecha, ini, fin);
+/* ══════════════════════════════════════
+   LÓGICA DEL MAESTRO
 
-  // Recolectar todos los productos del Excel con sus cantidades promedio/total
-  // Usamos un mapa global de producto → {tinas, pzas} sumados de todas las rutas
-  const excelMap = {}; // nombre → {tinas, pzas}
-  rutas.forEach(ruta => {
-    allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Contenedor'])
-      .forEach(r => {
-        const nom = r['Producto']||'';
-        if (!excelMap[nom]) excelMap[nom]={tinas:0,pzas:0};
-        excelMap[nom].tinas += parseFloat(r['Tinas'])||0;
-        excelMap[nom].pzas  += parseFloat(r['Piezas'])||0;
-      });
-  });
+   El maestro guarda SOLO nombres + orden (sin cantidades).
+   Las cantidades siempre vienen del Excel al generar.
 
-  if (estructura.length === 0) {
-    // Sin orden guardado: construir desde cero
+   Al cargar un nuevo Excel:
+   - Productos ya en el maestro → conservan su posición
+   - Productos NUEVOS del Excel → se agregan al final de su categoría
+   - Productos que ya no están en el Excel → se quedan en el maestro
+     (el ticket de ruta simplemente los omite si la ruta no los tiene)
+══════════════════════════════════════ */
+function fusionarExcelEnMaestro() {
+  // Recolectar todos los productos únicos del Excel
+  const prodsExcel = new Set();
+  allData.filter(r=>r['Contenedor']&&r['Producto']).forEach(r=>prodsExcel.add(r['Producto']));
+
+  if (!maestro.length) {
+    // Sin maestro previo: construir desde cero
     const catMap = {};
-    Object.entries(excelMap).forEach(([nom, qty]) => {
+    prodsExcel.forEach(nom => {
       const cat = categorizar(nom);
       if (!catMap[cat]) catMap[cat] = [];
-      catMap[cat].push({nombre:nom, tinas:qty.tinas, pzas:qty.pzas, custom:false});
+      catMap[cat].push({nombre:nom, custom:false});
     });
-    estructura = CATS_DEF.map(cat=>({cat, items:catMap[cat]||[]})).filter(c=>c.items.length>0);
+    maestro = CATS_DEF.map(cat=>({cat, items:catMap[cat]||[]})).filter(c=>c.items.length>0);
     Object.keys(catMap).filter(c=>!CATS_DEF.includes(c)).forEach(cat=>{
-      estructura.push({cat, items:catMap[cat]});
+      maestro.push({cat, items:catMap[cat]});
     });
   } else {
-    // CON orden guardado: actualizar cantidades + agregar productos nuevos
-    const yaRegistrados = new Set();
-    estructura.forEach(catObj => {
-      catObj.items.forEach(it => {
-        if (!it.custom) {
-          // actualizar cantidades con los del Excel
-          if (excelMap[it.nombre]) {
-            it.tinas = excelMap[it.nombre].tinas;
-            it.pzas  = excelMap[it.nombre].pzas;
-          }
-          yaRegistrados.add(it.nombre);
-        }
-      });
-    });
-
-    // Productos nuevos del Excel que no estaban en el orden guardado
-    Object.entries(excelMap).forEach(([nom]) => {
+    // Con maestro existente: solo agregar los nuevos
+    const yaRegistrados = new Set(maestro.flatMap(c=>c.items.map(i=>i.nombre)));
+    prodsExcel.forEach(nom => {
       if (yaRegistrados.has(nom)) return;
-      // Agregar a la categoría correspondiente (o crearla)
       const cat = categorizar(nom);
-      let catObj = estructura.find(c=>c.cat===cat);
-      if (!catObj) { catObj={cat,items:[]}; estructura.push(catObj); }
-      catObj.items.push({nombre:nom, tinas:excelMap[nom].tinas, pzas:excelMap[nom].pzas, custom:false});
+      let catObj = maestro.find(c=>c.cat===cat);
+      if (!catObj) { catObj={cat, items:[]}; maestro.push(catObj); }
+      catObj.items.push({nombre:nom, custom:false});
     });
   }
 
-  setSaveStatus(estructura.length?'✔ Orden cargado':'⬤ Sin guardar', estructura.length>0);
+  // Mostrar hint de que el maestro está listo
+  document.getElementById('maestro-hint').innerHTML =
+    `✅ <strong>Maestro actualizado</strong> con ${prodsExcel.size} productos del archivo. Ve a <strong>Ticket Maestro</strong> para ordenarlos.`;
+  document.getElementById('maestro-hint').style.background='#f0fdf4';
+  document.getElementById('maestro-hint').style.borderColor='#86efac';
+  document.getElementById('maestro-hint').style.color='#166534';
 }
 
 /* ══ GENERAR TODOS LOS TICKETS ══ */
@@ -489,9 +476,10 @@ function generarTodos() {
   const fin=parseInt(document.getElementById('sel-fin').value);
   const folio=document.getElementById('f-folio').value;
   const hora=document.getElementById('f-hora').value;
-  if(!fecha||!ini||!fin)return;
+  if(!fecha||!ini||!fin) return;
 
-  fusionarConExcel(fecha,ini,fin);
+  // Si no hay maestro todavía, construir automáticamente
+  if (!maestro.length) fusionarExcelEnMaestro();
 
   const rutas=rutasEnRango(fecha,ini,fin);
   const wrap=document.getElementById('tickets-wrap');
@@ -500,52 +488,55 @@ function generarTodos() {
   rutas.forEach(ruta=>{
     const ag=allData.find(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Agencia']);
     const sucursal=ag?(ag['Agencia']||'').replace(/^\d+-/,'').trim():'';
-    const html=buildThermalHTML(ruta,fecha,sucursal,folio,hora);
-    if(!html)return;
+    const html=buildTicketRuta(ruta,fecha,sucursal,folio,hora);
+    if(!html) return;
     const card=document.createElement('div');
     card.className='ticket-card';
-    card.innerHTML=html+`<div class="card-footer"><button onclick="imprimirUno(this)">🖨 Imprimir esta ruta</button></div>`;
+    card.innerHTML=html+`<div class="card-footer"><button onclick="imprimirUno(this)">🖨 Esta ruta</button></div>`;
     wrap.appendChild(card);
   });
 
   document.getElementById('preview-label').style.display='block';
   document.getElementById('btn-print').style.display='block';
-  if(!wrap.children.length) wrap.innerHTML='<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
+  document.getElementById('maestro-status').style.display='block';
+  if(!wrap.children.length)
+    wrap.innerHTML='<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
 }
 
-/* ══ CONSTRUIR HTML TICKET PARA UNA RUTA ESPECÍFICA ══ */
-function buildThermalHTML(ruta, fecha, sucursal, folio, hora) {
-  const prodRows = allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Contenedor']);
-  const eqRows   = allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&!r['Contenedor']&&r['Producto']);
-
+/* ══ CONSTRUIR TICKET DE UNA RUTA usando el orden del maestro ══ */
+function buildTicketRuta(ruta, fecha, sucursal, folio, hora) {
   // Cantidades REALES de esta ruta específica
-  const qtyMap={};
-  prodRows.forEach(r=>{ qtyMap[r['Producto']||'']={t:parseFloat(r['Tinas'])||0,p:parseFloat(r['Piezas'])||0}; });
+  const qtyMap = {};
+  allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Contenedor'])
+    .forEach(r=>{ qtyMap[r['Producto']||''] = {t:parseFloat(r['Tinas'])||0, p:parseFloat(r['Piezas'])||0}; });
 
-  let body='';
-  estructura.forEach(({cat,items})=>{
-    // Solo mostrar items que esta ruta tiene (o items custom)
-    const visibles=items.filter(it=>it.custom||qtyMap[it.nombre]);
-    if(!visibles.length)return;
-    body+=`<div class="th-sec"><div class="th-sec-t">${cat}</div>`;
-    body+=`<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>`;
-    body+=`<table class="th-tbl">`;
-    visibles.forEach(it=>{
-      const q=it.custom?{t:it.tinas||0,p:it.pzas||0}:(qtyMap[it.nombre]||{t:0,p:0});
-      body+=`<tr><td>${it.nombre}</td><td>${q.t}</td><td>${q.p}</td></tr>`;
+  const eqRows = allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&!r['Contenedor']&&r['Producto']);
+
+  let body = '';
+  maestro.forEach(({cat, items}) => {
+    // Solo mostrar productos que ESTA RUTA tiene (o custom marcados como siempre)
+    const enEstaRuta = items.filter(it => it.custom || qtyMap[it.nombre]);
+    if (!enEstaRuta.length) return;
+
+    body += `<div class="th-sec"><div class="th-sec-t">${cat}</div>`;
+    body += `<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>`;
+    body += `<table class="th-tbl">`;
+    enEstaRuta.forEach(it => {
+      const q = it.custom ? {t:0,p:0} : (qtyMap[it.nombre]||{t:0,p:0});
+      body += `<tr><td>${it.nombre}</td><td>${q.t}</td><td>${q.p}</td></tr>`;
     });
-    body+=`</table></div>`;
+    body += `</table></div>`;
   });
 
-  if(eqRows.length){
-    body+=`<div class="th-eq"><div class="th-eq-t">EQUIPO</div>`;
+  if (eqRows.length) {
+    body += `<div class="th-eq"><div class="th-eq-t">EQUIPO</div>`;
     eqRows.forEach(r=>{body+=`<div class="th-eq-r"><span>${r['Producto']||''}</span><span>${parseFloat(r['Piezas'])||0}</span></div>`;});
-    body+=`</div>`;
+    body += `</div>`;
   }
 
-  if(!body)return null;
-  const tt=prodRows.reduce((s,r)=>s+(parseFloat(r['Tinas'])||0),0);
-  const tp=prodRows.reduce((s,r)=>s+(parseFloat(r['Piezas'])||0),0);
+  if (!body) return null;
+  const tt = Object.values(qtyMap).reduce((s,q)=>s+q.t,0);
+  const tp = Object.values(qtyMap).reduce((s,q)=>s+q.p,0);
 
   return `<div class="thermal">
     <div class="th-hdr">
@@ -555,14 +546,14 @@ function buildThermalHTML(ruta, fecha, sucursal, folio, hora) {
       <div class="th-rut">RUTA ${ruta} &nbsp; ${folio}</div>
     </div>
     ${body}
-    <div class="th-ftr">${prodRows.length} prod · ${tt} tinas · ${tp} pzas</div>
+    <div class="th-ftr">${Object.keys(qtyMap).length} prod · ${tt} tinas · ${tp} pzas</div>
   </div>`;
 }
 
 /* ══ IMPRIMIR UNA RUTA ══ */
-function imprimirUno(btn){
-  const html=btn.closest('.ticket-card').querySelector('.thermal').outerHTML;
-  const w=window.open('','_blank','width=420,height=720');
+function imprimirUno(btn) {
+  const html = btn.closest('.ticket-card').querySelector('.thermal').outerHTML;
+  const w = window.open('','_blank','width=420,height=720');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Courier New',monospace;font-size:10px;width:80mm;padding:3px;}
@@ -582,130 +573,115 @@ function imprimirUno(btn){
     .th-eq-r{display:flex;justify-content:space-between;font-size:9px;}
     .th-ftr{border-top:1px dashed #000;margin-top:4px;padding-top:2px;font-size:8px;text-align:center;}
   </style></head><body>${html}</body></html>`);
-  w.document.close();w.focus();
+  w.document.close(); w.focus();
   setTimeout(()=>{w.print();w.close();},350);
 }
 
-/* ══════════════════════════════════
-   EDITOR DE ORDEN
-══════════════════════════════════ */
-function renderEditor() {
-  if (!estructura.length) { renderEditorPlaceholder(); return; }
-  const c = document.getElementById('cat-container');
+/* ══════════════════════
+   EDITOR DEL MAESTRO
+══════════════════════ */
+function renderMaestro() {
+  const c = document.getElementById('maestro-cat-container');
+  if (!maestro.length) {
+    c.innerHTML='<div class="placeholder" style="padding:28px 10px;font-size:.76rem;">Carga un archivo OLA desde la pestaña Tickets para poblar el maestro automáticamente.</div>';
+    document.getElementById('maestro-preview-box').innerHTML='<div class="placeholder" style="padding:28px 12px;font-size:.76rem;">Sin datos aún.</div>';
+    return;
+  }
   c.innerHTML='';
-  estructura.forEach((catObj,ci)=>c.appendChild(makeCatBlock(catObj,ci)));
-  // drag entre bloques de categoría
+  maestro.forEach((catObj,ci)=>c.appendChild(makeCatBlock(catObj,ci)));
   initCatDrag();
-  actualizarEditorPreview();
-  setSaveStatus('— cambios sin guardar', false);
-}
-
-function renderEditorPlaceholder(){
-  document.getElementById('cat-container').innerHTML=
-    '<div class="note" style="text-align:center;padding:20px 10px;">Genera tickets primero desde la pestaña <strong>Tickets</strong>.</div>';
+  renderMaestroPreview();
+  document.getElementById('maestro-hint') && (document.getElementById('maestro-hint').style.display='none');
 }
 
 function makeCatBlock(catObj, ci) {
-  const block=document.createElement('div');
+  const block = document.createElement('div');
   block.className='cat-block';
   block.draggable=true;
   block.dataset.ci=ci;
 
   block.innerHTML=`
-    <div class="cat-head" title="Arrastra para mover esta categoría">
+    <div class="cat-head">
       <span class="cat-drag">⠿</span>
-      <input class="cat-name-input" value="${catObj.cat}" placeholder="Nombre categoría"
-        onchange="estructura[${ci}].cat=this.value;actualizarEditorPreview();">
-      <div class="cat-btns">
-        <button onclick="moverCat(${ci},-1)" title="Subir">▲</button>
-        <button onclick="moverCat(${ci},1)" title="Bajar">▼</button>
-        <button class="del" onclick="eliminarCat(${ci})" title="Eliminar">✕</button>
+      <input class="cat-name-inp" value="${catObj.cat}" placeholder="Nombre..."
+        onchange="maestro[${ci}].cat=this.value;renderMaestroPreview();">
+      <div class="cat-acts">
+        <button onclick="moverCat(${ci},-1)">▲</button>
+        <button onclick="moverCat(${ci},1)">▼</button>
+        <button class="del" onclick="eliminarCat(${ci})">✕</button>
       </div>
     </div>
-    <div class="sortable-list" id="list-${ci}" data-ci="${ci}"></div>
+    <div class="sort-list" id="sl-${ci}" data-ci="${ci}"></div>
     <div class="add-row">
-      <input class="inp-name" type="text" placeholder="Nombre del artículo..." id="an-${ci}">
-      <input class="inp-qty" type="number" placeholder="T" id="at-${ci}" min="0">
-      <input class="inp-qty" type="number" placeholder="Pz" id="ap-${ci}" min="0">
+      <input class="inp-n" type="text" placeholder="Agregar producto..." id="an-${ci}">
       <button onclick="agregarItem(${ci})">+ Agregar</button>
     </div>`;
 
-  const list=block.querySelector(`#list-${ci}`);
+  const list = block.querySelector(`#sl-${ci}`);
   catObj.items.forEach((it,ii)=>list.appendChild(makeItemEl(it,ci,ii)));
 
-  // drag dentro de la lista (items)
-  list.addEventListener('dragover',e=>{
-    e.preventDefault();e.stopPropagation();
-    if(!dragSrc||dragSrc.classList.contains('cat-block'))return;
-    const after=getDragAfter(list,e.clientY);
-    if(after==null)list.appendChild(dragSrc);
-    else list.insertBefore(dragSrc,after);
+  list.addEventListener('dragover', e=>{
+    e.preventDefault(); e.stopPropagation();
+    if (!dragSrc || dragSrc.classList.contains('cat-block')) return;
+    const after = getDragAfter(list, e.clientY);
+    if (after==null) list.appendChild(dragSrc);
+    else list.insertBefore(dragSrc, after);
   });
-  list.addEventListener('drop',e=>{
-    e.preventDefault();e.stopPropagation();
-    if(!dragSrc||dragSrc.classList.contains('cat-block'))return;
+  list.addEventListener('drop', e=>{
+    e.preventDefault(); e.stopPropagation();
+    if (!dragSrc || dragSrc.classList.contains('cat-block')) return;
     syncFromDOM();
   });
 
   return block;
 }
 
-function makeItemEl(item, ci, ii) {
-  const el=document.createElement('div');
+function makeItemEl(it, ci, ii) {
+  const el = document.createElement('div');
   el.className='sort-item';
   el.draggable=true;
   el.dataset.ci=ci; el.dataset.ii=ii;
   el.innerHTML=`
-    <span class="drag-handle">⠿</span>
-    <span class="item-name">${item.nombre}</span>
-    ${item.custom?'<span class="cbadge">CUSTOM</span>':''}
-    <div class="item-qty">
-      <input type="number" value="${item.tinas||0}" min="0" title="Tinas"
-        onchange="estructura[${ci}].items[${ii}].tinas=parseFloat(this.value)||0;actualizarEditorPreview();">
-      <label>T</label>
-      <input type="number" value="${item.pzas||0}" min="0" title="Piezas"
-        onchange="estructura[${ci}].items[${ii}].pzas=parseFloat(this.value)||0;actualizarEditorPreview();">
-      <label>Pz</label>
-    </div>
-    <button class="del-item" onclick="eliminarItem(${ci},${ii})">✕</button>`;
-  el.addEventListener('dragstart',e=>{dragSrc=el;dragSrcCat=null;setTimeout(()=>el.classList.add('dragging'),0);});
-  el.addEventListener('dragend',()=>{el.classList.remove('dragging');syncFromDOM();});
+    <span class="drag-h">⠿</span>
+    <span class="item-lbl">${it.nombre}</span>
+    ${it.custom?'<span class="cbadge">CUSTOM</span>':''}
+    <button class="del-it" onclick="eliminarItem(${ci},${ii})">✕</button>`;
+  el.addEventListener('dragstart', ()=>{ dragSrc=el; dragSrcBlock=null; setTimeout(()=>el.classList.add('dragging'),0); });
+  el.addEventListener('dragend', ()=>{ el.classList.remove('dragging'); syncFromDOM(); });
   return el;
 }
 
-/* ── Drag de CATEGORÍAS completas ── */
-function initCatDrag(){
+function initCatDrag() {
   document.querySelectorAll('.cat-block').forEach(block=>{
-    block.addEventListener('dragstart',e=>{
-      if(e.target.tagName==='INPUT')return;
-      dragSrcCat=block;dragSrc=null;
+    block.addEventListener('dragstart', e=>{
+      if (e.target.tagName==='INPUT') return;
+      dragSrcBlock=block; dragSrc=null;
       setTimeout(()=>block.style.opacity='.4',0);
     });
-    block.addEventListener('dragend',()=>{
+    block.addEventListener('dragend', ()=>{
       block.style.opacity='';
-      dragSrcCat=null;
+      dragSrcBlock=null;
       syncFromDOM();
     });
-    block.addEventListener('dragover',e=>{
-      if(!dragSrcCat||dragSrcCat===block)return;
+    block.addEventListener('dragover', e=>{
+      if (!dragSrcBlock||dragSrcBlock===block) return;
       e.preventDefault();
-      const c=document.getElementById('cat-container');
+      const c=document.getElementById('maestro-cat-container');
       const rect=block.getBoundingClientRect();
-      const mid=rect.top+rect.height/2;
-      if(e.clientY<mid) c.insertBefore(dragSrcCat,block);
-      else if(block.nextSibling) c.insertBefore(dragSrcCat,block.nextSibling);
-      else c.appendChild(dragSrcCat);
+      if (e.clientY < rect.top+rect.height/2) c.insertBefore(dragSrcBlock,block);
+      else if (block.nextSibling) c.insertBefore(dragSrcBlock,block.nextSibling);
+      else c.appendChild(dragSrcBlock);
     });
-    block.addEventListener('drop',e=>{
+    block.addEventListener('drop', e=>{
       e.preventDefault();
-      if(dragSrcCat) syncFromDOM();
+      if (dragSrcBlock) syncFromDOM();
     });
   });
 }
 
-function getDragAfter(container,y){
-  const items=[...container.querySelectorAll('.sort-item:not(.dragging)')];
-  return items.reduce((cl,child)=>{
+function getDragAfter(container, y) {
+  const els=[...container.querySelectorAll('.sort-item:not(.dragging)')];
+  return els.reduce((cl,child)=>{
     const box=child.getBoundingClientRect();
     const off=y-box.top-box.height/2;
     if(off<0&&off>cl.offset)return{offset:off,el:child};
@@ -713,89 +689,85 @@ function getDragAfter(container,y){
   },{offset:Number.NEGATIVE_INFINITY}).el;
 }
 
-function syncFromDOM(){
-  const container=document.getElementById('cat-container');
-  const blocks=[...container.querySelectorAll('.cat-block')];
-  const nueva=[];
+function syncFromDOM() {
+  const blocks=[...document.querySelectorAll('#maestro-cat-container .cat-block')];
+  const nuevo=[];
   blocks.forEach(block=>{
     const ci=parseInt(block.dataset.ci);
-    const catNombre=block.querySelector('.cat-name-input').value;
+    const catNom=block.querySelector('.cat-name-inp').value;
     const items=[];
     block.querySelectorAll('.sort-item').forEach(el=>{
-      const oci=parseInt(el.dataset.ci),oii=parseInt(el.dataset.ii);
-      if(estructura[oci]?.items[oii]) items.push({...estructura[oci].items[oii]});
+      const oci=parseInt(el.dataset.ci), oii=parseInt(el.dataset.ii);
+      if(maestro[oci]?.items[oii]) items.push({...maestro[oci].items[oii]});
     });
-    nueva.push({cat:catNombre, items});
+    nuevo.push({cat:catNom, items});
   });
-  estructura=nueva;
-  renderEditor();
+  maestro=nuevo;
+  renderMaestro();
 }
 
-function eliminarItem(ci,ii){
-  if(!confirm('¿Eliminar este artículo?'))return;
-  estructura[ci].items.splice(ii,1);
-  renderEditor();
+function eliminarItem(ci,ii) {
+  if(!confirm('¿Eliminar este producto del maestro?')) return;
+  maestro[ci].items.splice(ii,1);
+  renderMaestro();
 }
-
-function agregarItem(ci){
+function agregarItem(ci) {
   const nom=document.getElementById(`an-${ci}`).value.trim();
-  if(!nom)return;
-  const t=parseFloat(document.getElementById(`at-${ci}`).value)||0;
-  const p=parseFloat(document.getElementById(`ap-${ci}`).value)||0;
-  estructura[ci].items.push({nombre:nom,tinas:t,pzas:p,custom:true});
-  renderEditor();
+  if(!nom) return;
+  maestro[ci].items.push({nombre:nom, custom:true});
+  renderMaestro();
 }
-
-function moverCat(ci,dir){
+function moverCat(ci,dir) {
   const ni=ci+dir;
-  if(ni<0||ni>=estructura.length)return;
-  [estructura[ci],estructura[ni]]=[estructura[ni],estructura[ci]];
-  renderEditor();
+  if(ni<0||ni>=maestro.length) return;
+  [maestro[ci],maestro[ni]]=[maestro[ni],maestro[ci]];
+  renderMaestro();
 }
-
-function eliminarCat(ci){
-  if(!confirm(`¿Eliminar la categoría "${estructura[ci].cat}"?`))return;
-  estructura.splice(ci,1);
-  renderEditor();
+function eliminarCat(ci) {
+  if(!confirm(`¿Eliminar la categoría "${maestro[ci].cat}"?`)) return;
+  maestro.splice(ci,1);
+  renderMaestro();
 }
-
-function agregarCategoria(){
+function agregarCategoria() {
   const nom=document.getElementById('new-cat-input').value.trim().toUpperCase();
-  if(!nom)return;
-  estructura.push({cat:nom,items:[]});
+  if(!nom) return;
+  maestro.push({cat:nom, items:[]});
   document.getElementById('new-cat-input').value='';
-  renderEditor();
+  renderMaestro();
 }
 
-function actualizarEditorPreview(){
+/* ── Preview del maestro (ticket completo con todos los productos) ── */
+function renderMaestroPreview() {
   let body='';
-  estructura.forEach(({cat,items})=>{
-    if(!items.length)return;
+  maestro.forEach(({cat,items})=>{
+    if(!items.length) return;
     body+=`<div class="th-sec"><div class="th-sec-t">${cat}</div>`;
     body+=`<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>`;
     body+=`<table class="th-tbl">`;
-    items.forEach(it=>{body+=`<tr><td>${it.nombre}</td><td>${it.tinas||0}</td><td>${it.pzas||0}</td></tr>`;});
+    items.forEach(it=>{
+      body+=`<tr><td>${it.nombre}</td><td>—</td><td>—</td></tr>`;
+    });
     body+=`</table></div>`;
   });
-  document.getElementById('ed-preview').innerHTML=`
+
+  document.getElementById('maestro-preview-box').innerHTML=`
     <div class="thermal">
       <div class="th-hdr">
-        <div class="th-tit">TICKET DE CARGA</div>
-        <div class="th-suc">Vista previa — todas las rutas</div>
-        <div class="th-meta"><span>DD/MM/AAAA</span><span>HH:MM</span></div>
-        <div class="th-rut">RUTA XXXX F1</div>
+        <div class="th-tit">★ TICKET MAESTRO ★</div>
+        <div class="th-suc">Todos los productos — referencia de orden</div>
+        <div class="th-meta"><span>Plantilla</span><span>global</span></div>
+        <div class="th-rut">Todos los productos</div>
       </div>
-      ${body||'<div style="padding:12px;text-align:center;font-size:9px;color:#999;">Sin productos aún</div>'}
-      <div class="th-ftr">Orden guardado activo</div>
+      ${body||'<div style="padding:12px;text-align:center;font-size:9px;color:#999;">Sin productos</div>'}
+      <div class="th-ftr">${maestro.reduce((s,c)=>s+c.items.length,0)} productos en total</div>
     </div>`;
 }
 
-function aplicarYGenerar(){
-  guardarOrden();
+function aplicarYGenerar() {
+  guardarMaestro();
   showTab('tickets');
-  if(allData.length&&document.getElementById('sel-fecha').value){
-    setTimeout(generarTodos,100);
-  }
+  if (allData.length && document.getElementById('sel-fecha').value)
+    setTimeout(generarTodos,120);
 }
 
 /* ── Drag & drop upload ── */
@@ -810,9 +782,10 @@ uz.addEventListener('drop',e=>{
   document.getElementById('file-input').dispatchEvent(new Event('change'));
 });
 
-/* ── Cargar orden al iniciar ── */
-if(cargarOrdenGuardado()){
-  setSaveStatus('✔ Orden guardado activo', true);
+/* ── Cargar maestro al iniciar ── */
+if (cargarMaestroGuardado() && maestro.length) {
+  setPill('💾 Maestro activo', true);
+  document.getElementById('maestro-status').style.display='block';
 }
 </script>
 </body>
