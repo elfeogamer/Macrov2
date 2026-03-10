@@ -521,6 +521,22 @@ document.getElementById('file-input').addEventListener('change', function(e) {
     const wb = XLSX.read(ev.target.result, {type:'array', cellDates:true});
     const ws = wb.Sheets[wb.SheetNames[0]];
     allData = XLSX.utils.sheet_to_json(ws, {raw:false, dateNF:'yyyy-mm-dd'});
+    // Normalizar fechas: pueden venir como Date object o string con hora
+    allData = allData.map(r => {
+      const f = r['Fecha'];
+      if (f) {
+        // Si es string con T (ISO), recortar
+        if (typeof f === 'string' && f.includes('T')) r['Fecha'] = f.slice(0,10);
+        // Si es Date object
+        else if (f instanceof Date || (typeof f === 'string' && f.length > 10)) {
+          const d = new Date(f);
+          if (!isNaN(d)) r['Fecha'] = d.toISOString().slice(0,10);
+        }
+      }
+      // Normalizar Ruta a string para comparaciones consistentes
+      if (r['Ruta'] !== undefined) r['Ruta'] = String(r['Ruta']);
+      return r;
+    });
     const z = document.getElementById('upload-zone');
     z.classList.add('loaded');
     z.querySelector('p').innerHTML = '<strong>✔ ' + file.name + '</strong>';
@@ -545,7 +561,7 @@ document.getElementById('sel-fecha').addEventListener('change', function() {
   document.getElementById('btn-gen').disabled = true;
   document.getElementById('rutas-badge').style.display = 'none';
   if (!f) { si.innerHTML='<option>—</option>'; si.disabled=true; sf2.innerHTML='<option>—</option>'; sf2.disabled=true; return; }
-  const rutas = [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(f)).map(r=>r['Ruta']).filter(Boolean))].sort((a,b)=>a-b);
+  const rutas = [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(f)).map(r=>String(r['Ruta'])).filter(Boolean))].sort((a,b)=>parseInt(a)-parseInt(b));
   const opts = rutas.map(r => '<option value="'+r+'">'+r+'</option>').join('');
   si.innerHTML = '<option value="">— desde —</option>' + opts;
   sf2.innerHTML = '<option value="">— hasta —</option>' + opts;
@@ -556,8 +572,8 @@ document.getElementById('sel-ini').addEventListener('change', actualizarBadge);
 document.getElementById('sel-fin').addEventListener('change', actualizarBadge);
 
 function rutasEnRango(fecha, ini, fin) {
-  return [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(fecha)).map(r=>r['Ruta']).filter(Boolean))]
-    .filter(r => r >= ini && r <= fin).sort((a,b) => a - b);
+  return [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(fecha)).map(r=>String(r['Ruta'])).filter(Boolean))]
+    .filter(r => parseInt(r) >= ini && parseInt(r) <= fin).sort((a,b) => parseInt(a) - parseInt(b));
 }
 function actualizarBadge() {
   const fecha = document.getElementById('sel-fecha').value;
