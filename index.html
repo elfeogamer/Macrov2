@@ -447,6 +447,7 @@ let rutaEdits = {};        // {ruta: [{cat, items:[{nombre,t,p,hidden}]}]}  over
 let editingRuta = null;    // ruta que se está editando en el modal
 let dragSrc = null, dragSrcBlock = null;
 let currentFontPt = 16;
+let currentFontFamily = "'Courier New',Courier,monospace";
 
 /* ═══════ INIT ═══════ */
 document.getElementById('f-hora').value = new Date().toTimeString().slice(0,5);
@@ -458,7 +459,6 @@ if (cargarMaestroGuardado()) {
 }
 
 /* ═══════ FONT SIZE & FAMILY ═══════ */
-let currentFontFamily = "'Courier New',Courier,monospace";
 
 function updateFontSize(val) {
   currentFontPt = parseInt(val);
