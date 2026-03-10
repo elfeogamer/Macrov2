@@ -7,41 +7,50 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--azul:#0055A4;--azul-os:#003D7A;--rojo:#E30613;--amarillo:#FFD500;--gris:#f4f6fa;--borde:#d0d7e3;--texto:#1a1f2e;--verde:#16a34a;--tf:18px;}
+:root{
+  --azul:#0055A4;--azul-os:#003D7A;--rojo:#E30613;--amarillo:#FFD500;
+  --gris:#f4f6fa;--borde:#d0d7e3;--texto:#1a1f2e;--verde:#16a34a;
+  --tf:16pt; /* tamaño de fuente para el ticket — CAMBIA AQUÍ o usa el slider */
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:"DM Sans",sans-serif;background:var(--gris);color:var(--texto);min-height:100vh;}
-.topbar{background:var(--azul-os);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.25);}
-.brand{font-family:"Syne",sans-serif;font-weight:800;font-size:1.05rem;color:#fff;}
+
+/* TOP BAR */
+.topbar{background:var(--azul-os);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.3);}
+.brand{font-family:"Syne",sans-serif;font-weight:800;font-size:1rem;color:#fff;}
 .brand span{color:var(--amarillo);}
-.save-pill{font-size:.68rem;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);transition:.3s;}
+.save-pill{font-size:.65rem;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);transition:.3s;}
 .save-pill.ok{background:rgba(22,163,74,.25);color:#86efac;}
-.tabs-bar{background:#fff;border-bottom:2px solid var(--borde);display:flex;padding:0 18px;}
-.tab-btn{padding:10px 16px;font-family:"Syne",sans-serif;font-weight:700;font-size:.78rem;color:#9ca3af;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s;white-space:nowrap;}
+
+/* TABS */
+.tabs-bar{background:#fff;border-bottom:2px solid var(--borde);display:flex;padding:0 16px;}
+.tab-btn{padding:9px 15px;font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;color:#9ca3af;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:.15s;white-space:nowrap;}
 .tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
-.tab-btn:hover:not(.active){color:var(--texto);}
 .tab-panel{display:none;}
-.tab-panel.active{display:flex;min-height:calc(100vh - 88px);}
-.sidebar{background:#fff;border-right:1px solid var(--borde);padding:15px 13px;width:272px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
-.sec-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.84rem;color:var(--azul-os);padding-bottom:7px;border-bottom:2px solid var(--amarillo);}
-.upload-zone{border:2px dashed var(--borde);border-radius:8px;padding:14px 10px;text-align:center;cursor:pointer;transition:.2s;}
+.tab-panel.active{display:flex;min-height:calc(100vh - 84px);}
+
+/* SIDEBAR */
+.sidebar{background:#fff;border-right:1px solid var(--borde);padding:14px 12px;width:265px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;}
+.sec-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.82rem;color:var(--azul-os);padding-bottom:6px;border-bottom:2px solid var(--amarillo);}
+.upload-zone{border:2px dashed var(--borde);border-radius:8px;padding:13px 9px;text-align:center;cursor:pointer;transition:.2s;}
 .upload-zone:hover{border-color:var(--azul);background:#eef3fb;}
-.upload-zone .icon{font-size:1.5rem;margin-bottom:3px;}
-.upload-zone p{font-size:.72rem;color:#6b7280;}
+.upload-zone .icon{font-size:1.4rem;margin-bottom:2px;}
+.upload-zone p{font-size:.7rem;color:#6b7280;}
 .upload-zone p strong{color:var(--azul);}
 .upload-zone.loaded{border-color:var(--verde);background:#f0fdf4;cursor:default;}
 .upload-zone.loaded p,.upload-zone.loaded p strong{color:var(--verde);}
 #file-input{display:none;}
-.info-box{background:#eef3fb;border-left:3px solid var(--azul);border-radius:0 5px 5px 0;padding:6px 9px;font-size:.7rem;color:var(--azul-os);display:none;}
-.info-box b{display:block;font-size:.73rem;}
-.field label{display:block;font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
-.field select,.field input{width:100%;padding:7px 8px;border:1.5px solid var(--borde);border-radius:6px;font-family:"DM Sans",sans-serif;font-size:.82rem;color:var(--texto);background:var(--gris);transition:.15s;}
+.info-box{background:#eef3fb;border-left:3px solid var(--azul);border-radius:0 5px 5px 0;padding:5px 8px;font-size:.68rem;color:var(--azul-os);display:none;}
+.info-box b{display:block;font-size:.71rem;}
+.field label{display:block;font-size:.6rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.field select,.field input{width:100%;padding:6px 7px;border:1.5px solid var(--borde);border-radius:6px;font-family:"DM Sans",sans-serif;font-size:.8rem;color:var(--texto);background:var(--gris);}
 .field select:focus,.field input:focus{outline:none;border-color:var(--azul);background:#fff;}
 select:disabled{opacity:.35;}
-.rango-grid{display:grid;grid-template-columns:1fr 12px 1fr;gap:4px;align-items:center;}
-.rango-sep{text-align:center;font-size:.68rem;color:#9ca3af;}
-.badge{font-size:.65rem;margin-top:3px;padding:3px 7px;border-radius:4px;background:#eef3fb;color:var(--azul);display:none;}
+.rango-grid{display:grid;grid-template-columns:1fr 10px 1fr;gap:3px;align-items:center;}
+.rango-sep{text-align:center;font-size:.65rem;color:#9ca3af;}
+.badge{font-size:.63rem;margin-top:2px;padding:2px 6px;border-radius:4px;background:#eef3fb;color:var(--azul);display:none;}
 .badge.warn{background:#fff1f1;color:var(--rojo);}
-.btn{width:100%;padding:9px;border:none;border-radius:7px;font-family:"Syne",sans-serif;font-weight:700;font-size:.84rem;cursor:pointer;transition:.15s;}
+.btn{width:100%;padding:8px;border:none;border-radius:7px;font-family:"Syne",sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:.15s;}
 .btn-azul{background:var(--azul);color:#fff;}
 .btn-azul:hover:not(:disabled){background:var(--azul-os);}
 .btn-azul:disabled{background:#9ca3af;cursor:not-allowed;}
@@ -49,111 +58,176 @@ select:disabled{opacity:.35;}
 .btn-rojo:hover{background:#b80410;}
 .btn-verde{background:var(--verde);color:#fff;}
 .btn-verde:hover{background:#15803d;}
-.btn-sm{font-size:.72rem;padding:6px 10px;border-radius:5px;}
+.btn-sm{font-size:.7rem;padding:5px 9px;border-radius:5px;}
 .btn-ghost{background:transparent;color:#6b7280;border:1.5px solid var(--borde);}
-.btn-ghost:hover{background:var(--gris);color:var(--texto);}
-.preview-main{flex:1;padding:18px;overflow-y:auto;}
-.preview-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;color:#9ca3af;margin-bottom:10px;display:none;}
-.tickets-wrap{display:flex;flex-wrap:wrap;gap:14px;}
-.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,61,122,.07);width:340px;flex-shrink:0;}
-.card-footer{background:#f8f9fb;border-top:1px solid var(--borde);padding:6px 9px;display:flex;gap:5px;}
-.card-footer button{flex:1;padding:4px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.68rem;font-weight:700;cursor:pointer;font-family:"Syne",sans-serif;}
+.btn-ghost:hover{background:var(--gris);}
+
+/* FONT SIZE CONTROL */
+.font-ctrl{background:#eef3fb;border:1.5px solid var(--borde);border-radius:7px;padding:8px 10px;}
+.font-ctrl-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.font-ctrl label{font-size:.6rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;}
+.font-ctrl .fval{font-size:.82rem;font-weight:700;color:var(--azul);}
+.font-ctrl input[type=range]{width:100%;accent-color:var(--azul);}
+.font-hint{font-size:.6rem;color:#9ca3af;margin-top:3px;text-align:center;}
+
+/* MAESTRO STATUS */
+.maestro-status{font-size:.66rem;padding:6px 8px;background:#eef3fb;border-radius:6px;color:var(--azul-os);display:none;}
+
+/* PREVIEW MAIN */
+.preview-main{flex:1;padding:16px;overflow-y:auto;}
+.preview-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.74rem;color:#9ca3af;margin-bottom:10px;display:none;}
+.tickets-wrap{display:flex;flex-wrap:wrap;gap:16px;}
+.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,61,122,.07);width:320px;flex-shrink:0;}
+.card-footer{background:#f8f9fb;border-top:1px solid var(--borde);padding:6px 8px;display:flex;gap:5px;}
+.card-footer button{flex:1;padding:5px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.68rem;font-weight:700;cursor:pointer;font-family:"Syne",sans-serif;}
 .card-footer button:hover{background:var(--azul-os);}
-.placeholder{padding:46px 18px;text-align:center;color:#9ca3af;font-size:.82rem;line-height:2.2;}
-.placeholder .big{font-size:2rem;display:block;margin-bottom:8px;}
-.maestro-layout{flex:1;display:grid;grid-template-columns:1fr 300px;}
-.maestro-editor{padding:18px;overflow-y:auto;border-right:1px solid var(--borde);}
-.maestro-preview{padding:18px;overflow-y:auto;background:#fff;}
-.toolbar{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;}
+.card-footer button.edit-btn{background:#6b7280;}
+.card-footer button.edit-btn:hover{background:#374151;}
+.placeholder{padding:40px 16px;text-align:center;color:#9ca3af;font-size:.8rem;line-height:2.2;}
+.placeholder .big{font-size:1.8rem;display:block;margin-bottom:6px;}
+
+/* EDIT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:10px;width:520px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+.modal-head{background:var(--azul-os);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0;flex-shrink:0;}
+.modal-head h3{font-family:"Syne",sans-serif;font-weight:800;font-size:.9rem;}
+.modal-close{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:.7;padding:0 4px;}
+.modal-close:hover{opacity:1;}
+.modal-body{overflow-y:auto;padding:12px 14px;flex:1;}
+.modal-note{font-size:.68rem;color:#6b7280;background:#f8f9fb;border:1px solid var(--borde);border-radius:6px;padding:7px 10px;margin-bottom:10px;line-height:1.6;}
+.modal-note strong{color:var(--azul-os);}
+.edit-cat-block{margin-bottom:8px;border:1.5px solid var(--borde);border-radius:7px;overflow:hidden;}
+.edit-cat-head{background:var(--azul);color:#fff;padding:5px 10px;font-family:"Syne",sans-serif;font-weight:700;font-size:.75rem;display:flex;align-items:center;gap:6px;}
+.edit-cat-drag{opacity:.6;cursor:grab;font-size:.9rem;}
+.edit-cat-name{font-weight:700;}
+.edit-items-list{padding:3px 4px;}
+.edit-item-row{display:flex;align-items:center;gap:5px;padding:4px 5px;background:var(--gris);border:1px solid var(--borde);border-radius:5px;margin-bottom:2px;cursor:grab;user-select:none;}
+.edit-item-row:hover{background:#e8edf5;}
+.edit-item-row.dragging{opacity:.3;border:2px dashed var(--azul);}
+.edit-drag-h{color:#bbb;font-size:.82rem;flex-shrink:0;}
+.edit-item-name{flex:1;font-size:.78rem;padding:2px 5px;border:1.5px solid transparent;border-radius:4px;font-family:"DM Sans",sans-serif;background:transparent;color:var(--texto);}
+.edit-item-name:focus{outline:none;border-color:var(--azul);background:#fff;}
+.edit-item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:.82rem;flex-shrink:0;}
+.edit-item-del:hover{color:var(--rojo);}
+.modal-foot{border-top:1px solid var(--borde);padding:10px 14px;display:flex;gap:7px;flex-shrink:0;}
+
+/* MAESTRO TAB */
+.maestro-layout{flex:1;display:grid;grid-template-columns:1fr 290px;}
+.maestro-editor{padding:16px;overflow-y:auto;border-right:1px solid var(--borde);}
+.maestro-preview{padding:16px;overflow-y:auto;background:#fff;}
+.toolbar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .toolbar .btn{width:auto;flex:1;}
-.note{font-size:.7rem;color:#6b7280;background:#f8f9fb;border:1px solid var(--borde);border-radius:6px;padding:9px 11px;line-height:1.7;margin-bottom:12px;}
+.note{font-size:.68rem;color:#6b7280;background:#f8f9fb;border:1px solid var(--borde);border-radius:6px;padding:8px 10px;line-height:1.7;margin-bottom:10px;}
 .note strong{color:var(--azul-os);}
-.cat-block{background:#fff;border:1.5px solid var(--borde);border-radius:8px;margin-bottom:9px;overflow:hidden;}
-.cat-head{background:var(--azul);color:#fff;padding:6px 10px;display:flex;align-items:center;gap:7px;cursor:grab;}
-.cat-head:active{cursor:grabbing;}
+.cat-block{background:#fff;border:1.5px solid var(--borde);border-radius:8px;margin-bottom:8px;overflow:hidden;}
+.cat-head{background:var(--azul);color:#fff;padding:5px 9px;display:flex;align-items:center;gap:6px;cursor:grab;}
 .cat-drag{font-size:.9rem;opacity:.55;flex-shrink:0;}
-.cat-name-inp{background:transparent;border:none;color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.3px;flex:1;outline:none;}
-.cat-name-inp::placeholder{color:rgba(255,255,255,.45);}
-.cat-count{font-size:.65rem;opacity:.7;flex-shrink:0;white-space:nowrap;}
+.cat-name-inp{background:transparent;border:none;color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;flex:1;outline:none;}
+.cat-count{font-size:.63rem;opacity:.7;flex-shrink:0;}
 .cat-acts{display:flex;gap:3px;flex-shrink:0;}
-.cat-acts button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:2px 7px;border-radius:4px;font-size:.65rem;cursor:pointer;transition:.15s;}
+.cat-acts button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:2px 6px;border-radius:4px;font-size:.63rem;cursor:pointer;}
 .cat-acts button:hover{background:rgba(255,255,255,.3);}
 .cat-acts .del{background:rgba(227,6,19,.35);}
-.cat-acts .del:hover{background:rgba(227,6,19,.65);}
-.sort-list{min-height:24px;padding:4px 5px;}
-.sort-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:var(--gris);border:1px solid var(--borde);border-radius:5px;cursor:grab;user-select:none;transition:.1s;}
-.sort-item:hover{background:#e8edf5;border-color:#aab4c8;}
+.sort-list{min-height:20px;padding:3px 4px;}
+.sort-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:var(--gris);border:1px solid var(--borde);border-radius:5px;cursor:grab;user-select:none;}
+.sort-item:hover{background:#e8edf5;}
 .sort-item.dragging{opacity:.3;border:2px dashed var(--azul);}
-.drag-h{color:#bbb;font-size:.82rem;flex-shrink:0;}
-.item-lbl{flex:1;font-size:.76rem;word-break:break-word;}
-.cbadge{font-size:.56rem;background:var(--amarillo);color:#000;padding:1px 4px;border-radius:3px;font-weight:700;flex-shrink:0;}
-.del-it{background:none;border:none;color:#ccc;cursor:pointer;font-size:.8rem;padding:0 2px;flex-shrink:0;}
+.drag-h{color:#bbb;font-size:.8rem;flex-shrink:0;}
+.item-lbl{flex:1;font-size:.74rem;word-break:break-word;}
+.cbadge{font-size:.54rem;background:var(--amarillo);color:#000;padding:1px 4px;border-radius:3px;font-weight:700;flex-shrink:0;}
+.del-it{background:none;border:none;color:#ccc;cursor:pointer;font-size:.78rem;padding:0 2px;flex-shrink:0;}
 .del-it:hover{color:var(--rojo);}
-.add-row{display:flex;gap:4px;padding:4px 5px 6px;border-top:1px dashed #e5e7eb;}
-.add-row input{padding:4px 6px;border:1.5px solid var(--borde);border-radius:5px;font-size:.73rem;font-family:"DM Sans",sans-serif;background:var(--gris);}
-.add-row input:focus{outline:none;border-color:var(--azul);background:#fff;}
-.add-row .inp-n{flex:1;}
-.add-row button{padding:4px 8px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.73rem;font-weight:700;cursor:pointer;}
-.add-row button:hover{background:var(--azul-os);}
-.new-cat-row{display:flex;gap:6px;}
-.new-cat-row input{flex:1;padding:7px 9px;border:1.5px solid var(--borde);border-radius:6px;font-size:.8rem;font-family:"DM Sans",sans-serif;}
+.add-row{display:flex;gap:4px;padding:3px 4px 5px;border-top:1px dashed #e5e7eb;}
+.add-row input{flex:1;padding:4px 6px;border:1.5px solid var(--borde);border-radius:5px;font-size:.72rem;font-family:"DM Sans",sans-serif;background:var(--gris);}
+.add-row input:focus{outline:none;border-color:var(--azul);}
+.add-row button{padding:4px 8px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.72rem;font-weight:700;cursor:pointer;}
+.new-cat-row{display:flex;gap:5px;}
+.new-cat-row input{flex:1;padding:6px 8px;border:1.5px solid var(--borde);border-radius:6px;font-size:.78rem;font-family:"DM Sans",sans-serif;}
 .new-cat-row input:focus{outline:none;border-color:var(--azul);}
-.new-cat-row button{padding:7px 12px;background:var(--azul);color:#fff;border:none;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
-.new-cat-row button:hover{background:var(--azul-os);}
-.prev-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.8rem;color:var(--azul-os);margin-bottom:8px;}
-.prev-note{font-size:.68rem;color:#9ca3af;margin-bottom:10px;line-height:1.5;}
-#maestro-preview-box{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,61,122,.06);}
-.maestro-status{font-size:.68rem;padding:7px 9px;background:#eef3fb;border-radius:6px;color:var(--azul-os);display:none;}
-/* TICKET */
-.thermal{font-family:"Courier New",Courier,monospace;font-size:var(--tf,18px);color:#000;background:#fff;width:100%;padding:10px 8px;}
-.th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:6px;margin-bottom:6px;}
-.th-tit{font-size:calc(var(--tf,18px) + 4px);font-weight:bold;}
-.th-suc{font-size:calc(var(--tf,18px));margin-top:2px;}
-.th-meta{font-size:calc(var(--tf,18px) - 2px);margin-top:3px;display:flex;justify-content:space-between;}
-.th-rut{font-size:calc(var(--tf,18px) + 2px);font-weight:bold;margin-top:5px;}
+.new-cat-row button{padding:6px 11px;background:var(--azul);color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;}
+.prev-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.78rem;color:var(--azul-os);margin-bottom:7px;}
+.prev-note{font-size:.66rem;color:#9ca3af;margin-bottom:9px;line-height:1.5;}
+#maestro-preview-box{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;}
+
+/* ══════════════════════════════════
+   TICKET THERMAL
+   El tamaño real se controla con --tf
+   ══════════════════════════════════ */
+.thermal{
+  font-family:"Courier New",Courier,monospace;
+  font-size:var(--tf);
+  color:#000;
+  background:#fff;
+  width:100%;
+  padding:8px 6px;
+  line-height:1.35;
+}
+.th-hdr{text-align:center;border-bottom:2px dashed #000;padding-bottom:6px;margin-bottom:6px;}
+.th-tit{font-size:calc(var(--tf) * 1.3);font-weight:bold;letter-spacing:1px;}
+.th-suc{font-size:calc(var(--tf) * 1.05);margin-top:2px;}
+.th-meta{font-size:calc(var(--tf) * 0.85);margin-top:3px;display:flex;justify-content:space-between;}
+.th-rut{font-size:calc(var(--tf) * 1.2);font-weight:bold;margin-top:5px;letter-spacing:.5px;}
 .th-sec{margin-top:5px;}
-.th-sec-t{font-weight:bold;font-size:var(--tf,18px);text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:3px;}
-.th-cols{display:flex;font-size:calc(var(--tf,18px) - 3px);font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:2px;margin-bottom:2px;}
-.th-cols .cp{flex:1;}.th-cols .ct,.th-cols .cpz{width:38px;text-align:right;}
-.th-tbl{width:100%;border-collapse:collapse;font-size:var(--tf,18px);}
-.th-tbl td{padding:3px 2px;vertical-align:top;}
-.th-tbl td:nth-child(2),.th-tbl td:nth-child(3){text-align:right;width:38px;white-space:nowrap;}
-.th-eq{margin-top:5px;border-top:1px dashed #000;padding-top:4px;}
-.th-eq-t{font-size:calc(var(--tf,18px) - 2px);font-weight:bold;text-transform:uppercase;margin-bottom:2px;}
-.th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf,18px);padding:3px 0;}
-.th-ftr{border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:calc(var(--tf,18px) - 3px);text-align:center;color:#555;}
-/* Font size control widget */
-.font-ctrl{display:flex;align-items:center;gap:6px;background:#eef3fb;border:1.5px solid var(--borde);border-radius:7px;padding:7px 10px;}
-.font-ctrl label{font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
-.font-ctrl input[type=range]{flex:1;accent-color:var(--azul);}
-.font-ctrl span{font-size:.78rem;font-weight:700;color:var(--azul);width:30px;text-align:right;}
+.th-sec-t{
+  font-weight:bold;
+  font-size:var(--tf);
+  text-transform:uppercase;
+  border-top:2px solid #000;
+  border-bottom:1px solid #000;
+  padding:2px 0;
+  margin-bottom:3px;
+}
+.th-cols{
+  display:flex;
+  font-size:calc(var(--tf) * 0.82);
+  font-weight:bold;
+  border-bottom:1px solid #ccc;
+  padding-bottom:2px;
+  margin-bottom:2px;
+}
+.th-cols .cp{flex:1;}
+.th-cols .ct,.th-cols .cpz{width:36px;text-align:right;}
+.th-tbl{width:100%;border-collapse:collapse;font-size:var(--tf);}
+.th-tbl td{padding:3px 2px;vertical-align:top;line-height:1.3;}
+.th-tbl td:nth-child(2),.th-tbl td:nth-child(3){text-align:right;width:36px;white-space:nowrap;}
+.th-eq{margin-top:5px;border-top:2px dashed #000;padding-top:4px;}
+.th-eq-t{font-size:calc(var(--tf) * 0.9);font-weight:bold;text-transform:uppercase;margin-bottom:2px;}
+.th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf);padding:3px 0;}
+.th-ftr{border-top:2px dashed #000;margin-top:6px;padding-top:4px;font-size:calc(var(--tf) * 0.8);text-align:center;color:#555;}
+
+/* ══════════════════════════════════
+   IMPRESIÓN
+   Usa exactamente --tf tal como está
+   ══════════════════════════════════ */
 @media print{
-  body{background:#fff;}
-  .topbar,.tabs-bar,.sidebar,.maestro-layout,.preview-label,.card-footer,.font-ctrl{display:none!important;}
+  @page{margin:4mm 5mm;}
+  body,html{background:#fff!important;}
+  .topbar,.tabs-bar,.sidebar,.card-footer,.preview-label,.font-ctrl,.maestro-status,
+  .btn-ghost,.modal-overlay{display:none!important;}
   .tab-panel{display:block!important;}
   #tab-tickets{display:block!important;}
-  .tickets-wrap{display:block;}
-  .preview-main{padding:0;}
-  .ticket-card{width:80mm;border:none;border-radius:0;box-shadow:none;page-break-after:always;break-after:page;}
+  .preview-main{padding:0!important;overflow:visible!important;}
+  .tickets-wrap{display:block!important;}
+  .ticket-card{
+    width:72mm!important;
+    border:none!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    page-break-after:always;
+    break-after:page;
+    margin:0!important;
+  }
   .ticket-card:last-child{page-break-after:avoid;break-after:avoid;}
-  /* PRINT: use the user-selected font size from --tf variable */
-  .thermal{padding:4px 3px;font-size:var(--tf,18px)!important;}
-  .th-tit{font-size:calc(var(--tf,18px) + 4px)!important;}
-  .th-suc{font-size:calc(var(--tf,18px))!important;}
-  .th-meta{font-size:calc(var(--tf,18px) - 2px)!important;}
-  .th-rut{font-size:calc(var(--tf,18px) + 2px)!important;}
-  .th-sec-t{font-size:var(--tf,18px)!important;}
-  .th-cols{font-size:calc(var(--tf,18px) - 3px)!important;}
-  .th-tbl{font-size:var(--tf,18px)!important;}
-  .th-eq-t{font-size:calc(var(--tf,18px) - 2px)!important;}
-  .th-eq-r{font-size:var(--tf,18px)!important;}
-  .th-ftr{font-size:calc(var(--tf,18px) - 3px)!important;}
-  .th-cols .ct,.th-cols .cpz{width:38px!important;}
-  .th-tbl td:nth-child(2),.th-tbl td:nth-child(3){width:38px!important;}
+  .thermal{
+    padding:2mm 1mm!important;
+    /* El font-size viene de --tf inyectado por JS en el style del elemento */
+  }
 }
 </style>
 </head>
 <body>
+
 <div class="topbar">
   <div class="brand">Bimbo <span>Tickets de Carga</span></div>
   <span class="save-pill" id="save-pill">sin guardar</span>
@@ -163,18 +237,23 @@ select:disabled{opacity:.35;}
   <button class="tab-btn" onclick="showTab('maestro')">📋 Ticket Maestro</button>
 </div>
 
-<!-- TAB TICKETS -->
+<!-- ══ TAB TICKETS ══ -->
 <div class="tab-panel active" id="tab-tickets">
   <div class="sidebar">
     <div class="sec-title">Configurar</div>
+
     <div class="upload-zone" id="upload-zone" onclick="triggerUpload()">
       <div class="icon">📂</div>
       <p><strong>Clic aquí</strong> para subir archivo OLA</p>
-      <p style="font-size:.66rem;margin-top:2px;">OLA_vta_DDMMMAAAA.xlsx</p>
+      <p style="font-size:.63rem;margin-top:1px;">OLA_vta_DDMMMAAAA.xlsx</p>
     </div>
     <input type="file" id="file-input" accept=".xlsx,.xls">
     <div class="info-box" id="info-box"><b id="info-nombre">—</b><span id="info-det">—</span></div>
-    <div class="field"><label>Fecha</label><select id="sel-fecha" disabled><option>— carga el archivo —</option></select></div>
+
+    <div class="field">
+      <label>Fecha</label>
+      <select id="sel-fecha" disabled><option>— carga el archivo —</option></select>
+    </div>
     <div class="field">
       <label>Rango de rutas</label>
       <div class="rango-grid">
@@ -186,175 +265,217 @@ select:disabled{opacity:.35;}
     </div>
     <div class="field"><label>Folio</label><input type="text" id="f-folio" value="F1"></div>
     <div class="field"><label>Hora</label><input type="time" id="f-hora"></div>
+
     <button class="btn btn-azul" id="btn-gen" disabled onclick="generarTodos()">⟳ Generar Tickets</button>
-    <button class="btn btn-rojo" id="btn-print" style="display:none" onclick="window.print()">🖨 Imprimir Todos</button>
+    <button class="btn btn-rojo" id="btn-print" style="display:none" onclick="imprimirTodos()">🖨 Imprimir Todos</button>
+
+    <!-- CONTROL TAMAÑO FUENTE -->
     <div class="font-ctrl">
-      <label>Tamaño fuente</label>
-      <input type="range" id="font-slider" min="12" max="24" value="18" oninput="updateFontSize(this.value)">
-      <span id="font-val">18px</span>
+      <div class="font-ctrl-top">
+        <label>Tamaño de letra</label>
+        <span class="fval" id="font-val">16pt</span>
+      </div>
+      <input type="range" id="font-slider" min="8" max="22" value="16" step="1" oninput="updateFontSize(this.value)">
+      <div class="font-hint">Mueve el slider → imprime → ajusta si es necesario</div>
     </div>
+
     <div class="maestro-status" id="maestro-status">📋 Usando orden del <strong>Ticket Maestro</strong></div>
-    <button class="btn btn-ghost btn-sm" onclick="resetMaestro()" style="font-size:.7rem;margin-top:2px;">🗑 Borrar maestro guardado</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetMaestro()" style="font-size:.68rem;">🗑 Borrar maestro guardado</button>
   </div>
+
   <div class="preview-main">
-    <div class="preview-label" id="preview-label">Vista previa — un ticket por ruta</div>
+    <div class="preview-label" id="preview-label">Vista previa — clic en ✏️ Editar para reordenar y renombrar artículos de cada ruta</div>
     <div class="tickets-wrap" id="tickets-wrap">
       <div class="placeholder"><span class="big">🗒</span>Sube el archivo OLA, configura el rango<br>y presiona <strong>Generar Tickets</strong></div>
     </div>
   </div>
 </div>
 
-<!-- TAB MAESTRO -->
+<!-- ══ TAB MAESTRO ══ -->
 <div class="tab-panel" id="tab-maestro">
   <div class="maestro-layout">
     <div class="maestro-editor">
-      <div class="sec-title" style="margin-bottom:12px;">📋 Ticket Maestro — Plantilla de Orden</div>
+      <div class="sec-title" style="margin-bottom:10px;">📋 Ticket Maestro — Plantilla de Orden</div>
       <div class="note">
-        <strong>¿Qué es el Ticket Maestro?</strong> Es la plantilla con <em>todos</em> los productos en el orden que tú defines.
-        Los tickets por ruta heredan exactamente este orden — si la ruta no lleva un producto, se omite, pero los demás no cambian de posición.<br><br>
-        Las <strong>categorías vienen del catálogo oficial Bimbo</strong> (DULCE1, DULCE2, TR, PASTEL, GALLETA, PANES, ESPECIALIDADES, CAJA).<br>
-        <strong>⠿ Arrastra</strong> productos o categorías · <strong>➕ Agrega</strong> extras · <strong>💾 Guarda</strong> permanentemente.
+        <strong>¿Qué es el Ticket Maestro?</strong> Plantilla con <em>todos</em> los productos en el orden que defines.
+        Los tickets por ruta heredan este orden — si la ruta no lleva un producto, se omite.<br>
+        <strong>⠿ Arrastra</strong> · <strong>➕ Agrega</strong> · <strong>💾 Guarda</strong> permanentemente.
       </div>
       <div class="toolbar">
-        <button class="btn btn-verde" onclick="guardarMaestro()">💾 Guardar Maestro</button>
+        <button class="btn btn-verde" onclick="guardarMaestro()">💾 Guardar</button>
         <button class="btn btn-azul" onclick="aplicarYGenerar()">▶ Aplicar y Generar</button>
       </div>
       <div id="maestro-cat-container">
-        <div class="placeholder" style="padding:28px 10px;font-size:.76rem;">Carga un archivo OLA desde la pestaña Tickets para poblar el maestro automáticamente.</div>
+        <div class="placeholder" style="padding:24px 10px;font-size:.74rem;">Carga un archivo OLA desde Tickets para poblar el maestro.</div>
       </div>
-      <div style="margin-top:10px;">
-        <label style="display:block;font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Nueva categoría</label>
-        <div class="new-cat-row"><input type="text" id="new-cat-input" placeholder="Ej: TORTILLAS, ESPECIALES..."><button onclick="agregarCategoria()">+ Crear</button></div>
+      <div style="margin-top:9px;">
+        <label style="display:block;font-size:.6rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">Nueva categoría</label>
+        <div class="new-cat-row">
+          <input type="text" id="new-cat-input" placeholder="Ej: TORTILLAS, ESPECIALES...">
+          <button onclick="agregarCategoria()">+ Crear</button>
+        </div>
       </div>
     </div>
     <div class="maestro-preview">
       <div class="prev-label">Vista del Ticket Maestro</div>
       <div class="prev-note">Todos los productos en tu orden.<br>Cada ticket por ruta hereda esta posición.</div>
-      <div id="maestro-preview-box"><div class="placeholder" style="padding:28px 12px;font-size:.76rem;">El maestro aparecerá aquí.</div></div>
+      <div id="maestro-preview-box"><div class="placeholder" style="padding:24px 10px;font-size:.74rem;">El maestro aparecerá aquí.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL EDITAR RUTA ══ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">✏️ Editar Ruta</h3>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-note">
+        <strong>⠿ Arrastra</strong> filas para cambiar el orden &nbsp;·&nbsp;
+        <strong>Clic en el nombre</strong> para editarlo &nbsp;·&nbsp;
+        <strong>✕</strong> para ocultar del ticket.<br>
+        Los cambios solo afectan <em>esta ruta</em>. El maestro global no se modifica.
+      </div>
+      <div id="modal-edit-content"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-azul" onclick="aplicarEdicionRuta()">✔ Aplicar cambios</button>
+      <button class="btn btn-ghost btn-sm" onclick="cerrarModal()">Cancelar</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ═══════════════════════════════════════════════
+   CATÁLOGO ITEM → CATEGORÍA
+═══════════════════════════════════════════════ */
 const ITEM_CAT_MAP = {
-  "1182": "CAJA","150233": "PASTEL","150275": "CAJA","150379": "PASTEL","150582": "PASTEL",
-  "200185": "DULCE2","200277": "ESPECIALIDADES","200358": "CAJA","200384": "DULCE2","200385": "DULCE2",
-  "200426": "PASTEL","200518": "CAJA","200657": "CAJA","200699": "ESPECIALIDADES","200780": "PASTEL",
-  "200807": "ESPECIALIDADES","200852": "PASTEL","200927": "ESPECIALIDADES","200929": "ESPECIALIDADES",
-  "200933": "ESPECIALIDADES","200940": "PASTEL","201188": "ESPECIALIDADES","201192": "PANES",
-  "201313": "PASTEL","201373": "PASTEL","201420": "CAJA","201423": "CAJA","201528": "PASTEL",
-  "201529": "PASTEL","201617": "ESPECIALIDADES","201665": "PASTEL","201666": "PASTEL","201767": "CAJA",
-  "201823": "PASTEL","201849": "PASTEL","201850": "PASTEL","201940": "CAJA","202006": "CAJA",
-  "202067": "DULCE1","202097": "DULCE1","202113": "PASTEL","202138": "CAJA","202148": "CAJA",
-  "202183": "DULCE1","202248": "ESPECIALIDADES","202275": "PASTEL","202290": "PASTEL",
-  "202344": "ESPECIALIDADES","202399": "CAJA","202476": "DULCE2","202477": "DULCE2","202517": "DULCE2",
-  "202557": "ESPECIALIDADES","202575": "DULCE1","202576": "DULCE1","202596": "GALLETA","202615": "PASTEL",
-  "202619": "PASTEL","202636": "ESPECIALIDADES","202660": "CAJA","202749": "CAJA","202750": "PASTEL",
-  "202759": "DULCE2","202819": "CAJA","202838": "DULCE2","202926": "CAJA","202963": "CAJA",
-  "202972": "CAJA","202999": "CAJA","203000": "CAJA","203032": "DULCE2","203070": "DULCE2",
-  "203184": "DULCE2","203217": "CAJA","203219": "CAJA","203416": "CAJA","203528": "CAJA",
-  "203573": "DULCE2","203602": "PASTEL","203614": "DULCE2","203674": "ESPECIALIDADES",
-  "203713": "ESPECIALIDADES","203720": "ESPECIALIDADES","203724": "DULCE2","203758": "PASTEL",
-  "203787": "PASTEL","203790": "DULCE1","203808": "CAJA","203819": "PASTEL","203821": "PASTEL",
-  "203823": "DULCE1","203824": "DULCE1","203825": "DULCE1","203851": "CAJA","203908": "CAJA",
-  "203944": "PASTEL","203969": "ESPECIALIDADES","203986": "DULCE2","204014": "DULCE2",
-  "204027": "ESPECIALIDADES","204029": "DULCE2","204031": "CAJA","204052": "PASTEL","204055": "CAJA",
-  "204058": "DULCE1","204066": "ESPECIALIDADES","204069": "PANES","204080": "ESPECIALIDADES",
-  "204083": "ESPECIALIDADES","204084": "PASTEL","204089": "CAJA","204138": "CAJA","204148": "DULCE2",
-  "204156": "DULCE2","204158": "PASTEL","204165": "DULCE1","204180": "PASTEL","204205": "ESPECIALIDADES",
-  "204228": "DULCE2","204234": "PASTEL","204241": "DULCE2","204246": "ESPECIALIDADES",
-  "204257": "ESPECIALIDADES","204258": "ESPECIALIDADES","204285": "DULCE2","204287": "PASTEL",
-  "204289": "PASTEL","204294": "PASTEL","204356": "PASTEL","204367": "TR","204375": "ESPECIALIDADES",
-  "204376": "TR","204377": "CAJA","204379": "DULCE2","204386": "CAJA","204407": "ESPECIALIDADES",
-  "204408": "ESPECIALIDADES","204433": "PASTEL","204535": "PASTEL","204537": "GALLETA","204553": "PASTEL",
-  "204565": "PASTEL","204566": "PASTEL","204576": "ESPECIALIDADES","204577": "ESPECIALIDADES",
-  "204607": "PASTEL","204610": "CAJA","204616": "PASTEL","204639": "PASTEL","204682": "ESPECIALIDADES",
-  "204699": "DULCE1","204731": "PASTEL","204755": "PASTEL","204756": "DULCE2","204757": "DULCE1",
-  "204772": "PASTEL","204775": "PANES","204778": "PASTEL","204779": "PASTEL","204780": "PASTEL",
-  "204798": "DULCE2","204845": "CAJA","204847": "PASTEL","204854": "DULCE2","204861": "PASTEL",
-  "204904": "DULCE2","204922": "PASTEL","204930": "PASTEL","204937": "PASTEL","204961": "PANES",
-  "204962": "PANES","204968": "ESPECIALIDADES","204969": "ESPECIALIDADES","204970": "ESPECIALIDADES",
-  "204973": "ESPECIALIDADES","204974": "ESPECIALIDADES","204983": "ESPECIALIDADES","204984": "ESPECIALIDADES",
-  "205013": "DULCE1","205021": "PANES","205028": "CAJA","205029": "CAJA","205065": "PASTEL",
-  "205106": "PASTEL","205123": "DULCE2","205124": "CAJA","205163": "PASTEL","205214": "GALLETA",
-  "205256": "PASTEL","205257": "PASTEL","205258": "PASTEL","205264": "PANES","205278": "PASTEL",
-  "205284": "PASTEL","205321": "DULCE2","205322": "DULCE1","205338": "DULCE2","205344": "DULCE2",
-  "205371": "PANES","205384": "PASTEL","30007": "DULCE2","31184": "DULCE2","31284": "DULCE1",
-  "31310": "CAJA","31690": "CAJA","35052": "PASTEL","35142": "ESPECIALIDADES","35145": "ESPECIALIDADES",
-  "35453": "PASTEL","35484": "PASTEL","35728": "PANES","36534": "DULCE2","36711": "DULCE2",
-  "37006": "DULCE2","37058": "PASTEL","37131": "ESPECIALIDADES","37135": "ESPECIALIDADES","37358": "PASTEL",
-  "37427": "CAJA","38086": "PANES","39140": "DULCE2","39374": "ESPECIALIDADES","412": "PASTEL",
-  "41843": "CAJA","43005": "PANES","43006": "ESPECIALIDADES","43023": "DULCE2","43059": "ESPECIALIDADES",
-  "43060": "DULCE2","43064": "DULCE2","43065": "PASTEL","43068": "PASTEL","43069": "PASTEL",
-  "43084": "DULCE2","43118": "DULCE2","43134": "PANES","43156": "DULCE2","43161": "ESPECIALIDADES",
-  "43169": "DULCE2","43173": "ESPECIALIDADES","43175": "ESPECIALIDADES","43185": "ESPECIALIDADES",
-  "43186": "ESPECIALIDADES","43187": "ESPECIALIDADES","43188": "PANES","43189": "ESPECIALIDADES",
-  "43190": "PANES","43195": "PANES","43201": "DULCE2","43202": "DULCE2","43206": "DULCE1",
-  "43207": "DULCE1","43215": "PASTEL","43223": "ESPECIALIDADES","43230": "GALLETA","43231": "ESPECIALIDADES",
-  "43285": "PASTEL","43305": "DULCE2","43307": "PASTEL","43316": "DULCE2","43336": "ESPECIALIDADES",
-  "43342": "DULCE2","43345": "ESPECIALIDADES","44829": "ESPECIALIDADES","44950": "DULCE1","45496": "PASTEL",
-  "47332": "ESPECIALIDADES","4767": "CAJA","47886": "PASTEL","48135": "ESPECIALIDADES","48136": "ESPECIALIDADES",
-  "48345": "ESPECIALIDADES","48373": "ESPECIALIDADES","48557": "ESPECIALIDADES","48598": "DULCE1",
-  "49950": "CAJA","9098": "CAJA","991182": "CAJA","99205065": "PASTEL","9935484": "PASTEL",
-  "9936610": "PASTEL","9937427": "CAJA","9938086": "PANES","9939140": "DULCE2","9941843": "CAJA",
-  "9943169": "DULCE2","9943201": "DULCE2","9943215": "PASTEL","9943285": "PASTEL","9944829": "ESPECIALIDADES"
+  "1182":"CAJA","150233":"PASTEL","150275":"CAJA","150379":"PASTEL","150582":"PASTEL",
+  "200185":"DULCE2","200277":"ESPECIALIDADES","200358":"CAJA","200384":"DULCE2","200385":"DULCE2",
+  "200426":"PASTEL","200518":"CAJA","200657":"CAJA","200699":"ESPECIALIDADES","200780":"PASTEL",
+  "200807":"ESPECIALIDADES","200852":"PASTEL","200927":"ESPECIALIDADES","200929":"ESPECIALIDADES",
+  "200933":"ESPECIALIDADES","200940":"PASTEL","201188":"ESPECIALIDADES","201192":"PANES",
+  "201313":"PASTEL","201373":"PASTEL","201420":"CAJA","201423":"CAJA","201528":"PASTEL",
+  "201529":"PASTEL","201617":"ESPECIALIDADES","201665":"PASTEL","201666":"PASTEL","201767":"CAJA",
+  "201823":"PASTEL","201849":"PASTEL","201850":"PASTEL","201940":"CAJA","202006":"CAJA",
+  "202067":"DULCE1","202097":"DULCE1","202113":"PASTEL","202138":"CAJA","202148":"CAJA",
+  "202183":"DULCE1","202248":"ESPECIALIDADES","202275":"PASTEL","202290":"PASTEL",
+  "202344":"ESPECIALIDADES","202399":"CAJA","202476":"DULCE2","202477":"DULCE2","202517":"DULCE2",
+  "202557":"ESPECIALIDADES","202575":"DULCE1","202576":"DULCE1","202596":"GALLETA","202615":"PASTEL",
+  "202619":"PASTEL","202636":"ESPECIALIDADES","202660":"CAJA","202749":"CAJA","202750":"PASTEL",
+  "202759":"DULCE2","202819":"CAJA","202838":"DULCE2","202926":"CAJA","202963":"CAJA",
+  "202972":"CAJA","202999":"CAJA","203000":"CAJA","203032":"DULCE2","203070":"DULCE2",
+  "203184":"DULCE2","203217":"CAJA","203219":"CAJA","203416":"CAJA","203528":"CAJA",
+  "203573":"DULCE2","203602":"PASTEL","203614":"DULCE2","203674":"ESPECIALIDADES",
+  "203713":"ESPECIALIDADES","203720":"ESPECIALIDADES","203724":"DULCE2","203758":"PASTEL",
+  "203787":"PASTEL","203790":"DULCE1","203808":"CAJA","203819":"PASTEL","203821":"PASTEL",
+  "203823":"DULCE1","203824":"DULCE1","203825":"DULCE1","203851":"CAJA","203908":"CAJA",
+  "203944":"PASTEL","203969":"ESPECIALIDADES","203986":"DULCE2","204014":"DULCE2",
+  "204027":"ESPECIALIDADES","204029":"DULCE2","204031":"CAJA","204052":"PASTEL","204055":"CAJA",
+  "204058":"DULCE1","204066":"ESPECIALIDADES","204069":"PANES","204080":"ESPECIALIDADES",
+  "204083":"ESPECIALIDADES","204084":"PASTEL","204089":"CAJA","204138":"CAJA","204148":"DULCE2",
+  "204156":"DULCE2","204158":"PASTEL","204165":"DULCE1","204180":"PASTEL","204205":"ESPECIALIDADES",
+  "204228":"DULCE2","204234":"PASTEL","204241":"DULCE2","204246":"ESPECIALIDADES",
+  "204257":"ESPECIALIDADES","204258":"ESPECIALIDADES","204285":"DULCE2","204287":"PASTEL",
+  "204289":"PASTEL","204294":"PASTEL","204356":"PASTEL","204367":"TR","204375":"ESPECIALIDADES",
+  "204376":"TR","204377":"CAJA","204379":"DULCE2","204386":"CAJA","204407":"ESPECIALIDADES",
+  "204408":"ESPECIALIDADES","204433":"PASTEL","204535":"PASTEL","204537":"GALLETA","204553":"PASTEL",
+  "204565":"PASTEL","204566":"PASTEL","204576":"ESPECIALIDADES","204577":"ESPECIALIDADES",
+  "204607":"PASTEL","204610":"CAJA","204616":"PASTEL","204639":"PASTEL","204682":"ESPECIALIDADES",
+  "204699":"DULCE1","204731":"PASTEL","204755":"PASTEL","204756":"DULCE2","204757":"DULCE1",
+  "204772":"PASTEL","204775":"PANES","204778":"PASTEL","204779":"PASTEL","204780":"PASTEL",
+  "204798":"DULCE2","204845":"CAJA","204847":"PASTEL","204854":"DULCE2","204861":"PASTEL",
+  "204904":"DULCE2","204922":"PASTEL","204930":"PASTEL","204937":"PASTEL","204961":"PANES",
+  "204962":"PANES","204968":"ESPECIALIDADES","204969":"ESPECIALIDADES","204970":"ESPECIALIDADES",
+  "204973":"ESPECIALIDADES","204974":"ESPECIALIDADES","204983":"ESPECIALIDADES","204984":"ESPECIALIDADES",
+  "205013":"DULCE1","205021":"PANES","205028":"CAJA","205029":"CAJA","205065":"PASTEL",
+  "205106":"PASTEL","205123":"DULCE2","205124":"CAJA","205163":"PASTEL","205214":"GALLETA",
+  "205256":"PASTEL","205257":"PASTEL","205258":"PASTEL","205264":"PANES","205278":"PASTEL",
+  "205284":"PASTEL","205321":"DULCE2","205322":"DULCE1","205338":"DULCE2","205344":"DULCE2",
+  "205371":"PANES","205384":"PASTEL","30007":"DULCE2","31184":"DULCE2","31284":"DULCE1",
+  "31310":"CAJA","31690":"CAJA","35052":"PASTEL","35142":"ESPECIALIDADES","35145":"ESPECIALIDADES",
+  "35453":"PASTEL","35484":"PASTEL","35728":"PANES","36534":"DULCE2","36711":"DULCE2",
+  "37006":"DULCE2","37058":"PASTEL","37131":"ESPECIALIDADES","37135":"ESPECIALIDADES","37358":"PASTEL",
+  "37427":"CAJA","38086":"PANES","39140":"DULCE2","39374":"ESPECIALIDADES","412":"PASTEL",
+  "41843":"CAJA","43005":"PANES","43006":"ESPECIALIDADES","43023":"DULCE2","43059":"ESPECIALIDADES",
+  "43060":"DULCE2","43064":"DULCE2","43065":"PASTEL","43068":"PASTEL","43069":"PASTEL",
+  "43084":"DULCE2","43118":"DULCE2","43134":"PANES","43156":"DULCE2","43161":"ESPECIALIDADES",
+  "43169":"DULCE2","43173":"ESPECIALIDADES","43175":"ESPECIALIDADES","43185":"ESPECIALIDADES",
+  "43186":"ESPECIALIDADES","43187":"ESPECIALIDADES","43188":"PANES","43189":"ESPECIALIDADES",
+  "43190":"PANES","43195":"PANES","43201":"DULCE2","43202":"DULCE2","43206":"DULCE1",
+  "43207":"DULCE1","43215":"PASTEL","43223":"ESPECIALIDADES","43230":"GALLETA","43231":"ESPECIALIDADES",
+  "43285":"PASTEL","43305":"DULCE2","43307":"PASTEL","43316":"DULCE2","43336":"ESPECIALIDADES",
+  "43342":"DULCE2","43345":"ESPECIALIDADES","44829":"ESPECIALIDADES","44950":"DULCE1","45496":"PASTEL",
+  "47332":"ESPECIALIDADES","4767":"CAJA","47886":"PASTEL","48135":"ESPECIALIDADES","48136":"ESPECIALIDADES",
+  "48345":"ESPECIALIDADES","48373":"ESPECIALIDADES","48557":"ESPECIALIDADES","48598":"DULCE1",
+  "49950":"CAJA","9098":"CAJA","991182":"CAJA","99205065":"PASTEL","9935484":"PASTEL",
+  "9936610":"PASTEL","9937427":"CAJA","9938086":"PANES","9939140":"DULCE2","9941843":"CAJA",
+  "9943169":"DULCE2","9943201":"DULCE2","9943215":"PASTEL","9943285":"PASTEL","9944829":"ESPECIALIDADES"
 };
 
-let allData = [];
-let maestro = [];
-let dragSrc = null, dragSrcBlock = null;
-const STORAGE_KEY = 'bimbo_maestro_v3';
 const CATS_ORDER = ['DULCE1','DULCE2','TR','PASTEL','GALLETA','PANES','ESPECIALIDADES','CAJA'];
-const CATS_LABELS = {
-  'DULCE1': 'DULCE 1 — BIM Flow','DULCE2': 'DULCE 2 — BIM Otros','TR': 'TR — TÍA ROSA',
-  'PASTEL': 'PASTEL — MLA/WON','GALLETA': 'GALLETA','PANES': 'PANES',
-  'ESPECIALIDADES': 'ESPECIALIDADES','CAJA': 'CAJA'
-};
+const STORAGE_KEY = 'bimbo_maestro_v4';
 
+/* ═══════ ESTADO ═══════ */
+let allData = [];
+let maestro = [];          // [{cat, items:[{nombre,item,custom}]}]
+let rutaEdits = {};        // {ruta: [{cat, items:[{nombre,t,p,hidden}]}]}  overrides por ruta
+let editingRuta = null;    // ruta que se está editando en el modal
+let dragSrc = null, dragSrcBlock = null;
+let currentFontPt = 16;
+
+/* ═══════ INIT ═══════ */
 document.getElementById('f-hora').value = new Date().toTimeString().slice(0,5);
-
-function categorizarItem(itemNum, nombre) {
-  const num = String(itemNum).replace(/[^0-9]/g,'');
-  if (ITEM_CAT_MAP[num]) return ITEM_CAT_MAP[num];
-  if (/Prom|Prom/i.test(nombre)) {
-    const baseNum = num.replace(/^99/,'');
-    if (ITEM_CAT_MAP[baseNum]) return ITEM_CAT_MAP[baseNum];
-  }
-  return 'OTROS';
+updateFontSize(16);
+if (cargarMaestroGuardado()) {
+  setPill('💾 Maestro activo', true);
+  document.getElementById('maestro-status').style.display = 'block';
 }
 
+/* ═══════ FONT SIZE ═══════ */
+function updateFontSize(val) {
+  currentFontPt = parseInt(val);
+  document.documentElement.style.setProperty('--tf', val + 'pt');
+  document.getElementById('font-val').textContent = val + 'pt';
+  document.getElementById('font-slider').value = val;
+}
+
+/* ═══════ TABS ═══════ */
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn')[id === 'tickets' ? 0 : 1].classList.add('active');
+  if (id === 'maestro') renderMaestro();
+}
+
+/* ═══════ SAVE / LOAD ═══════ */
 function guardarMaestro() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(maestro)); setPill('💾 Maestro guardado', true); }
   catch(e) { alert('No se pudo guardar.'); }
 }
 function cargarMaestroGuardado() {
-  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) { maestro = JSON.parse(raw); return true; } }
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) { maestro = JSON.parse(r); return true; } }
   catch(e) {}
   return false;
 }
 function resetMaestro() {
   if (!confirm('¿Borrar el Ticket Maestro guardado?')) return;
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-  maestro = [];
+  maestro = []; rutaEdits = {};
   setPill('sin guardar', false);
-  document.getElementById('maestro-status').style.display='none';
+  document.getElementById('maestro-status').style.display = 'none';
   renderMaestro();
-  alert('Maestro borrado.');
 }
 function setPill(msg, ok) {
   const p = document.getElementById('save-pill');
   p.textContent = msg;
-  p.className = 'save-pill' + (ok?' ok':'');
+  p.className = 'save-pill' + (ok ? ' ok' : '');
 }
 
-function showTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  document.querySelectorAll('.tab-btn')[id==='tickets'?0:1].classList.add('active');
-  if (id==='maestro') renderMaestro();
-}
-
+/* ═══════ UPLOAD ═══════ */
 function triggerUpload() {
   if (!document.getElementById('upload-zone').classList.contains('loaded'))
     document.getElementById('file-input').click();
@@ -363,282 +484,526 @@ document.getElementById('file-input').addEventListener('change', function(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    const wb = XLSX.read(ev.target.result, {type:'array',cellDates:true});
+    const wb = XLSX.read(ev.target.result, {type:'array', cellDates:true});
     const ws = wb.Sheets[wb.SheetNames[0]];
     allData = XLSX.utils.sheet_to_json(ws, {raw:false, dateNF:'yyyy-mm-dd'});
     const z = document.getElementById('upload-zone');
     z.classList.add('loaded');
-    z.querySelector('p').innerHTML = '<strong>✔ '+file.name+'</strong>';
-    z.querySelector('p:last-child').textContent = allData.length+' registros';
+    z.querySelector('p').innerHTML = '<strong>✔ ' + file.name + '</strong>';
+    z.querySelector('p:last-child').textContent = allData.length + ' registros';
     document.getElementById('info-nombre').textContent = file.name;
-    document.getElementById('info-det').textContent = allData.length+' filas';
-    document.getElementById('info-box').style.display='block';
-    const fechas = [...new Set(allData.map(r=>(r['Fecha']||'').toString().slice(0,10)).filter(Boolean))].sort();
+    document.getElementById('info-det').textContent = allData.length + ' filas';
+    document.getElementById('info-box').style.display = 'block';
+    const fechas = [...new Set(allData.map(r => (r['Fecha']||'').toString().slice(0,10)).filter(Boolean))].sort();
     const sf = document.getElementById('sel-fecha');
-    sf.innerHTML = '<option value="">— fecha —</option>'+fechas.map(f=>'<option value="'+f+'">'+fmtF(f)+'</option>').join('');
+    sf.innerHTML = '<option value="">— fecha —</option>' + fechas.map(f => '<option value="'+f+'">'+fmtF(f)+'</option>').join('');
     sf.disabled = false;
-    if (fechas.length===1){sf.value=fechas[0];sf.dispatchEvent(new Event('change'));}
+    if (fechas.length === 1) { sf.value = fechas[0]; sf.dispatchEvent(new Event('change')); }
     fusionarExcelEnMaestro();
+    rutaEdits = {};
   };
   reader.readAsArrayBuffer(file);
 });
-document.getElementById('sel-fecha').addEventListener('change', function(){
-  const f=this.value, si=document.getElementById('sel-ini'), sf=document.getElementById('sel-fin');
-  document.getElementById('btn-gen').disabled=true;
-  document.getElementById('rutas-badge').style.display='none';
-  if(!f){si.innerHTML='<option>—</option>';si.disabled=true;sf.innerHTML='<option>—</option>';sf.disabled=true;return;}
-  const rutas=[...new Set(allData.filter(r=>r['Fecha']&&r['Fecha'].toString().startsWith(f)).map(r=>r['Ruta']).filter(Boolean))].sort((a,b)=>a-b);
-  const opts=rutas.map(r=>'<option value="'+r+'">'+r+'</option>').join('');
-  si.innerHTML='<option value="">— desde —</option>'+opts;
-  sf.innerHTML='<option value="">— hasta —</option>'+opts;
-  si.disabled=false;sf.disabled=false;
-  if(rutas.length){si.value=rutas[0];sf.value=rutas[rutas.length-1];actualizarBadge();}
-});
-document.getElementById('sel-ini').addEventListener('change',actualizarBadge);
-document.getElementById('sel-fin').addEventListener('change',actualizarBadge);
-function rutasEnRango(fecha,ini,fin){
-  return [...new Set(allData.filter(r=>r['Fecha']&&r['Fecha'].toString().startsWith(fecha)).map(r=>r['Ruta']).filter(Boolean))]
-    .filter(r=>r>=ini&&r<=fin).sort((a,b)=>a-b);
-}
-function actualizarBadge(){
-  const fecha=document.getElementById('sel-fecha').value;
-  const ini=parseInt(document.getElementById('sel-ini').value);
-  const fin=parseInt(document.getElementById('sel-fin').value);
-  const b=document.getElementById('rutas-badge');
-  b.style.display='block';
-  if(!ini||!fin){b.textContent='Selecciona rango';b.className='badge warn';document.getElementById('btn-gen').disabled=true;return;}
-  const r=rutasEnRango(fecha,ini,fin);
-  if(!r.length){b.textContent='⚠ Sin rutas en ese rango';b.className='badge warn';document.getElementById('btn-gen').disabled=true;return;}
-  b.textContent='✔ '+r.length+' ruta'+(r.length>1?'s':'')+(r.length<=5?': '+r.join(', '):': '+r.slice(0,5).join(', ')+(r.length>5?'…':''));
-  b.className='badge';
-  document.getElementById('btn-gen').disabled=false;
-}
-function fmtF(iso){if(!iso)return'';const[y,m,d]=iso.split('-');return d+'/'+m+'/'+y;}
 
+document.getElementById('sel-fecha').addEventListener('change', function() {
+  const f = this.value;
+  const si = document.getElementById('sel-ini'), sf2 = document.getElementById('sel-fin');
+  document.getElementById('btn-gen').disabled = true;
+  document.getElementById('rutas-badge').style.display = 'none';
+  if (!f) { si.innerHTML='<option>—</option>'; si.disabled=true; sf2.innerHTML='<option>—</option>'; sf2.disabled=true; return; }
+  const rutas = [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(f)).map(r=>r['Ruta']).filter(Boolean))].sort((a,b)=>a-b);
+  const opts = rutas.map(r => '<option value="'+r+'">'+r+'</option>').join('');
+  si.innerHTML = '<option value="">— desde —</option>' + opts;
+  sf2.innerHTML = '<option value="">— hasta —</option>' + opts;
+  si.disabled = false; sf2.disabled = false;
+  if (rutas.length) { si.value = rutas[0]; sf2.value = rutas[rutas.length-1]; actualizarBadge(); }
+});
+document.getElementById('sel-ini').addEventListener('change', actualizarBadge);
+document.getElementById('sel-fin').addEventListener('change', actualizarBadge);
+
+function rutasEnRango(fecha, ini, fin) {
+  return [...new Set(allData.filter(r => r['Fecha']&&r['Fecha'].toString().startsWith(fecha)).map(r=>r['Ruta']).filter(Boolean))]
+    .filter(r => r >= ini && r <= fin).sort((a,b) => a - b);
+}
+function actualizarBadge() {
+  const fecha = document.getElementById('sel-fecha').value;
+  const ini = parseInt(document.getElementById('sel-ini').value);
+  const fin = parseInt(document.getElementById('sel-fin').value);
+  const b = document.getElementById('rutas-badge');
+  b.style.display = 'block';
+  if (!ini || !fin) { b.textContent='Selecciona rango'; b.className='badge warn'; document.getElementById('btn-gen').disabled=true; return; }
+  const r = rutasEnRango(fecha, ini, fin);
+  if (!r.length) { b.textContent='⚠ Sin rutas'; b.className='badge warn'; document.getElementById('btn-gen').disabled=true; return; }
+  b.textContent = '✔ ' + r.length + ' ruta' + (r.length>1?'s':'') + (r.length<=5?': '+r.join(', '):'');
+  b.className = 'badge';
+  document.getElementById('btn-gen').disabled = false;
+}
+function fmtF(iso) { if(!iso) return ''; const[y,m,d]=iso.split('-'); return d+'/'+m+'/'+y; }
+
+/* ═══════ FUSIONAR EXCEL EN MAESTRO ═══════ */
+function categorizarItem(itemNum, nombre) {
+  const num = String(itemNum).replace(/[^0-9]/g,'');
+  if (ITEM_CAT_MAP[num]) return ITEM_CAT_MAP[num];
+  return 'OTROS';
+}
 function fusionarExcelEnMaestro() {
   const prodsExcel = new Map();
-  allData.filter(r=>r['Contenedor']&&r['Producto']).forEach(r=>{
+  allData.filter(r => r['Contenedor'] && r['Producto']).forEach(r => {
     if (!prodsExcel.has(r['Producto'])) prodsExcel.set(r['Producto'], r['Item']||'');
   });
   if (!maestro.length) {
     const catMap = {};
-    CATS_ORDER.forEach(c => catMap[c]=[]);
-    prodsExcel.forEach((item,nom) => {
-      const cat = categorizarItem(item,nom);
-      if (!catMap[cat]) catMap[cat]=[];
+    CATS_ORDER.forEach(c => catMap[c] = []);
+    prodsExcel.forEach((item, nom) => {
+      const cat = categorizarItem(item, nom);
+      if (!catMap[cat]) catMap[cat] = [];
       catMap[cat].push({nombre:nom, item:item, custom:false});
     });
-    maestro = CATS_ORDER.map(cat=>({cat, items:catMap[cat]||[]})).filter(c=>c.items.length>0);
-    Object.keys(catMap).filter(c=>!CATS_ORDER.includes(c)&&catMap[c].length).forEach(cat=>{
+    maestro = CATS_ORDER.map(cat => ({cat, items:catMap[cat]||[]})).filter(c => c.items.length > 0);
+    Object.keys(catMap).filter(c => !CATS_ORDER.includes(c) && catMap[c].length).forEach(cat => {
       maestro.push({cat, items:catMap[cat]});
     });
   } else {
-    const yaReg = new Set(maestro.flatMap(c=>c.items.map(i=>i.nombre)));
-    prodsExcel.forEach((item,nom) => {
+    const yaReg = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
+    prodsExcel.forEach((item, nom) => {
       if (yaReg.has(nom)) return;
-      const cat = categorizarItem(item,nom);
-      let catObj = maestro.find(c=>c.cat===cat);
-      if (!catObj) { catObj={cat,items:[]}; maestro.push(catObj); }
+      const cat = categorizarItem(item, nom);
+      let catObj = maestro.find(c => c.cat === cat);
+      if (!catObj) { catObj = {cat, items:[]}; maestro.push(catObj); }
       catObj.items.push({nombre:nom, item:item, custom:false});
     });
   }
 }
 
+/* ═══════ GENERAR TICKETS ═══════ */
 function generarTodos() {
-  const fecha=document.getElementById('sel-fecha').value;
-  const ini=parseInt(document.getElementById('sel-ini').value);
-  const fin=parseInt(document.getElementById('sel-fin').value);
-  const folio=document.getElementById('f-folio').value;
-  const hora=document.getElementById('f-hora').value;
-  if(!fecha||!ini||!fin) return;
+  const fecha = document.getElementById('sel-fecha').value;
+  const ini = parseInt(document.getElementById('sel-ini').value);
+  const fin = parseInt(document.getElementById('sel-fin').value);
+  const folio = document.getElementById('f-folio').value;
+  const hora = document.getElementById('f-hora').value;
+  if (!fecha || !ini || !fin) return;
   if (!maestro.length) fusionarExcelEnMaestro();
-  const rutas=rutasEnRango(fecha,ini,fin);
-  const wrap=document.getElementById('tickets-wrap');
-  wrap.innerHTML='';
-  rutas.forEach(ruta=>{
-    const ag=allData.find(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Agencia']);
-    const sucursal=ag?(ag['Agencia']||'').replace(/^\d+-/,'').trim():'';
-    const html=buildTicketRuta(ruta,fecha,sucursal,folio,hora);
-    if(!html) return;
-    const card=document.createElement('div');
-    card.className='ticket-card';
-    card.innerHTML=html+'<div class="card-footer"><button onclick="imprimirUno(this)">🖨 Esta ruta</button></div>';
-    wrap.appendChild(card);
+  const rutas = rutasEnRango(fecha, ini, fin);
+  const wrap = document.getElementById('tickets-wrap');
+  wrap.innerHTML = '';
+  rutas.forEach(ruta => {
+    const ag = allData.find(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Agencia']);
+    const sucursal = ag ? (ag['Agencia']||'').replace(/^\d+-/,'').trim() : '';
+    const card = crearTicketCard(ruta, fecha, sucursal, folio, hora);
+    if (card) wrap.appendChild(card);
   });
-  document.getElementById('preview-label').style.display='block';
-  document.getElementById('btn-print').style.display='block';
-  document.getElementById('maestro-status').style.display='block';
-  if(!wrap.children.length) wrap.innerHTML='<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
+  document.getElementById('preview-label').style.display = 'block';
+  document.getElementById('btn-print').style.display = 'block';
+  document.getElementById('maestro-status').style.display = 'block';
+  if (!wrap.children.length)
+    wrap.innerHTML = '<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
 }
 
-function buildTicketRuta(ruta, fecha, sucursal, folio, hora) {
-  const qtyMap={};
-  allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Contenedor'])
-    .forEach(r=>{ qtyMap[r['Producto']||'']={t:parseFloat(r['Tinas'])||0,p:parseFloat(r['Piezas'])||0}; });
-  const eqRows=allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&!r['Contenedor']&&r['Producto']);
-  let body='';
-  maestro.forEach(({cat,items})=>{
-    const visibles=items.filter(it=>it.custom||qtyMap[it.nombre]);
-    if(!visibles.length) return;
-    body+='<div class="th-sec"><div class="th-sec-t">'+cat+'</div>';
-    body+='<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
-    body+='<table class="th-tbl">';
-    visibles.forEach(it=>{
-      const q=it.custom?{t:0,p:0}:(qtyMap[it.nombre]||{t:0,p:0});
-      body+='<tr><td>'+it.nombre+'</td><td>'+q.t+'</td><td>'+q.p+'</td></tr>';
+function crearTicketCard(ruta, fecha, sucursal, folio, hora) {
+  const html = buildTicketHTML(ruta, fecha, sucursal, folio, hora);
+  if (!html) return null;
+  const card = document.createElement('div');
+  card.className = 'ticket-card';
+  card.dataset.ruta = ruta;
+  card.dataset.fecha = fecha;
+  card.dataset.sucursal = sucursal;
+  card.dataset.folio = folio;
+  card.dataset.hora = hora;
+  card.innerHTML = html +
+    '<div class="card-footer">' +
+    '<button onclick="abrirModal(\''+ruta+'\',\''+fecha+'\',\''+sucursal+'\',\''+folio+'\',\''+hora+'\')">✏️ Editar</button>' +
+    '<button onclick="imprimirUno(this)">🖨 Imprimir</button>' +
+    '</div>';
+  return card;
+}
+
+/* Construye el HTML del ticket. Si hay edits para esta ruta los usa, si no usa el maestro */
+function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
+  // Datos del Excel para esta ruta
+  const qtyMap = {};
+  allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Contenedor'])
+    .forEach(r => { qtyMap[r['Producto']||''] = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0}; });
+  const eqRows = allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && !r['Contenedor'] && r['Producto']);
+
+  let body = '';
+
+  if (rutaEdits[ruta]) {
+    // Usar estructura editada por el usuario
+    rutaEdits[ruta].forEach(({cat, items}) => {
+      const visibles = items.filter(it => !it.hidden);
+      if (!visibles.length) return;
+      body += '<div class="th-sec"><div class="th-sec-t">' + cat + '</div>';
+      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += '<table class="th-tbl">';
+      visibles.forEach(it => {
+        body += '<tr><td>' + it.nombre + '</td><td>' + it.t + '</td><td>' + it.p + '</td></tr>';
+      });
+      body += '</table></div>';
     });
-    body+='</table></div>';
-  });
-  if(eqRows.length){
-    body+='<div class="th-eq"><div class="th-eq-t">EQUIPO</div>';
-    eqRows.forEach(r=>{body+='<div class="th-eq-r"><span>'+r['Producto']+'</span><span>'+parseFloat(r['Piezas']||0)+'</span></div>';});
-    body+='</div>';
+  } else {
+    // Usar maestro global
+    maestro.forEach(({cat, items}) => {
+      const visibles = items.filter(it => it.custom || qtyMap[it.nombre]);
+      if (!visibles.length) return;
+      body += '<div class="th-sec"><div class="th-sec-t">' + cat + '</div>';
+      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += '<table class="th-tbl">';
+      visibles.forEach(it => {
+        const q = it.custom ? {t:0,p:0} : (qtyMap[it.nombre] || {t:0,p:0});
+        body += '<tr><td>' + it.nombre + '</td><td>' + q.t + '</td><td>' + q.p + '</td></tr>';
+      });
+      body += '</table></div>';
+    });
   }
-  if(!body) return null;
-  const tt=Object.values(qtyMap).reduce((s,q)=>s+q.t,0);
-  const tp=Object.values(qtyMap).reduce((s,q)=>s+q.p,0);
-  return '<div class="thermal"><div class="th-hdr"><div class="th-tit">TICKET DE CARGA</div><div class="th-suc">'+sucursal+'</div><div class="th-meta"><span>'+fmtF(fecha)+'</span><span>'+hora+'</span></div><div class="th-rut">RUTA '+ruta+' &nbsp; '+folio+'</div></div>'+body+'<div class="th-ftr">'+Object.keys(qtyMap).length+' prod · '+tt+' tinas · '+tp+' pzas</div></div>';
+
+  if (eqRows.length && !rutaEdits[ruta]) {
+    body += '<div class="th-eq"><div class="th-eq-t">EQUIPO</div>';
+    eqRows.forEach(r => { body += '<div class="th-eq-r"><span>'+r['Producto']+'</span><span>'+parseFloat(r['Piezas']||0)+'</span></div>'; });
+    body += '</div>';
+  }
+
+  if (!body) return null;
+
+  const tt = Object.values(qtyMap).reduce((s,q) => s+q.t, 0);
+  const tp = Object.values(qtyMap).reduce((s,q) => s+q.p, 0);
+
+  return '<div class="thermal">' +
+    '<div class="th-hdr">' +
+    '<div class="th-tit">TICKET DE CARGA</div>' +
+    '<div class="th-suc">' + sucursal + '</div>' +
+    '<div class="th-meta"><span>' + fmtF(fecha) + '</span><span>' + hora + '</span></div>' +
+    '<div class="th-rut">RUTA ' + ruta + ' &nbsp; ' + folio + '</div>' +
+    '</div>' +
+    body +
+    '<div class="th-ftr">' + Object.keys(qtyMap).length + ' prod · ' + tt + ' tinas · ' + tp + ' pzas</div>' +
+    '</div>';
 }
 
-function imprimirUno(btn){
-  const tf = document.getElementById('font-slider').value + 'px';
-  const html=btn.closest('.ticket-card').querySelector('.thermal').outerHTML;
-  const w=window.open('','_blank','width=500,height=820');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-    :root{--tf:${tf};}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Courier New',monospace;width:80mm;padding:4px;}
-    .thermal{width:100%;font-family:'Courier New',monospace;font-size:var(--tf);color:#000;}
-    .th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:5px;margin-bottom:5px;}
-    .th-tit{font-size:calc(var(--tf) + 4px);font-weight:bold;}
-    .th-suc{font-size:var(--tf);}
-    .th-meta{font-size:calc(var(--tf) - 2px);display:flex;justify-content:space-between;margin-top:3px;}
-    .th-rut{font-size:calc(var(--tf) + 2px);font-weight:bold;margin-top:4px;}
-    .th-sec{margin-top:4px;}
-    .th-sec-t{font-weight:bold;font-size:var(--tf);text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:2px;}
-    .th-cols{display:flex;font-size:calc(var(--tf) - 3px);font-weight:bold;border-bottom:1px solid #ccc;}
-    .cp{flex:1;}.ct,.cpz{width:38px;text-align:right;}
-    table{width:100%;border-collapse:collapse;font-size:var(--tf);}
-    td{padding:3px 2px;vertical-align:top;}
-    td:nth-child(2),td:nth-child(3){text-align:right;width:38px;}
-    .th-eq{margin-top:4px;border-top:1px dashed #000;padding-top:3px;}
-    .th-eq-t{font-size:calc(var(--tf) - 2px);font-weight:bold;text-transform:uppercase;}
-    .th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf);padding:3px 0;}
-    .th-ftr{border-top:1px dashed #000;margin-top:5px;padding-top:3px;font-size:calc(var(--tf) - 3px);text-align:center;}
-  </style></head><body>${html}</body></html>`);
-  w.document.close();w.focus();setTimeout(()=>{w.print();w.close();},350);
+/* ═══════ IMPRIMIR ═══════ */
+function imprimirTodos() {
+  // Inyectar el --tf actual en cada .thermal como estilo inline para que la impresión lo respete
+  document.querySelectorAll('.thermal').forEach(el => {
+    el.style.fontSize = currentFontPt + 'pt';
+  });
+  setTimeout(() => window.print(), 80);
 }
 
+function imprimirUno(btn) {
+  const tf = currentFontPt + 'pt';
+  const thermalEl = btn.closest('.ticket-card').querySelector('.thermal');
+  const html = thermalEl.outerHTML;
+  const w = window.open('', '_blank', 'width=500,height=900');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+@page{margin:3mm 4mm;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Courier New',Courier,monospace;width:72mm;}
+.thermal{font-family:'Courier New',Courier,monospace;font-size:${tf};color:#000;width:100%;padding:2mm 1mm;line-height:1.35;}
+.th-hdr{text-align:center;border-bottom:2px dashed #000;padding-bottom:4px;margin-bottom:4px;}
+.th-tit{font-size:calc(${tf} * 1.3);font-weight:bold;letter-spacing:1px;}
+.th-suc{font-size:${tf};}
+.th-meta{font-size:calc(${tf} * 0.85);display:flex;justify-content:space-between;margin-top:2px;}
+.th-rut{font-size:calc(${tf} * 1.2);font-weight:bold;margin-top:4px;}
+.th-sec{margin-top:4px;}
+.th-sec-t{font-weight:bold;font-size:${tf};text-transform:uppercase;border-top:2px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:2px;}
+.th-cols{display:flex;font-size:calc(${tf} * 0.82);font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:1px;margin-bottom:1px;}
+.cp{flex:1;}.ct,.cpz{width:36px;text-align:right;}
+table{width:100%;border-collapse:collapse;font-size:${tf};}
+td{padding:2px 2px;vertical-align:top;line-height:1.3;}
+td:nth-child(2),td:nth-child(3){text-align:right;width:36px;white-space:nowrap;}
+.th-eq{margin-top:4px;border-top:2px dashed #000;padding-top:3px;}
+.th-eq-t{font-size:calc(${tf} * 0.9);font-weight:bold;text-transform:uppercase;}
+.th-eq-r{display:flex;justify-content:space-between;font-size:${tf};padding:2px 0;}
+.th-ftr{border-top:2px dashed #000;margin-top:4px;padding-top:3px;font-size:calc(${tf} * 0.8);text-align:center;}
+</style></head><body>${html}</body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); w.close(); }, 400);
+}
+
+/* ═══════ MODAL EDITAR RUTA ═══════ */
+let modalDragSrc = null;
+
+function abrirModal(ruta, fecha, sucursal, folio, hora) {
+  editingRuta = ruta;
+  document.getElementById('modal-title').textContent = '✏️ Editar Ruta ' + ruta + (sucursal ? ' — ' + sucursal : '');
+
+  // Construir estructura editable para esta ruta
+  // Si ya hay edits guardados, usarlos; si no, construir desde maestro + datos excel
+  let estructura;
+  if (rutaEdits[ruta]) {
+    estructura = JSON.parse(JSON.stringify(rutaEdits[ruta]));
+  } else {
+    const qtyMap = {};
+    allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Contenedor'])
+      .forEach(r => { qtyMap[r['Producto']||''] = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0}; });
+    estructura = [];
+    maestro.forEach(({cat, items}) => {
+      const its = items
+        .filter(it => it.custom || qtyMap[it.nombre])
+        .map(it => {
+          const q = qtyMap[it.nombre] || {t:0,p:0};
+          return {nombre: it.nombre, t: q.t, p: q.p, hidden: false};
+        });
+      if (its.length) estructura.push({cat, items: its});
+    });
+  }
+
+  // Render en el modal
+  const cont = document.getElementById('modal-edit-content');
+  cont.innerHTML = '';
+  estructura.forEach((catObj, ci) => {
+    const block = document.createElement('div');
+    block.className = 'edit-cat-block';
+    block.innerHTML = '<div class="edit-cat-head"><span class="edit-cat-drag">⠿</span><span class="edit-cat-name">' + catObj.cat + '</span></div>';
+    const list = document.createElement('div');
+    list.style.padding = '3px 4px';
+    list.dataset.ci = ci;
+    catObj.items.forEach((it, ii) => {
+      list.appendChild(makeModalItem(it, ci, ii));
+    });
+    // drag & drop de filas dentro del modal
+    list.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!modalDragSrc) return;
+      list.style.background = '#dbeafe';
+      const after = getModalDragAfter(list, e.clientY);
+      if (after == null) list.appendChild(modalDragSrc);
+      else list.insertBefore(modalDragSrc, after);
+    });
+    list.addEventListener('dragleave', e => { if (!list.contains(e.relatedTarget)) list.style.background = ''; });
+    list.addEventListener('drop', e => { e.preventDefault(); list.style.background = ''; });
+    block.appendChild(list);
+    cont.appendChild(block);
+  });
+
+  // Guardar referencia a estructura en el modal
+  cont._estructura = estructura;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function makeModalItem(it, ci, ii) {
+  const row = document.createElement('div');
+  row.className = 'edit-item-row' + (it.hidden ? ' hidden-row' : '');
+  if (it.hidden) row.style.opacity = '.4';
+  row.draggable = true;
+  row.dataset.ci = ci;
+  row.dataset.ii = ii;
+  row.innerHTML =
+    '<span class="edit-drag-h">⠿</span>' +
+    '<input class="edit-item-name" type="text" value="' + escHtml(it.nombre) + '" title="Clic para renombrar">' +
+    '<span style="font-size:.65rem;color:#6b7280;white-space:nowrap;flex-shrink:0;padding:0 4px;">' + it.t + ' / ' + it.p + '</span>' +
+    '<button class="edit-item-del" onclick="toggleHiddenModal(this)" title="' + (it.hidden?'Mostrar':'Ocultar') + '">' + (it.hidden ? '👁' : '✕') + '</button>';
+  row.addEventListener('dragstart', () => { modalDragSrc = row; setTimeout(() => row.classList.add('dragging'), 0); });
+  row.addEventListener('dragend', () => { row.classList.remove('dragging'); modalDragSrc = null; });
+  return row;
+}
+
+function toggleHiddenModal(btn) {
+  const row = btn.closest('.edit-item-row');
+  const isHidden = row.style.opacity === '0.4';
+  if (isHidden) {
+    row.style.opacity = '';
+    btn.textContent = '✕';
+    btn.title = 'Ocultar';
+  } else {
+    row.style.opacity = '0.4';
+    btn.textContent = '👁';
+    btn.title = 'Mostrar';
+  }
+}
+
+function getModalDragAfter(container, y) {
+  return [...container.querySelectorAll('.edit-item-row:not(.dragging)')].reduce((cl, child) => {
+    const box = child.getBoundingClientRect();
+    const off = y - box.top - box.height / 2;
+    if (off < 0 && off > cl.offset) return {offset: off, el: child};
+    return cl;
+  }, {offset: Number.NEGATIVE_INFINITY}).el;
+}
+
+function cerrarModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingRuta = null;
+}
+
+function aplicarEdicionRuta() {
+  if (!editingRuta) return;
+  const cont = document.getElementById('modal-edit-content');
+  const blocks = cont.querySelectorAll('.edit-cat-block');
+  const nueva = [];
+  blocks.forEach(block => {
+    const cat = block.querySelector('.edit-cat-name').textContent;
+    const rows = block.querySelectorAll('.edit-item-row');
+    const items = [];
+    rows.forEach(row => {
+      const nombre = row.querySelector('.edit-item-name').value.trim();
+      const hidden = row.style.opacity === '0.4';
+      const partes = (row.querySelector('span[style]')||{}).textContent || '0 / 0';
+      const [t, p] = partes.split('/').map(x => parseFloat(x.trim())||0);
+      items.push({nombre, t, p, hidden});
+    });
+    if (items.length) nueva.push({cat, items});
+  });
+  rutaEdits[editingRuta] = nueva;
+
+  // Re-renderizar el ticket de esta ruta
+  const ruta = editingRuta;
+  const cards = document.querySelectorAll('.ticket-card');
+  cards.forEach(card => {
+    if (card.dataset.ruta == ruta) {
+      const fecha = card.dataset.fecha;
+      const sucursal = card.dataset.sucursal;
+      const folio = card.dataset.folio;
+      const hora = card.dataset.hora;
+      const html = buildTicketHTML(ruta, fecha, sucursal, folio, hora);
+      if (html) {
+        const thermal = card.querySelector('.thermal');
+        if (thermal) thermal.outerHTML = html; // reemplaza solo el thermal
+        // Rebuild card completo
+        const newCard = crearTicketCard(ruta, fecha, sucursal, folio, hora);
+        if (newCard) card.replaceWith(newCard);
+      }
+    }
+  });
+  cerrarModal();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ═══════ IMPRESIÓN TODOS ═══════ */
+// Cerrar modal al hacer clic fuera
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+/* ═══════ MAESTRO TAB ═══════ */
 function renderMaestro() {
-  const c=document.getElementById('maestro-cat-container');
-  if(!maestro.length){
-    c.innerHTML='<div class="placeholder" style="padding:28px 10px;font-size:.76rem;">Carga un archivo OLA desde la pestaña Tickets para poblar el maestro.</div>';
-    document.getElementById('maestro-preview-box').innerHTML='<div class="placeholder" style="padding:28px 12px;font-size:.76rem;">Sin datos.</div>';
+  const c = document.getElementById('maestro-cat-container');
+  if (!maestro.length) {
+    c.innerHTML = '<div class="placeholder" style="padding:22px 10px;font-size:.74rem;">Carga un archivo OLA desde Tickets.</div>';
+    document.getElementById('maestro-preview-box').innerHTML = '<div class="placeholder" style="padding:22px 10px;font-size:.74rem;">Sin datos.</div>';
     return;
   }
-  c.innerHTML='';
-  maestro.forEach((catObj,ci)=>c.appendChild(makeCatBlock(catObj,ci)));
+  c.innerHTML = '';
+  maestro.forEach((catObj, ci) => c.appendChild(makeCatBlock(catObj, ci)));
   initCatDrag();
   renderMaestroPreview();
 }
 
 function makeCatBlock(catObj, ci) {
-  const block=document.createElement('div');
-  block.className='cat-block'; block.draggable=true; block.dataset.ci=ci;
-  block.innerHTML='<div class="cat-head"><span class="cat-drag">⠿</span><input class="cat-name-inp" value="'+catObj.cat+'" placeholder="Nombre..." onchange="maestro['+ci+'].cat=this.value;renderMaestroPreview();"><span class="cat-count">'+catObj.items.length+' productos</span><div class="cat-acts"><button onclick="moverCat('+ci+',-1)">▲</button><button onclick="moverCat('+ci+',1)">▼</button><button class="del" onclick="eliminarCat('+ci+')">✕</button></div></div><div class="sort-list" id="sl-'+ci+'" data-ci="'+ci+'"></div><div class="add-row"><input class="inp-n" type="text" placeholder="Agregar producto..." id="an-'+ci+'"><button onclick="agregarItem('+ci+')">+ Agregar</button></div>';
-  const list=block.querySelector('#sl-'+ci);
-  catObj.items.forEach((it,ii)=>list.appendChild(makeItemEl(it,ci,ii)));
-  list.addEventListener('dragover',e=>{
-    e.preventDefault();e.stopPropagation();
-    if(!dragSrc||dragSrc.classList.contains('cat-block'))return;
-    list.style.background='#dbeafe';
-    const after=getDragAfter(list,e.clientY);
-    if(after==null)list.appendChild(dragSrc);
-    else list.insertBefore(dragSrc,after);
+  const block = document.createElement('div');
+  block.className = 'cat-block'; block.draggable = true; block.dataset.ci = ci;
+  block.innerHTML =
+    '<div class="cat-head"><span class="cat-drag">⠿</span>' +
+    '<input class="cat-name-inp" value="' + catObj.cat + '" placeholder="Nombre..." onchange="maestro['+ci+'].cat=this.value;renderMaestroPreview();">' +
+    '<span class="cat-count">' + catObj.items.length + ' prod</span>' +
+    '<div class="cat-acts">' +
+    '<button onclick="moverCat('+ci+',-1)">▲</button>' +
+    '<button onclick="moverCat('+ci+',1)">▼</button>' +
+    '<button class="del" onclick="eliminarCat('+ci+')">✕</button></div></div>' +
+    '<div class="sort-list" id="sl-'+ci+'" data-ci="'+ci+'"></div>' +
+    '<div class="add-row"><input class="inp-n" type="text" placeholder="Agregar producto..." id="an-'+ci+'"><button onclick="agregarItem('+ci+')">+</button></div>';
+  const list = block.querySelector('#sl-' + ci);
+  catObj.items.forEach((it, ii) => list.appendChild(makeItemEl(it, ci, ii)));
+  list.addEventListener('dragover', e => {
+    e.preventDefault(); e.stopPropagation();
+    if (!dragSrc || dragSrc.classList.contains('cat-block')) return;
+    list.style.background = '#dbeafe';
+    const after = getDragAfter(list, e.clientY);
+    if (after == null) list.appendChild(dragSrc); else list.insertBefore(dragSrc, after);
   });
-  list.addEventListener('dragleave',e=>{
-    if(!list.contains(e.relatedTarget)) list.style.background='';
-  });
-  list.addEventListener('drop',e=>{
-    e.preventDefault();e.stopPropagation();
-    list.style.background='';
-    if(!dragSrc||dragSrc.classList.contains('cat-block'))return;
-    syncFromDOM();
-  });
+  list.addEventListener('dragleave', e => { if (!list.contains(e.relatedTarget)) list.style.background = ''; });
+  list.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); list.style.background = ''; if (!dragSrc) return; syncFromDOM(); });
   return block;
 }
 
-function makeItemEl(it,ci,ii){
-  const el=document.createElement('div');
-  el.className='sort-item';el.draggable=true;el.dataset.ci=ci;el.dataset.ii=ii;
-  el.innerHTML='<span class="drag-h">⠿</span><span class="item-lbl">'+it.nombre+'</span>'+(it.custom?'<span class="cbadge">CUSTOM</span>':'')+'<button class="del-it" onclick="eliminarItem('+ci+','+ii+')">✕</button>';
-  el.addEventListener('dragstart',()=>{dragSrc=el;dragSrcBlock=null;setTimeout(()=>el.classList.add('dragging'),0);});
-  el.addEventListener('dragend',()=>{el.classList.remove('dragging');syncFromDOM();});
+function makeItemEl(it, ci, ii) {
+  const el = document.createElement('div');
+  el.className = 'sort-item'; el.draggable = true; el.dataset.ci = ci; el.dataset.ii = ii;
+  el.innerHTML = '<span class="drag-h">⠿</span><span class="item-lbl">' + it.nombre + '</span>' +
+    (it.custom ? '<span class="cbadge">+</span>' : '') +
+    '<button class="del-it" onclick="eliminarItem('+ci+','+ii+')">✕</button>';
+  el.addEventListener('dragstart', () => { dragSrc = el; dragSrcBlock = null; setTimeout(() => el.classList.add('dragging'), 0); });
+  el.addEventListener('dragend', () => { el.classList.remove('dragging'); syncFromDOM(); });
   return el;
 }
 
-function initCatDrag(){
-  document.querySelectorAll('.cat-block').forEach(block=>{
-    block.addEventListener('dragstart',e=>{if(e.target.tagName==='INPUT')return;dragSrcBlock=block;dragSrc=null;setTimeout(()=>block.style.opacity='.4',0);});
-    block.addEventListener('dragend',()=>{block.style.opacity='';dragSrcBlock=null;syncFromDOM();});
-    block.addEventListener('dragover',e=>{if(!dragSrcBlock||dragSrcBlock===block)return;e.preventDefault();const c=document.getElementById('maestro-cat-container');const rect=block.getBoundingClientRect();if(e.clientY<rect.top+rect.height/2)c.insertBefore(dragSrcBlock,block);else if(block.nextSibling)c.insertBefore(dragSrcBlock,block.nextSibling);else c.appendChild(dragSrcBlock);});
-    block.addEventListener('drop',e=>{e.preventDefault();if(dragSrcBlock)syncFromDOM();});
-  });
-}
-
-function getDragAfter(container,y){
-  return [...container.querySelectorAll('.sort-item:not(.dragging)')].reduce((cl,child)=>{const box=child.getBoundingClientRect();const off=y-box.top-box.height/2;if(off<0&&off>cl.offset)return{offset:off,el:child};return cl;},{offset:Number.NEGATIVE_INFINITY}).el;
-}
-
-function syncFromDOM(){
-  const blocks=[...document.querySelectorAll('#maestro-cat-container .cat-block')];
-  const newMaestro=blocks.map(block=>{
-    const catNom=block.querySelector('.cat-name-inp').value;
-    const items=[];
-    block.querySelectorAll('.sort-item').forEach(el=>{
-      const oci=parseInt(el.dataset.ci),oii=parseInt(el.dataset.ii);
-      if(maestro[oci]?.items[oii]) items.push({...maestro[oci].items[oii]});
+function initCatDrag() {
+  document.querySelectorAll('.cat-block').forEach(block => {
+    block.addEventListener('dragstart', e => { if (e.target.tagName==='INPUT') return; dragSrcBlock=block; dragSrc=null; setTimeout(()=>block.style.opacity='.4',0); });
+    block.addEventListener('dragend', () => { block.style.opacity=''; dragSrcBlock=null; syncFromDOM(); });
+    block.addEventListener('dragover', e => {
+      if (!dragSrcBlock || dragSrcBlock===block) return; e.preventDefault();
+      const c = document.getElementById('maestro-cat-container');
+      const rect = block.getBoundingClientRect();
+      if (e.clientY < rect.top+rect.height/2) c.insertBefore(dragSrcBlock, block);
+      else if (block.nextSibling) c.insertBefore(dragSrcBlock, block.nextSibling);
+      else c.appendChild(dragSrcBlock);
     });
-    return {cat:catNom,items};
+    block.addEventListener('drop', e => { e.preventDefault(); if (dragSrcBlock) syncFromDOM(); });
   });
-  maestro=newMaestro;
+}
+
+function getDragAfter(container, y) {
+  return [...container.querySelectorAll('.sort-item:not(.dragging)')].reduce((cl, child) => {
+    const box = child.getBoundingClientRect();
+    const off = y - box.top - box.height / 2;
+    if (off < 0 && off > cl.offset) return {offset: off, el: child};
+    return cl;
+  }, {offset: Number.NEGATIVE_INFINITY}).el;
+}
+
+function syncFromDOM() {
+  const blocks = [...document.querySelectorAll('#maestro-cat-container .cat-block')];
+  maestro = blocks.map(block => {
+    const catNom = block.querySelector('.cat-name-inp').value;
+    const items = [];
+    block.querySelectorAll('.sort-item').forEach(el => {
+      const oci = parseInt(el.dataset.ci), oii = parseInt(el.dataset.ii);
+      if (maestro[oci]?.items[oii]) items.push({...maestro[oci].items[oii]});
+    });
+    return {cat: catNom, items};
+  });
   renderMaestro();
 }
 
-function eliminarItem(ci,ii){if(!confirm('¿Eliminar?'))return;maestro[ci].items.splice(ii,1);renderMaestro();}
-function agregarItem(ci){const nom=document.getElementById('an-'+ci).value.trim();if(!nom)return;maestro[ci].items.push({nombre:nom,item:'',custom:true});renderMaestro();}
-function moverCat(ci,dir){const ni=ci+dir;if(ni<0||ni>=maestro.length)return;[maestro[ci],maestro[ni]]=[maestro[ni],maestro[ci]];renderMaestro();}
-function eliminarCat(ci){if(!confirm('¿Eliminar categoría "'+maestro[ci].cat+'"?'))return;maestro.splice(ci,1);renderMaestro();}
-function agregarCategoria(){const nom=document.getElementById('new-cat-input').value.trim().toUpperCase();if(!nom)return;maestro.push({cat:nom,items:[]});document.getElementById('new-cat-input').value='';renderMaestro();}
+function eliminarItem(ci, ii) { if (!confirm('¿Eliminar?')) return; maestro[ci].items.splice(ii,1); renderMaestro(); }
+function agregarItem(ci) { const nom=document.getElementById('an-'+ci).value.trim(); if(!nom) return; maestro[ci].items.push({nombre:nom,item:'',custom:true}); renderMaestro(); }
+function moverCat(ci, dir) { const ni=ci+dir; if(ni<0||ni>=maestro.length) return; [maestro[ci],maestro[ni]]=[maestro[ni],maestro[ci]]; renderMaestro(); }
+function eliminarCat(ci) { if(!confirm('¿Eliminar categoría?')) return; maestro.splice(ci,1); renderMaestro(); }
+function agregarCategoria() { const nom=document.getElementById('new-cat-input').value.trim().toUpperCase(); if(!nom) return; maestro.push({cat:nom,items:[]}); document.getElementById('new-cat-input').value=''; renderMaestro(); }
 
-function renderMaestroPreview(){
-  let body='';let total=0;
-  maestro.forEach(({cat,items})=>{
-    if(!items.length)return;total+=items.length;
-    body+='<div class="th-sec"><div class="th-sec-t">'+cat+' ('+items.length+')</div>';
-    body+='<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
-    body+='<table class="th-tbl">';
-    items.forEach(it=>{body+='<tr><td>'+it.nombre+'</td><td>—</td><td>—</td></tr>';});
-    body+='</table></div>';
+function renderMaestroPreview() {
+  let body='', total=0;
+  maestro.forEach(({cat, items}) => {
+    if (!items.length) return; total += items.length;
+    body += '<div class="th-sec"><div class="th-sec-t">'+cat+' ('+items.length+')</div>';
+    body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div><table class="th-tbl">';
+    items.forEach(it => { body += '<tr><td>'+it.nombre+'</td><td>—</td><td>—</td></tr>'; });
+    body += '</table></div>';
   });
-  document.getElementById('maestro-preview-box').innerHTML='<div class="thermal"><div class="th-hdr"><div class="th-tit">★ TICKET MAESTRO ★</div><div class="th-suc">Catálogo Oficial Bimbo</div><div class="th-meta"><span>Plantilla</span><span>global</span></div><div class="th-rut">Todos los productos</div></div>'+(body||'<div style="padding:12px;text-align:center;font-size:9px;color:#999;">Sin productos</div>')+'<div class="th-ftr">'+total+' productos en el maestro</div></div>';
+  document.getElementById('maestro-preview-box').innerHTML =
+    '<div class="thermal"><div class="th-hdr"><div class="th-tit">★ TICKET MAESTRO ★</div><div class="th-suc">Catálogo Bimbo</div><div class="th-meta"><span>Plantilla</span><span>global</span></div><div class="th-rut">Todos los productos</div></div>' +
+    (body || '<div style="padding:12px;text-align:center;font-size:9px;color:#999;">Sin productos</div>') +
+    '<div class="th-ftr">'+total+' productos</div></div>';
 }
 
-function aplicarYGenerar(){guardarMaestro();showTab('tickets');if(allData.length&&document.getElementById('sel-fecha').value)setTimeout(generarTodos,120);}
+function aplicarYGenerar() { guardarMaestro(); showTab('tickets'); if(allData.length&&document.getElementById('sel-fecha').value) setTimeout(generarTodos,120); }
 
-const uz=document.getElementById('upload-zone');
-uz.addEventListener('dragover',e=>{e.preventDefault();uz.style.borderColor='var(--azul)';});
-uz.addEventListener('dragleave',()=>{uz.style.borderColor='';});
-uz.addEventListener('drop',e=>{e.preventDefault();uz.style.borderColor='';const f=e.dataTransfer.files[0];if(!f)return;const dt=new DataTransfer();dt.items.add(f);document.getElementById('file-input').files=dt.files;document.getElementById('file-input').dispatchEvent(new Event('change'));});
-
-function updateFontSize(val) {
-  document.documentElement.style.setProperty('--tf', val+'px');
-  document.getElementById('font-val').textContent = val+'px';
-}
-// Init default 18px (más grande)
-updateFontSize(18);
-
-if(cargarMaestroGuardado()&&maestro.length){setPill('💾 Maestro activo',true);document.getElementById('maestro-status').style.display='block';}
+/* Drag & drop upload zone */
+const uz = document.getElementById('upload-zone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.style.borderColor='var(--azul)'; });
+uz.addEventListener('dragleave', () => { uz.style.borderColor=''; });
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.style.borderColor='';
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  const dt = new DataTransfer(); dt.items.add(f);
+  document.getElementById('file-input').files = dt.files;
+  document.getElementById('file-input').dispatchEvent(new Event('change'));
+});
 </script>
 </body>
 </html>
