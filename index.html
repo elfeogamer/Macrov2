@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--azul:#0055A4;--azul-os:#003D7A;--rojo:#E30613;--amarillo:#FFD500;--gris:#f4f6fa;--borde:#d0d7e3;--texto:#1a1f2e;--verde:#16a34a;}
+:root{--azul:#0055A4;--azul-os:#003D7A;--rojo:#E30613;--amarillo:#FFD500;--gris:#f4f6fa;--borde:#d0d7e3;--texto:#1a1f2e;--verde:#16a34a;--tf:18px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:"DM Sans",sans-serif;background:var(--gris);color:var(--texto);min-height:100vh;}
 .topbar{background:var(--azul-os);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,.25);}
@@ -55,7 +55,7 @@ select:disabled{opacity:.35;}
 .preview-main{flex:1;padding:18px;overflow-y:auto;}
 .preview-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.76rem;color:#9ca3af;margin-bottom:10px;display:none;}
 .tickets-wrap{display:flex;flex-wrap:wrap;gap:14px;}
-.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,61,122,.07);width:288px;flex-shrink:0;}
+.ticket-card{background:#fff;border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,61,122,.07);width:340px;flex-shrink:0;}
 .card-footer{background:#f8f9fb;border-top:1px solid var(--borde);padding:6px 9px;display:flex;gap:5px;}
 .card-footer button{flex:1;padding:4px;background:var(--azul);color:#fff;border:none;border-radius:5px;font-size:.68rem;font-weight:700;cursor:pointer;font-family:"Syne",sans-serif;}
 .card-footer button:hover{background:var(--azul-os);}
@@ -105,23 +105,23 @@ select:disabled{opacity:.35;}
 #maestro-preview-box{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,61,122,.06);}
 .maestro-status{font-size:.68rem;padding:7px 9px;background:#eef3fb;border-radius:6px;color:var(--azul-os);display:none;}
 /* TICKET */
-.thermal{font-family:"Courier New",Courier,monospace;font-size:var(--tf,13px);color:#000;background:#fff;width:100%;padding:7px 5px;}
-.th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:5px;margin-bottom:5px;}
-.th-tit{font-size:calc(var(--tf,13px) + 3px);font-weight:bold;}
-.th-suc{font-size:calc(var(--tf,13px) - 1px);margin-top:1px;}
-.th-meta{font-size:calc(var(--tf,13px) - 2px);margin-top:2px;display:flex;justify-content:space-between;}
-.th-rut{font-size:calc(var(--tf,13px) + 1px);font-weight:bold;margin-top:4px;}
-.th-sec{margin-top:4px;}
-.th-sec-t{font-weight:bold;font-size:var(--tf,13px);text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:1px 0;margin-bottom:2px;}
-.th-cols{display:flex;font-size:calc(var(--tf,13px) - 3px);font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:1px;margin-bottom:1px;}
-.th-cols .cp{flex:1;}.th-cols .ct,.th-cols .cpz{width:30px;text-align:right;}
-.th-tbl{width:100%;border-collapse:collapse;font-size:var(--tf,13px);}
-.th-tbl td{padding:2px 1px;vertical-align:top;}
-.th-tbl td:nth-child(2),.th-tbl td:nth-child(3){text-align:right;width:30px;white-space:nowrap;}
-.th-eq{margin-top:4px;border-top:1px dashed #000;padding-top:3px;}
-.th-eq-t{font-size:calc(var(--tf,13px) - 2px);font-weight:bold;text-transform:uppercase;margin-bottom:1px;}
-.th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf,13px);padding:2px 0;}
-.th-ftr{border-top:1px dashed #000;margin-top:5px;padding-top:3px;font-size:calc(var(--tf,13px) - 3px);text-align:center;color:#555;}
+.thermal{font-family:"Courier New",Courier,monospace;font-size:var(--tf,18px);color:#000;background:#fff;width:100%;padding:10px 8px;}
+.th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:6px;margin-bottom:6px;}
+.th-tit{font-size:calc(var(--tf,18px) + 4px);font-weight:bold;}
+.th-suc{font-size:calc(var(--tf,18px));margin-top:2px;}
+.th-meta{font-size:calc(var(--tf,18px) - 2px);margin-top:3px;display:flex;justify-content:space-between;}
+.th-rut{font-size:calc(var(--tf,18px) + 2px);font-weight:bold;margin-top:5px;}
+.th-sec{margin-top:5px;}
+.th-sec-t{font-weight:bold;font-size:var(--tf,18px);text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:3px;}
+.th-cols{display:flex;font-size:calc(var(--tf,18px) - 3px);font-weight:bold;border-bottom:1px solid #ccc;padding-bottom:2px;margin-bottom:2px;}
+.th-cols .cp{flex:1;}.th-cols .ct,.th-cols .cpz{width:38px;text-align:right;}
+.th-tbl{width:100%;border-collapse:collapse;font-size:var(--tf,18px);}
+.th-tbl td{padding:3px 2px;vertical-align:top;}
+.th-tbl td:nth-child(2),.th-tbl td:nth-child(3){text-align:right;width:38px;white-space:nowrap;}
+.th-eq{margin-top:5px;border-top:1px dashed #000;padding-top:4px;}
+.th-eq-t{font-size:calc(var(--tf,18px) - 2px);font-weight:bold;text-transform:uppercase;margin-bottom:2px;}
+.th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf,18px);padding:3px 0;}
+.th-ftr{border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:calc(var(--tf,18px) - 3px);text-align:center;color:#555;}
 /* Font size control widget */
 .font-ctrl{display:flex;align-items:center;gap:6px;background:#eef3fb;border:1.5px solid var(--borde);border-radius:7px;padding:7px 10px;}
 .font-ctrl label{font-size:.62rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
@@ -129,14 +129,27 @@ select:disabled{opacity:.35;}
 .font-ctrl span{font-size:.78rem;font-weight:700;color:var(--azul);width:30px;text-align:right;}
 @media print{
   body{background:#fff;}
-  .topbar,.tabs-bar,.sidebar,.maestro-layout,.preview-label,.card-footer{display:none!important;}
+  .topbar,.tabs-bar,.sidebar,.maestro-layout,.preview-label,.card-footer,.font-ctrl{display:none!important;}
   .tab-panel{display:block!important;}
   #tab-tickets{display:block!important;}
   .tickets-wrap{display:block;}
   .preview-main{padding:0;}
   .ticket-card{width:80mm;border:none;border-radius:0;box-shadow:none;page-break-after:always;break-after:page;}
   .ticket-card:last-child{page-break-after:avoid;break-after:avoid;}
-  .thermal{padding:3px 2px;}
+  /* PRINT: use the user-selected font size from --tf variable */
+  .thermal{padding:4px 3px;font-size:var(--tf,18px)!important;}
+  .th-tit{font-size:calc(var(--tf,18px) + 4px)!important;}
+  .th-suc{font-size:calc(var(--tf,18px))!important;}
+  .th-meta{font-size:calc(var(--tf,18px) - 2px)!important;}
+  .th-rut{font-size:calc(var(--tf,18px) + 2px)!important;}
+  .th-sec-t{font-size:var(--tf,18px)!important;}
+  .th-cols{font-size:calc(var(--tf,18px) - 3px)!important;}
+  .th-tbl{font-size:var(--tf,18px)!important;}
+  .th-eq-t{font-size:calc(var(--tf,18px) - 2px)!important;}
+  .th-eq-r{font-size:var(--tf,18px)!important;}
+  .th-ftr{font-size:calc(var(--tf,18px) - 3px)!important;}
+  .th-cols .ct,.th-cols .cpz{width:38px!important;}
+  .th-tbl td:nth-child(2),.th-tbl td:nth-child(3){width:38px!important;}
 }
 </style>
 </head>
@@ -177,8 +190,8 @@ select:disabled{opacity:.35;}
     <button class="btn btn-rojo" id="btn-print" style="display:none" onclick="window.print()">🖨 Imprimir Todos</button>
     <div class="font-ctrl">
       <label>Tamaño fuente</label>
-      <input type="range" id="font-slider" min="9" max="18" value="13" oninput="updateFontSize(this.value)">
-      <span id="font-val">13px</span>
+      <input type="range" id="font-slider" min="12" max="24" value="18" oninput="updateFontSize(this.value)">
+      <span id="font-val">18px</span>
     </div>
     <div class="maestro-status" id="maestro-status">📋 Usando orden del <strong>Ticket Maestro</strong></div>
     <button class="btn btn-ghost btn-sm" onclick="resetMaestro()" style="font-size:.7rem;margin-top:2px;">🗑 Borrar maestro guardado</button>
@@ -224,333 +237,92 @@ select:disabled{opacity:.35;}
 
 <script>
 const ITEM_CAT_MAP = {
-  "1182": "CAJA",
-  "150233": "PASTEL",
-  "150275": "CAJA",
-  "150379": "PASTEL",
-  "150582": "PASTEL",
-  "200185": "DULCE2",
-  "200277": "ESPECIALIDADES",
-  "200358": "CAJA",
-  "200384": "DULCE2",
-  "200385": "DULCE2",
-  "200426": "PASTEL",
-  "200518": "CAJA",
-  "200657": "CAJA",
-  "200699": "ESPECIALIDADES",
-  "200780": "PASTEL",
-  "200807": "ESPECIALIDADES",
-  "200852": "PASTEL",
-  "200927": "ESPECIALIDADES",
-  "200929": "ESPECIALIDADES",
-  "200933": "ESPECIALIDADES",
-  "200940": "PASTEL",
-  "201188": "ESPECIALIDADES",
-  "201192": "PANES",
-  "201313": "PASTEL",
-  "201373": "PASTEL",
-  "201420": "CAJA",
-  "201423": "CAJA",
-  "201528": "PASTEL",
-  "201529": "PASTEL",
-  "201617": "ESPECIALIDADES",
-  "201665": "PASTEL",
-  "201666": "PASTEL",
-  "201767": "CAJA",
-  "201823": "PASTEL",
-  "201849": "PASTEL",
-  "201850": "PASTEL",
-  "201940": "CAJA",
-  "202006": "CAJA",
-  "202067": "DULCE1",
-  "202097": "DULCE1",
-  "202113": "PASTEL",
-  "202138": "CAJA",
-  "202148": "CAJA",
-  "202183": "DULCE1",
-  "202248": "ESPECIALIDADES",
-  "202275": "PASTEL",
-  "202290": "PASTEL",
-  "202344": "ESPECIALIDADES",
-  "202399": "CAJA",
-  "202476": "DULCE2",
-  "202477": "DULCE2",
-  "202517": "DULCE2",
-  "202557": "ESPECIALIDADES",
-  "202575": "DULCE1",
-  "202576": "DULCE1",
-  "202596": "GALLETA",
-  "202615": "PASTEL",
-  "202619": "PASTEL",
-  "202636": "ESPECIALIDADES",
-  "202660": "CAJA",
-  "202749": "CAJA",
-  "202750": "PASTEL",
-  "202759": "DULCE2",
-  "202819": "CAJA",
-  "202838": "DULCE2",
-  "202926": "CAJA",
-  "202963": "CAJA",
-  "202972": "CAJA",
-  "202999": "CAJA",
-  "203000": "CAJA",
-  "203032": "DULCE2",
-  "203070": "DULCE2",
-  "203184": "DULCE2",
-  "203217": "CAJA",
-  "203219": "CAJA",
-  "203416": "CAJA",
-  "203528": "CAJA",
-  "203573": "DULCE2",
-  "203602": "PASTEL",
-  "203614": "DULCE2",
-  "203674": "ESPECIALIDADES",
-  "203713": "ESPECIALIDADES",
-  "203720": "ESPECIALIDADES",
-  "203724": "DULCE2",
-  "203758": "PASTEL",
-  "203787": "PASTEL",
-  "203790": "DULCE1",
-  "203808": "CAJA",
-  "203819": "PASTEL",
-  "203821": "PASTEL",
-  "203823": "DULCE1",
-  "203824": "DULCE1",
-  "203825": "DULCE1",
-  "203851": "CAJA",
-  "203908": "CAJA",
-  "203944": "PASTEL",
-  "203969": "ESPECIALIDADES",
-  "203986": "DULCE2",
-  "204014": "DULCE2",
-  "204027": "ESPECIALIDADES",
-  "204029": "DULCE2",
-  "204031": "CAJA",
-  "204052": "PASTEL",
-  "204055": "CAJA",
-  "204058": "DULCE1",
-  "204066": "ESPECIALIDADES",
-  "204069": "PANES",
-  "204080": "ESPECIALIDADES",
-  "204083": "ESPECIALIDADES",
-  "204084": "PASTEL",
-  "204089": "CAJA",
-  "204138": "CAJA",
-  "204148": "DULCE2",
-  "204156": "DULCE2",
-  "204158": "PASTEL",
-  "204165": "DULCE1",
-  "204180": "PASTEL",
-  "204205": "ESPECIALIDADES",
-  "204228": "DULCE2",
-  "204234": "PASTEL",
-  "204241": "DULCE2",
-  "204246": "ESPECIALIDADES",
-  "204257": "ESPECIALIDADES",
-  "204258": "ESPECIALIDADES",
-  "204285": "DULCE2",
-  "204287": "PASTEL",
-  "204289": "PASTEL",
-  "204294": "PASTEL",
-  "204356": "PASTEL",
-  "204367": "TR",
-  "204375": "ESPECIALIDADES",
-  "204376": "TR",
-  "204377": "CAJA",
-  "204379": "DULCE2",
-  "204386": "CAJA",
-  "204407": "ESPECIALIDADES",
-  "204408": "ESPECIALIDADES",
-  "204433": "PASTEL",
-  "204535": "PASTEL",
-  "204537": "GALLETA",
-  "204553": "PASTEL",
-  "204565": "PASTEL",
-  "204566": "PASTEL",
-  "204576": "ESPECIALIDADES",
-  "204577": "ESPECIALIDADES",
-  "204607": "PASTEL",
-  "204610": "CAJA",
-  "204616": "PASTEL",
-  "204639": "PASTEL",
-  "204682": "ESPECIALIDADES",
-  "204699": "DULCE1",
-  "204731": "PASTEL",
-  "204755": "PASTEL",
-  "204756": "DULCE2",
-  "204757": "DULCE1",
-  "204772": "PASTEL",
-  "204775": "PANES",
-  "204778": "PASTEL",
-  "204779": "PASTEL",
-  "204780": "PASTEL",
-  "204798": "DULCE2",
-  "204845": "CAJA",
-  "204847": "PASTEL",
-  "204854": "DULCE2",
-  "204861": "PASTEL",
-  "204904": "DULCE2",
-  "204922": "PASTEL",
-  "204930": "PASTEL",
-  "204937": "PASTEL",
-  "204961": "PANES",
-  "204962": "PANES",
-  "204968": "ESPECIALIDADES",
-  "204969": "ESPECIALIDADES",
-  "204970": "ESPECIALIDADES",
-  "204973": "ESPECIALIDADES",
-  "204974": "ESPECIALIDADES",
-  "204983": "ESPECIALIDADES",
-  "204984": "ESPECIALIDADES",
-  "205013": "DULCE1",
-  "205021": "PANES",
-  "205028": "CAJA",
-  "205029": "CAJA",
-  "205065": "PASTEL",
-  "205106": "PASTEL",
-  "205123": "DULCE2",
-  "205124": "CAJA",
-  "205163": "PASTEL",
-  "205214": "GALLETA",
-  "205256": "PASTEL",
-  "205257": "PASTEL",
-  "205258": "PASTEL",
-  "205264": "PANES",
-  "205278": "PASTEL",
-  "205284": "PASTEL",
-  "205321": "DULCE2",
-  "205322": "DULCE1",
-  "205338": "DULCE2",
-  "205344": "DULCE2",
-  "205371": "PANES",
-  "205384": "PASTEL",
-  "30007": "DULCE2",
-  "31184": "DULCE2",
-  "31284": "DULCE1",
-  "31310": "CAJA",
-  "31690": "CAJA",
-  "35052": "PASTEL",
-  "35142": "ESPECIALIDADES",
-  "35145": "ESPECIALIDADES",
-  "35453": "PASTEL",
-  "35484": "PASTEL",
-  "35728": "PANES",
-  "36534": "DULCE2",
-  "36711": "DULCE2",
-  "37006": "DULCE2",
-  "37058": "PASTEL",
-  "37131": "ESPECIALIDADES",
-  "37135": "ESPECIALIDADES",
-  "37358": "PASTEL",
-  "37427": "CAJA",
-  "38086": "PANES",
-  "39140": "DULCE2",
-  "39374": "ESPECIALIDADES",
-  "412": "PASTEL",
-  "41843": "CAJA",
-  "43005": "PANES",
-  "43006": "ESPECIALIDADES",
-  "43023": "DULCE2",
-  "43059": "ESPECIALIDADES",
-  "43060": "DULCE2",
-  "43064": "DULCE2",
-  "43065": "PASTEL",
-  "43068": "PASTEL",
-  "43069": "PASTEL",
-  "43084": "DULCE2",
-  "43118": "DULCE2",
-  "43134": "PANES",
-  "43156": "DULCE2",
-  "43161": "ESPECIALIDADES",
-  "43169": "DULCE2",
-  "43173": "ESPECIALIDADES",
-  "43175": "ESPECIALIDADES",
-  "43185": "ESPECIALIDADES",
-  "43186": "ESPECIALIDADES",
-  "43187": "ESPECIALIDADES",
-  "43188": "PANES",
-  "43189": "ESPECIALIDADES",
-  "43190": "PANES",
-  "43195": "PANES",
-  "43201": "DULCE2",
-  "43202": "DULCE2",
-  "43206": "DULCE1",
-  "43207": "DULCE1",
-  "43215": "PASTEL",
-  "43223": "ESPECIALIDADES",
-  "43230": "GALLETA",
-  "43231": "ESPECIALIDADES",
-  "43285": "PASTEL",
-  "43305": "DULCE2",
-  "43307": "PASTEL",
-  "43316": "DULCE2",
-  "43336": "ESPECIALIDADES",
-  "43342": "DULCE2",
-  "43345": "ESPECIALIDADES",
-  "44829": "ESPECIALIDADES",
-  "44950": "DULCE1",
-  "45496": "PASTEL",
-  "47332": "ESPECIALIDADES",
-  "4767": "CAJA",
-  "47886": "PASTEL",
-  "48135": "ESPECIALIDADES",
-  "48136": "ESPECIALIDADES",
-  "48345": "ESPECIALIDADES",
-  "48373": "ESPECIALIDADES",
-  "48557": "ESPECIALIDADES",
-  "48598": "DULCE1",
-  "49950": "CAJA",
-  "9098": "CAJA",
-  "991182": "CAJA",
-  "99205065": "PASTEL",
-  "9935484": "PASTEL",
-  "9936610": "PASTEL",
-  "9937427": "CAJA",
-  "9938086": "PANES",
-  "9939140": "DULCE2",
-  "9941843": "CAJA",
-  "9943169": "DULCE2",
-  "9943201": "DULCE2",
-  "9943215": "PASTEL",
-  "9943285": "PASTEL",
-  "9944829": "ESPECIALIDADES"
+  "1182": "CAJA","150233": "PASTEL","150275": "CAJA","150379": "PASTEL","150582": "PASTEL",
+  "200185": "DULCE2","200277": "ESPECIALIDADES","200358": "CAJA","200384": "DULCE2","200385": "DULCE2",
+  "200426": "PASTEL","200518": "CAJA","200657": "CAJA","200699": "ESPECIALIDADES","200780": "PASTEL",
+  "200807": "ESPECIALIDADES","200852": "PASTEL","200927": "ESPECIALIDADES","200929": "ESPECIALIDADES",
+  "200933": "ESPECIALIDADES","200940": "PASTEL","201188": "ESPECIALIDADES","201192": "PANES",
+  "201313": "PASTEL","201373": "PASTEL","201420": "CAJA","201423": "CAJA","201528": "PASTEL",
+  "201529": "PASTEL","201617": "ESPECIALIDADES","201665": "PASTEL","201666": "PASTEL","201767": "CAJA",
+  "201823": "PASTEL","201849": "PASTEL","201850": "PASTEL","201940": "CAJA","202006": "CAJA",
+  "202067": "DULCE1","202097": "DULCE1","202113": "PASTEL","202138": "CAJA","202148": "CAJA",
+  "202183": "DULCE1","202248": "ESPECIALIDADES","202275": "PASTEL","202290": "PASTEL",
+  "202344": "ESPECIALIDADES","202399": "CAJA","202476": "DULCE2","202477": "DULCE2","202517": "DULCE2",
+  "202557": "ESPECIALIDADES","202575": "DULCE1","202576": "DULCE1","202596": "GALLETA","202615": "PASTEL",
+  "202619": "PASTEL","202636": "ESPECIALIDADES","202660": "CAJA","202749": "CAJA","202750": "PASTEL",
+  "202759": "DULCE2","202819": "CAJA","202838": "DULCE2","202926": "CAJA","202963": "CAJA",
+  "202972": "CAJA","202999": "CAJA","203000": "CAJA","203032": "DULCE2","203070": "DULCE2",
+  "203184": "DULCE2","203217": "CAJA","203219": "CAJA","203416": "CAJA","203528": "CAJA",
+  "203573": "DULCE2","203602": "PASTEL","203614": "DULCE2","203674": "ESPECIALIDADES",
+  "203713": "ESPECIALIDADES","203720": "ESPECIALIDADES","203724": "DULCE2","203758": "PASTEL",
+  "203787": "PASTEL","203790": "DULCE1","203808": "CAJA","203819": "PASTEL","203821": "PASTEL",
+  "203823": "DULCE1","203824": "DULCE1","203825": "DULCE1","203851": "CAJA","203908": "CAJA",
+  "203944": "PASTEL","203969": "ESPECIALIDADES","203986": "DULCE2","204014": "DULCE2",
+  "204027": "ESPECIALIDADES","204029": "DULCE2","204031": "CAJA","204052": "PASTEL","204055": "CAJA",
+  "204058": "DULCE1","204066": "ESPECIALIDADES","204069": "PANES","204080": "ESPECIALIDADES",
+  "204083": "ESPECIALIDADES","204084": "PASTEL","204089": "CAJA","204138": "CAJA","204148": "DULCE2",
+  "204156": "DULCE2","204158": "PASTEL","204165": "DULCE1","204180": "PASTEL","204205": "ESPECIALIDADES",
+  "204228": "DULCE2","204234": "PASTEL","204241": "DULCE2","204246": "ESPECIALIDADES",
+  "204257": "ESPECIALIDADES","204258": "ESPECIALIDADES","204285": "DULCE2","204287": "PASTEL",
+  "204289": "PASTEL","204294": "PASTEL","204356": "PASTEL","204367": "TR","204375": "ESPECIALIDADES",
+  "204376": "TR","204377": "CAJA","204379": "DULCE2","204386": "CAJA","204407": "ESPECIALIDADES",
+  "204408": "ESPECIALIDADES","204433": "PASTEL","204535": "PASTEL","204537": "GALLETA","204553": "PASTEL",
+  "204565": "PASTEL","204566": "PASTEL","204576": "ESPECIALIDADES","204577": "ESPECIALIDADES",
+  "204607": "PASTEL","204610": "CAJA","204616": "PASTEL","204639": "PASTEL","204682": "ESPECIALIDADES",
+  "204699": "DULCE1","204731": "PASTEL","204755": "PASTEL","204756": "DULCE2","204757": "DULCE1",
+  "204772": "PASTEL","204775": "PANES","204778": "PASTEL","204779": "PASTEL","204780": "PASTEL",
+  "204798": "DULCE2","204845": "CAJA","204847": "PASTEL","204854": "DULCE2","204861": "PASTEL",
+  "204904": "DULCE2","204922": "PASTEL","204930": "PASTEL","204937": "PASTEL","204961": "PANES",
+  "204962": "PANES","204968": "ESPECIALIDADES","204969": "ESPECIALIDADES","204970": "ESPECIALIDADES",
+  "204973": "ESPECIALIDADES","204974": "ESPECIALIDADES","204983": "ESPECIALIDADES","204984": "ESPECIALIDADES",
+  "205013": "DULCE1","205021": "PANES","205028": "CAJA","205029": "CAJA","205065": "PASTEL",
+  "205106": "PASTEL","205123": "DULCE2","205124": "CAJA","205163": "PASTEL","205214": "GALLETA",
+  "205256": "PASTEL","205257": "PASTEL","205258": "PASTEL","205264": "PANES","205278": "PASTEL",
+  "205284": "PASTEL","205321": "DULCE2","205322": "DULCE1","205338": "DULCE2","205344": "DULCE2",
+  "205371": "PANES","205384": "PASTEL","30007": "DULCE2","31184": "DULCE2","31284": "DULCE1",
+  "31310": "CAJA","31690": "CAJA","35052": "PASTEL","35142": "ESPECIALIDADES","35145": "ESPECIALIDADES",
+  "35453": "PASTEL","35484": "PASTEL","35728": "PANES","36534": "DULCE2","36711": "DULCE2",
+  "37006": "DULCE2","37058": "PASTEL","37131": "ESPECIALIDADES","37135": "ESPECIALIDADES","37358": "PASTEL",
+  "37427": "CAJA","38086": "PANES","39140": "DULCE2","39374": "ESPECIALIDADES","412": "PASTEL",
+  "41843": "CAJA","43005": "PANES","43006": "ESPECIALIDADES","43023": "DULCE2","43059": "ESPECIALIDADES",
+  "43060": "DULCE2","43064": "DULCE2","43065": "PASTEL","43068": "PASTEL","43069": "PASTEL",
+  "43084": "DULCE2","43118": "DULCE2","43134": "PANES","43156": "DULCE2","43161": "ESPECIALIDADES",
+  "43169": "DULCE2","43173": "ESPECIALIDADES","43175": "ESPECIALIDADES","43185": "ESPECIALIDADES",
+  "43186": "ESPECIALIDADES","43187": "ESPECIALIDADES","43188": "PANES","43189": "ESPECIALIDADES",
+  "43190": "PANES","43195": "PANES","43201": "DULCE2","43202": "DULCE2","43206": "DULCE1",
+  "43207": "DULCE1","43215": "PASTEL","43223": "ESPECIALIDADES","43230": "GALLETA","43231": "ESPECIALIDADES",
+  "43285": "PASTEL","43305": "DULCE2","43307": "PASTEL","43316": "DULCE2","43336": "ESPECIALIDADES",
+  "43342": "DULCE2","43345": "ESPECIALIDADES","44829": "ESPECIALIDADES","44950": "DULCE1","45496": "PASTEL",
+  "47332": "ESPECIALIDADES","4767": "CAJA","47886": "PASTEL","48135": "ESPECIALIDADES","48136": "ESPECIALIDADES",
+  "48345": "ESPECIALIDADES","48373": "ESPECIALIDADES","48557": "ESPECIALIDADES","48598": "DULCE1",
+  "49950": "CAJA","9098": "CAJA","991182": "CAJA","99205065": "PASTEL","9935484": "PASTEL",
+  "9936610": "PASTEL","9937427": "CAJA","9938086": "PANES","9939140": "DULCE2","9941843": "CAJA",
+  "9943169": "DULCE2","9943201": "DULCE2","9943215": "PASTEL","9943285": "PASTEL","9944829": "ESPECIALIDADES"
 };
 
-/* ══ ESTADO ══ */
 let allData = [];
-let maestro = [];  // [{cat, items:[{nombre,item,custom}]}]
+let maestro = [];
 let dragSrc = null, dragSrcBlock = null;
 const STORAGE_KEY = 'bimbo_maestro_v3';
-
-// Orden oficial de categorías del catálogo
 const CATS_ORDER = ['DULCE1','DULCE2','TR','PASTEL','GALLETA','PANES','ESPECIALIDADES','CAJA'];
 const CATS_LABELS = {
-  'DULCE1': 'DULCE 1 — BIM Flow',
-  'DULCE2': 'DULCE 2 — BIM Otros',
-  'TR': 'TR — TÍA ROSA',
-  'PASTEL': 'PASTEL — MLA/WON',
-  'GALLETA': 'GALLETA',
-  'PANES': 'PANES',
-  'ESPECIALIDADES': 'ESPECIALIDADES',
-  'CAJA': 'CAJA'
+  'DULCE1': 'DULCE 1 — BIM Flow','DULCE2': 'DULCE 2 — BIM Otros','TR': 'TR — TÍA ROSA',
+  'PASTEL': 'PASTEL — MLA/WON','GALLETA': 'GALLETA','PANES': 'PANES',
+  'ESPECIALIDADES': 'ESPECIALIDADES','CAJA': 'CAJA'
 };
 
 document.getElementById('f-hora').value = new Date().toTimeString().slice(0,5);
 
-/* ══ CLASIFICAR por Item# usando el catálogo oficial ══ */
 function categorizarItem(itemNum, nombre) {
   const num = String(itemNum).replace(/[^0-9]/g,'');
   if (ITEM_CAT_MAP[num]) return ITEM_CAT_MAP[num];
-  // Fallback por nombre (algunos items de promo no están en el mapa)
   if (/Prom|Prom/i.test(nombre)) {
-    // Try the base number (promo items start with 99)
     const baseNum = num.replace(/^99/,'');
     if (ITEM_CAT_MAP[baseNum]) return ITEM_CAT_MAP[baseNum];
   }
   return 'OTROS';
 }
 
-/* ══ PERSISTENCIA ══ */
 function guardarMaestro() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(maestro)); setPill('💾 Maestro guardado', true); }
   catch(e) { alert('No se pudo guardar.'); }
@@ -575,7 +347,6 @@ function setPill(msg, ok) {
   p.className = 'save-pill' + (ok?' ok':'');
 }
 
-/* ══ TABS ══ */
 function showTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -584,7 +355,6 @@ function showTab(id) {
   if (id==='maestro') renderMaestro();
 }
 
-/* ══ UPLOAD ══ */
 function triggerUpload() {
   if (!document.getElementById('upload-zone').classList.contains('loaded'))
     document.getElementById('file-input').click();
@@ -645,16 +415,12 @@ function actualizarBadge(){
 }
 function fmtF(iso){if(!iso)return'';const[y,m,d]=iso.split('-');return d+'/'+m+'/'+y;}
 
-/* ══ FUSIONAR EXCEL EN MAESTRO ══ */
 function fusionarExcelEnMaestro() {
-  // Recolectar todos los productos únicos del Excel con su Item#
-  const prodsExcel = new Map(); // nombre -> item#
+  const prodsExcel = new Map();
   allData.filter(r=>r['Contenedor']&&r['Producto']).forEach(r=>{
     if (!prodsExcel.has(r['Producto'])) prodsExcel.set(r['Producto'], r['Item']||'');
   });
-
   if (!maestro.length) {
-    // Construir desde cero usando categorías del catálogo oficial
     const catMap = {};
     CATS_ORDER.forEach(c => catMap[c]=[]);
     prodsExcel.forEach((item,nom) => {
@@ -663,12 +429,10 @@ function fusionarExcelEnMaestro() {
       catMap[cat].push({nombre:nom, item:item, custom:false});
     });
     maestro = CATS_ORDER.map(cat=>({cat, items:catMap[cat]||[]})).filter(c=>c.items.length>0);
-    // Agregar categorías desconocidas
     Object.keys(catMap).filter(c=>!CATS_ORDER.includes(c)&&catMap[c].length).forEach(cat=>{
       maestro.push({cat, items:catMap[cat]});
     });
   } else {
-    // Agregar solo productos nuevos
     const yaReg = new Set(maestro.flatMap(c=>c.items.map(i=>i.nombre)));
     prodsExcel.forEach((item,nom) => {
       if (yaReg.has(nom)) return;
@@ -680,7 +444,6 @@ function fusionarExcelEnMaestro() {
   }
 }
 
-/* ══ GENERAR TICKETS ══ */
 function generarTodos() {
   const fecha=document.getElementById('sel-fecha').value;
   const ini=parseInt(document.getElementById('sel-ini').value);
@@ -708,7 +471,6 @@ function generarTodos() {
   if(!wrap.children.length) wrap.innerHTML='<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
 }
 
-/* ══ TICKET DE UNA RUTA (hereda orden del maestro) ══ */
 function buildTicketRuta(ruta, fecha, sucursal, folio, hora) {
   const qtyMap={};
   allData.filter(r=>r['Ruta']==ruta&&r['Fecha']&&r['Fecha'].toString().startsWith(fecha)&&r['Contenedor'])
@@ -739,13 +501,34 @@ function buildTicketRuta(ruta, fecha, sucursal, folio, hora) {
 }
 
 function imprimirUno(btn){
+  const tf = document.getElementById('font-slider').value + 'px';
   const html=btn.closest('.ticket-card').querySelector('.thermal').outerHTML;
-  const w=window.open('','_blank','width=420,height=720');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Courier New',monospace;font-size:10px;width:80mm;padding:3px;}.thermal{width:100%;}.th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;}.th-tit{font-size:12px;font-weight:bold;}.th-suc{font-size:9px;}.th-meta{font-size:8px;display:flex;justify-content:space-between;margin-top:2px;}.th-rut{font-size:11px;font-weight:bold;margin-top:3px;}.th-sec{margin-top:3px;}.th-sec-t{font-weight:bold;font-size:9px;text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:1px 0;margin-bottom:1px;}.th-cols{display:flex;font-size:7px;font-weight:bold;border-bottom:1px solid #ccc;}.cp{flex:1;}.ct,.cpz{width:24px;text-align:right;}table{width:100%;border-collapse:collapse;font-size:9px;}td{padding:1px;vertical-align:top;}td:nth-child(2),td:nth-child(3){text-align:right;width:24px;}.th-eq{margin-top:3px;border-top:1px dashed #000;padding-top:2px;}.th-eq-t{font-size:8px;font-weight:bold;text-transform:uppercase;}.th-eq-r{display:flex;justify-content:space-between;font-size:9px;}.th-ftr{border-top:1px dashed #000;margin-top:4px;padding-top:2px;font-size:8px;text-align:center;}</style></head><body>${html}</body></html>`);
+  const w=window.open('','_blank','width=500,height=820');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    :root{--tf:${tf};}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Courier New',monospace;width:80mm;padding:4px;}
+    .thermal{width:100%;font-family:'Courier New',monospace;font-size:var(--tf);color:#000;}
+    .th-hdr{text-align:center;border-bottom:1px dashed #000;padding-bottom:5px;margin-bottom:5px;}
+    .th-tit{font-size:calc(var(--tf) + 4px);font-weight:bold;}
+    .th-suc{font-size:var(--tf);}
+    .th-meta{font-size:calc(var(--tf) - 2px);display:flex;justify-content:space-between;margin-top:3px;}
+    .th-rut{font-size:calc(var(--tf) + 2px);font-weight:bold;margin-top:4px;}
+    .th-sec{margin-top:4px;}
+    .th-sec-t{font-weight:bold;font-size:var(--tf);text-transform:uppercase;border-top:1px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:2px;}
+    .th-cols{display:flex;font-size:calc(var(--tf) - 3px);font-weight:bold;border-bottom:1px solid #ccc;}
+    .cp{flex:1;}.ct,.cpz{width:38px;text-align:right;}
+    table{width:100%;border-collapse:collapse;font-size:var(--tf);}
+    td{padding:3px 2px;vertical-align:top;}
+    td:nth-child(2),td:nth-child(3){text-align:right;width:38px;}
+    .th-eq{margin-top:4px;border-top:1px dashed #000;padding-top:3px;}
+    .th-eq-t{font-size:calc(var(--tf) - 2px);font-weight:bold;text-transform:uppercase;}
+    .th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf);padding:3px 0;}
+    .th-ftr{border-top:1px dashed #000;margin-top:5px;padding-top:3px;font-size:calc(var(--tf) - 3px);text-align:center;}
+  </style></head><body>${html}</body></html>`);
   w.document.close();w.focus();setTimeout(()=>{w.print();w.close();},350);
 }
 
-/* ══ EDITOR DEL MAESTRO ══ */
 function renderMaestro() {
   const c=document.getElementById('maestro-cat-container');
   if(!maestro.length){
@@ -762,14 +545,12 @@ function renderMaestro() {
 function makeCatBlock(catObj, ci) {
   const block=document.createElement('div');
   block.className='cat-block'; block.draggable=true; block.dataset.ci=ci;
-  const label = CATS_LABELS[catObj.cat] || catObj.cat;
   block.innerHTML='<div class="cat-head"><span class="cat-drag">⠿</span><input class="cat-name-inp" value="'+catObj.cat+'" placeholder="Nombre..." onchange="maestro['+ci+'].cat=this.value;renderMaestroPreview();"><span class="cat-count">'+catObj.items.length+' productos</span><div class="cat-acts"><button onclick="moverCat('+ci+',-1)">▲</button><button onclick="moverCat('+ci+',1)">▼</button><button class="del" onclick="eliminarCat('+ci+')">✕</button></div></div><div class="sort-list" id="sl-'+ci+'" data-ci="'+ci+'"></div><div class="add-row"><input class="inp-n" type="text" placeholder="Agregar producto..." id="an-'+ci+'"><button onclick="agregarItem('+ci+')">+ Agregar</button></div>';
   const list=block.querySelector('#sl-'+ci);
   catObj.items.forEach((it,ii)=>list.appendChild(makeItemEl(it,ci,ii)));
   list.addEventListener('dragover',e=>{
     e.preventDefault();e.stopPropagation();
     if(!dragSrc||dragSrc.classList.contains('cat-block'))return;
-    // Accept items from ANY category (cross-category move)
     list.style.background='#dbeafe';
     const after=getDragAfter(list,e.clientY);
     if(after==null)list.appendChild(dragSrc);
@@ -811,9 +592,7 @@ function getDragAfter(container,y){
 
 function syncFromDOM(){
   const blocks=[...document.querySelectorAll('#maestro-cat-container .cat-block')];
-  // Read current state from DOM — items may have moved between categories
   const newMaestro=blocks.map(block=>{
-    const ci=parseInt(block.dataset.ci);
     const catNom=block.querySelector('.cat-name-inp').value;
     const items=[];
     block.querySelectorAll('.sort-item').forEach(el=>{
@@ -833,11 +612,9 @@ function eliminarCat(ci){if(!confirm('¿Eliminar categoría "'+maestro[ci].cat+'
 function agregarCategoria(){const nom=document.getElementById('new-cat-input').value.trim().toUpperCase();if(!nom)return;maestro.push({cat:nom,items:[]});document.getElementById('new-cat-input').value='';renderMaestro();}
 
 function renderMaestroPreview(){
-  let body='';
-  let total=0;
+  let body='';let total=0;
   maestro.forEach(({cat,items})=>{
-    if(!items.length)return;
-    total+=items.length;
+    if(!items.length)return;total+=items.length;
     body+='<div class="th-sec"><div class="th-sec-t">'+cat+' ('+items.length+')</div>';
     body+='<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
     body+='<table class="th-tbl">';
@@ -849,21 +626,18 @@ function renderMaestroPreview(){
 
 function aplicarYGenerar(){guardarMaestro();showTab('tickets');if(allData.length&&document.getElementById('sel-fecha').value)setTimeout(generarTodos,120);}
 
-/* Drag & drop upload */
 const uz=document.getElementById('upload-zone');
 uz.addEventListener('dragover',e=>{e.preventDefault();uz.style.borderColor='var(--azul)';});
 uz.addEventListener('dragleave',()=>{uz.style.borderColor='';});
 uz.addEventListener('drop',e=>{e.preventDefault();uz.style.borderColor='';const f=e.dataTransfer.files[0];if(!f)return;const dt=new DataTransfer();dt.items.add(f);document.getElementById('file-input').files=dt.files;document.getElementById('file-input').dispatchEvent(new Event('change'));});
 
-/* Font size control */
 function updateFontSize(val) {
   document.documentElement.style.setProperty('--tf', val+'px');
   document.getElementById('font-val').textContent = val+'px';
 }
-// Init default
-updateFontSize(13);
+// Init default 18px (más grande)
+updateFontSize(18);
 
-/* Cargar maestro al iniciar */
 if(cargarMaestroGuardado()&&maestro.length){setPill('💾 Maestro activo',true);document.getElementById('maestro-status').style.display='block';}
 </script>
 </body>
