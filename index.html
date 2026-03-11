@@ -330,15 +330,6 @@ select:disabled{opacity:.35;}
         <button class="btn btn-verde" onclick="guardarMaestro()">💾 Guardar</button>
         <button class="btn btn-azul" onclick="aplicarYGenerar()">▶ Aplicar y Generar</button>
       </div>
-      <div style="margin-bottom:10px;background:#fffbeb;border:1px solid #f59e0b;border-radius:6px;padding:8px 10px;">
-        <div style="font-size:.62rem;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">📂 Catálogo de Productos</div>
-        <div style="font-size:.68rem;color:#78350f;margin-bottom:6px;">Sube el archivo <strong>LINEAS_BIMBO.xlsx</strong> para obtener nombres y categorías oficiales.</div>
-        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:#f59e0b;color:#fff;font-size:.68rem;font-weight:700;padding:5px 10px;border-radius:5px;">
-          📁 Subir catálogo .xlsx
-          <input type="file" id="cat-file-input" accept=".xlsx" style="display:none;" onchange="cargarCatalogo(this)">
-        </label>
-        <span id="cat-status" style="font-size:.65rem;color:#92400e;margin-left:8px;"></span>
-      </div>
       <div id="maestro-cat-container">
         <div class="placeholder" style="padding:24px 10px;font-size:.74rem;">Carga un archivo OLA desde Tickets para poblar el maestro.</div>
       </div>
@@ -385,9 +376,69 @@ select:disabled{opacity:.35;}
 /* ═══════════════════════════════════════════════
    CATÁLOGO ITEM → CATEGORÍA
 ═══════════════════════════════════════════════ */
-const ITEM_CAT_MAP={};
-const ITEM_NAME_MAP={};
-
+const ITEM_CAT_MAP = {
+  "1182":"CAJA","150233":"PASTEL","150275":"CAJA","150379":"PASTEL","150582":"PASTEL",
+  "200185":"DULCE2","200277":"ESPECIALIDADES","200358":"CAJA","200384":"DULCE2","200385":"DULCE2",
+  "200426":"PASTEL","200518":"CAJA","200657":"CAJA","200699":"ESPECIALIDADES","200780":"PASTEL",
+  "200807":"ESPECIALIDADES","200852":"PASTEL","200927":"ESPECIALIDADES","200929":"ESPECIALIDADES",
+  "200933":"ESPECIALIDADES","200940":"PASTEL","201188":"ESPECIALIDADES","201192":"PANES",
+  "201313":"PASTEL","201373":"PASTEL","201420":"CAJA","201423":"CAJA","201528":"PASTEL",
+  "201529":"PASTEL","201617":"ESPECIALIDADES","201665":"PASTEL","201666":"PASTEL","201767":"CAJA",
+  "201823":"PASTEL","201849":"PASTEL","201850":"PASTEL","201940":"CAJA","202006":"CAJA",
+  "202067":"DULCE1","202097":"DULCE1","202113":"PASTEL","202138":"CAJA","202148":"CAJA",
+  "202183":"DULCE1","202248":"ESPECIALIDADES","202275":"PASTEL","202290":"PASTEL",
+  "202344":"ESPECIALIDADES","202399":"CAJA","202476":"DULCE2","202477":"DULCE2","202517":"DULCE2",
+  "202557":"ESPECIALIDADES","202575":"DULCE1","202576":"DULCE1","202596":"GALLETA","202615":"PASTEL",
+  "202619":"PASTEL","202636":"ESPECIALIDADES","202660":"CAJA","202749":"CAJA","202750":"PASTEL",
+  "202759":"DULCE2","202819":"CAJA","202838":"DULCE2","202926":"CAJA","202963":"CAJA",
+  "202972":"CAJA","202999":"CAJA","203000":"CAJA","203032":"DULCE2","203070":"DULCE2",
+  "203184":"DULCE2","203217":"CAJA","203219":"CAJA","203416":"CAJA","203528":"CAJA",
+  "203573":"DULCE2","203602":"PASTEL","203614":"DULCE2","203674":"ESPECIALIDADES",
+  "203713":"ESPECIALIDADES","203720":"ESPECIALIDADES","203724":"DULCE2","203758":"PASTEL",
+  "203787":"PASTEL","203790":"DULCE1","203808":"CAJA","203819":"PASTEL","203821":"PASTEL",
+  "203823":"DULCE1","203824":"DULCE1","203825":"DULCE1","203851":"CAJA","203908":"CAJA",
+  "203944":"PASTEL","203969":"ESPECIALIDADES","203986":"DULCE2","204014":"DULCE2",
+  "204027":"ESPECIALIDADES","204029":"DULCE2","204031":"CAJA","204052":"PASTEL","204055":"CAJA",
+  "204058":"DULCE1","204066":"ESPECIALIDADES","204069":"PANES","204080":"ESPECIALIDADES",
+  "204083":"ESPECIALIDADES","204084":"PASTEL","204089":"CAJA","204138":"CAJA","204148":"DULCE2",
+  "204156":"DULCE2","204158":"PASTEL","204165":"DULCE1","204180":"PASTEL","204205":"ESPECIALIDADES",
+  "204228":"DULCE2","204234":"PASTEL","204241":"DULCE2","204246":"ESPECIALIDADES",
+  "204257":"ESPECIALIDADES","204258":"ESPECIALIDADES","204285":"DULCE2","204287":"PASTEL",
+  "204289":"PASTEL","204294":"PASTEL","204356":"PASTEL","204367":"TR","204375":"ESPECIALIDADES",
+  "204376":"TR","204377":"CAJA","204379":"DULCE2","204386":"CAJA","204407":"ESPECIALIDADES",
+  "204408":"ESPECIALIDADES","204433":"PASTEL","204535":"PASTEL","204537":"GALLETA","204553":"PASTEL",
+  "204565":"PASTEL","204566":"PASTEL","204576":"ESPECIALIDADES","204577":"ESPECIALIDADES",
+  "204607":"PASTEL","204610":"CAJA","204616":"PASTEL","204639":"PASTEL","204682":"ESPECIALIDADES",
+  "204699":"DULCE1","204731":"PASTEL","204755":"PASTEL","204756":"DULCE2","204757":"DULCE1",
+  "204772":"PASTEL","204775":"PANES","204778":"PASTEL","204779":"PASTEL","204780":"PASTEL",
+  "204798":"DULCE2","204845":"CAJA","204847":"PASTEL","204854":"DULCE2","204861":"PASTEL",
+  "204904":"DULCE2","204922":"PASTEL","204930":"PASTEL","204937":"PASTEL","204961":"PANES",
+  "204962":"PANES","204968":"ESPECIALIDADES","204969":"ESPECIALIDADES","204970":"ESPECIALIDADES",
+  "204973":"ESPECIALIDADES","204974":"ESPECIALIDADES","204983":"ESPECIALIDADES","204984":"ESPECIALIDADES",
+  "205013":"DULCE1","205021":"PANES","205028":"CAJA","205029":"CAJA","205065":"PASTEL",
+  "205106":"PASTEL","205123":"DULCE2","205124":"CAJA","205163":"PASTEL","205214":"GALLETA",
+  "205256":"PASTEL","205257":"PASTEL","205258":"PASTEL","205264":"PANES","205278":"PASTEL",
+  "205284":"PASTEL","205321":"DULCE2","205322":"DULCE1","205338":"DULCE2","205344":"DULCE2",
+  "205371":"PANES","205384":"PASTEL","30007":"DULCE2","31184":"DULCE2","31284":"DULCE1",
+  "31310":"CAJA","31690":"CAJA","35052":"PASTEL","35142":"ESPECIALIDADES","35145":"ESPECIALIDADES",
+  "35453":"PASTEL","35484":"PASTEL","35728":"PANES","36534":"DULCE2","36711":"DULCE2",
+  "37006":"DULCE2","37058":"PASTEL","37131":"ESPECIALIDADES","37135":"ESPECIALIDADES","37358":"PASTEL",
+  "37427":"CAJA","38086":"PANES","39140":"DULCE2","39374":"ESPECIALIDADES","412":"PASTEL",
+  "41843":"CAJA","43005":"PANES","43006":"ESPECIALIDADES","43023":"DULCE2","43059":"ESPECIALIDADES",
+  "43060":"DULCE2","43064":"DULCE2","43065":"PASTEL","43068":"PASTEL","43069":"PASTEL",
+  "43084":"DULCE2","43118":"DULCE2","43134":"PANES","43156":"DULCE2","43161":"ESPECIALIDADES",
+  "43169":"DULCE2","43173":"ESPECIALIDADES","43175":"ESPECIALIDADES","43185":"ESPECIALIDADES",
+  "43186":"ESPECIALIDADES","43187":"ESPECIALIDADES","43188":"PANES","43189":"ESPECIALIDADES",
+  "43190":"PANES","43195":"PANES","43201":"DULCE2","43202":"DULCE2","43206":"DULCE1",
+  "43207":"DULCE1","43215":"PASTEL","43223":"ESPECIALIDADES","43230":"GALLETA","43231":"ESPECIALIDADES",
+  "43285":"PASTEL","43305":"DULCE2","43307":"PASTEL","43316":"DULCE2","43336":"ESPECIALIDADES",
+  "43342":"DULCE2","43345":"ESPECIALIDADES","44829":"ESPECIALIDADES","44950":"DULCE1","45496":"PASTEL",
+  "47332":"ESPECIALIDADES","4767":"CAJA","47886":"PASTEL","48135":"ESPECIALIDADES","48136":"ESPECIALIDADES",
+  "48345":"ESPECIALIDADES","48373":"ESPECIALIDADES","48557":"ESPECIALIDADES","48598":"DULCE1",
+  "49950":"CAJA","9098":"CAJA","991182":"CAJA","99205065":"PASTEL","9935484":"PASTEL",
+  "9936610":"PASTEL","9937427":"CAJA","9938086":"PANES","9939140":"DULCE2","9941843":"CAJA",
+  "9943169":"DULCE2","9943201":"DULCE2","9943215":"PASTEL","9943285":"PASTEL","9944829":"ESPECIALIDADES"
+};
 
 const CATS_ORDER = ['DULCE1','DULCE2','TR','PASTEL','GALLETA','PANES','ESPECIALIDADES','CAJA'];
 const STORAGE_KEY = 'bimbo_maestro_v4';
@@ -441,53 +492,6 @@ function showTab(id) {
 function guardarMaestro() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(maestro)); setPill('💾 Maestro guardado', true); }
   catch(e) { alert('No se pudo guardar.'); }
-}
-
-/* ═══════ CARGAR CATÁLOGO LINEAS_BIMBO ═══════ */
-function cargarCatalogo(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const st = document.getElementById('cat-status');
-  st.textContent = '⏳ Leyendo...';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const wb = XLSX.read(e.target.result, {type:'array'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
-      const lineaCat = {
-        'DULCE':'DULCE1','TRL':'TR','GALLETA':'GALLETA','PASTEL':'PASTEL',
-        'PANES':'PANES','AS':'ESPECIALIDADES','4T':'CAJA'
-      };
-      let count = 0;
-      rows.forEach(row => {
-        const item = String(row['ITEM']||row['Item']||'').trim();
-        const linea = String(row['LINEA']||row['Linea']||'').trim().toUpperCase();
-        const prod  = String(row['PRODUCTO']||row['Producto']||'').trim();
-        if (!item || !prod) return;
-        const cat = lineaCat[linea] || linea;
-        ITEM_CAT_MAP[item]  = cat;
-        ITEM_NAME_MAP[item] = prod;
-        count++;
-      });
-      st.textContent = '✅ ' + count + ' productos cargados';
-      // Si ya hay maestro cargado, actualizamos nombres
-      if (maestro.length) {
-        maestro.forEach(catObj => {
-          catObj.items.forEach(it => {
-            const key = String(it.item).trim();
-            if (!it.custom && ITEM_NAME_MAP[key]) it.nombre = ITEM_NAME_MAP[key];
-          });
-        });
-        renderMaestro();
-      }
-      // Si hay datos OLA, regenerar maestro con nuevos nombres
-      if (allData.length) fusionarExcelEnMaestro();
-    } catch(err) {
-      st.textContent = '❌ Error: ' + err.message;
-    }
-  };
-  reader.readAsArrayBuffer(file);
 }
 function cargarMaestroGuardado() {
   try { const r = localStorage.getItem(STORAGE_KEY); if (r) { maestro = JSON.parse(r); return true; } }
@@ -606,22 +610,20 @@ function fusionarExcelEnMaestro() {
     prodsExcel.forEach((item, nom) => {
       const cat = categorizarItem(item, nom);
       if (!catMap[cat]) catMap[cat] = [];
-      const nomOficial = ITEM_NAME_MAP[String(item).trim()] || nom;
-      catMap[cat].push({nombre:nomOficial, item:item, custom:false});
+      catMap[cat].push({nombre:nom, item:item, custom:false});
     });
     maestro = CATS_ORDER.map(cat => ({cat, items:catMap[cat]||[]})).filter(c => c.items.length > 0);
     Object.keys(catMap).filter(c => !CATS_ORDER.includes(c) && catMap[c].length).forEach(cat => {
       maestro.push({cat, items:catMap[cat]});
     });
   } else {
-    const yaReg = new Set(maestro.flatMap(c => c.items.map(i => String(i.item).trim())));
+    const yaReg = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
     prodsExcel.forEach((item, nom) => {
-      if (yaReg.has(String(item).trim())) return;
+      if (yaReg.has(nom)) return;
       const cat = categorizarItem(item, nom);
       let catObj = maestro.find(c => c.cat === cat);
       if (!catObj) { catObj = {cat, items:[]}; maestro.push(catObj); }
-      const nomOficial = ITEM_NAME_MAP[String(item).trim()] || nom;
-      catObj.items.push({nombre:nomOficial, item:item, custom:false});
+      catObj.items.push({nombre:nom, item:item, custom:false});
     });
   }
 }
