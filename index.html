@@ -58,6 +58,10 @@ select:disabled{opacity:.35;}
 .btn-ghost{background:transparent;color:#6b7280;border:1.5px solid var(--borde);}
 .btn-ghost:hover{background:var(--gris);}
 .font-ctrl{background:#eef3fb;border:1.5px solid var(--borde);border-radius:7px;padding:8px 10px;}
+.modo-btns{display:flex;gap:4px;margin-top:4px;}
+.modo-btn{flex:1;padding:5px 4px;border:1.5px solid var(--borde);border-radius:5px;font-family:"Syne",sans-serif;font-weight:700;font-size:.7rem;cursor:pointer;background:#fff;color:#6b7280;transition:.15s;}
+.modo-btn:hover{border-color:var(--azul);color:var(--azul);}
+.modo-btn.active-modo{background:var(--azul);color:#fff;border-color:var(--azul);}
 .font-ctrl-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
 .font-ctrl label{font-size:.6rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;}
 .font-ctrl .fval{font-size:.82rem;font-weight:700;color:var(--azul);}
@@ -158,6 +162,10 @@ select:disabled{opacity:.35;}
 .th-eq-t{font-size:calc(var(--tf) * 0.9);font-weight:bold;text-transform:uppercase;margin-bottom:2px;}
 .th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf);padding:3px 0;}
 .th-ftr{border-top:2px dashed #000;margin-top:6px;padding-top:4px;font-size:calc(var(--tf) * 0.8);text-align:center;color:#555;}
+.th-cont{margin-top:4px;border-top:2px solid #000;padding-top:4px;}
+.th-cont-tbl{width:100%;border-collapse:collapse;font-size:calc(var(--tf)*0.85);font-weight:bold;}
+.th-cont-tbl th,.th-cont-tbl td{border:1px solid #000;text-align:center;padding:2px 4px;}
+.th-cont-tbl th{background:#000;color:#fff;}
 
 /* ═══ TURNO SWITCHER ═══ */
 .turno-switcher{display:flex;gap:0;border:1.5px solid var(--borde);border-radius:7px;overflow:hidden;}
@@ -184,15 +192,16 @@ select:disabled{opacity:.35;}
 
 @media print{
   .cat-filter-panel{display:none!important;}
-  @page{margin:4mm 5mm;}
+  @page{margin:2mm 4mm;}
   body,html{background:#fff!important;}
   .topbar,.tabs-bar,.sidebar,.card-footer,.preview-label,.font-ctrl,.maestro-status,.btn-ghost,.modal-overlay{display:none!important;}
   .tab-panel{display:block!important;}
   #tab-tickets{display:block!important;}
   .preview-main{padding:0!important;overflow:visible!important;}
   .tickets-wrap{display:block!important;}
-  .ticket-card{width:72mm!important;border:none!important;border-radius:0!important;box-shadow:none!important;page-break-after:always;break-after:page;margin:0!important;}
+  .ticket-card{width:72mm!important;border:none!important;border-radius:0!important;box-shadow:none!important;page-break-after:always;break-after:page;margin:0!important;padding-bottom:0!important;}
   .ticket-card:last-child{page-break-after:avoid;break-after:avoid;}
+  .ticket-card::after{content:'';display:block;border-top:2px dashed #000;margin-top:4px;width:100%;}
 }
 </style>
 </head>
@@ -263,6 +272,14 @@ select:disabled{opacity:.35;}
       </div>
     </div>
     <div class="font-ctrl">
+      <div class="font-ctrl-top"><label>📦 Mostrar cantidades</label></div>
+      <div class="modo-btns" id="modo-btns">
+        <button class="modo-btn active-modo" id="modo-ambos" onclick="setModoImpr('ambos')">T + Pz</button>
+        <button class="modo-btn" id="modo-tinas" onclick="setModoImpr('tinas')">Solo T</button>
+        <button class="modo-btn" id="modo-piezas" onclick="setModoImpr('piezas')">Solo Pz</button>
+      </div>
+    </div>
+    <div class="font-ctrl">
       <div class="font-ctrl-top"><label>🔤 Tipo de letra</label></div>
       <select id="font-family-sel" onchange="updateFontFamily(this.value)">
         <option value="'Courier New',Courier,monospace">Courier New (térmica)</option>
@@ -280,7 +297,7 @@ select:disabled{opacity:.35;}
         <label>📏 Tamaño de letra</label>
         <span class="fval" id="font-val">16pt</span>
       </div>
-      <input type="range" id="font-slider" min="8" max="22" value="16" step="1" oninput="updateFontSize(this.value)">
+      <input type="range" id="font-slider" min="8" max="13" value="13" step="1" oninput="updateFontSize(this.value)">
       <div class="font-hint">Mueve el slider → imprime → ajusta</div>
     </div>
     <div class="maestro-status" id="maestro-status">📋 Usando orden del <strong>Ticket Maestro <span id="maestro-turno-label">T1</span></strong></div>
@@ -368,6 +385,13 @@ let editingRuta = null;
 let dragSrc = null, dragSrcBlock = null;
 let currentFontPt = 16;
 let currentFontFamily = "'Courier New',Courier,monospace";
+let modoImpr = 'ambos'; // 'tinas' | 'piezas' | 'ambos'
+
+function setModoImpr(modo) {
+  modoImpr = modo;
+  document.querySelectorAll('.modo-btn').forEach(b => b.classList.remove('active-modo'));
+  document.getElementById('modo-'+modo).classList.add('active-modo');
+}
 
 /* ═══ ESTADO DE TURNOS ═══ */
 let turnoActivo = 1;
@@ -661,14 +685,17 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
     .forEach(r => { qtyMap[r['Producto']||''] = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0}; });
   const eqRows = allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && !r['Contenedor'] && r['Producto']);
   let body = '';
+  const showT = modoImpr !== 'piezas';
+  const showP = modoImpr !== 'tinas';
+  const colHead = '<div class="th-cols"><span class="cp">Producto</span>'+(showT?'<span class="ct">T</span>':'')+(showP?'<span class="cpz">Pz</span>':'')+'</div>';
   if (rutaEdits[ruta]) {
     rutaEdits[ruta].forEach(({cat, items}) => {
       const vis = items.filter(it => !it.hidden);
       if (!vis.length) return;
       body += '<div class="th-sec"><div class="th-sec-t">'+cat+'</div>';
-      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += colHead;
       body += '<table class="th-tbl">';
-      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td><td>'+it.t+'</td><td>'+it.p+'</td></tr>'; });
+      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+it.t+'</td>':'')+(showP?'<td>'+it.p+'</td>':'')+'</tr>'; });
       body += '</table></div>';
     });
   } else {
@@ -676,11 +703,11 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
       const vis = items.filter(it => it.custom || qtyMap[it.nombre]);
       if (!vis.length) return;
       body += '<div class="th-sec"><div class="th-sec-t">'+cat+'</div>';
-      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += colHead;
       body += '<table class="th-tbl">';
       vis.forEach(it => {
         const q = it.custom ? {t:0,p:0} : (qtyMap[it.nombre] || {t:0,p:0});
-        body += '<tr><td>'+it.nombre+'</td><td>'+q.t+'</td><td>'+q.p+'</td></tr>';
+        body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+q.t+'</td>':'')+(showP?'<td>'+q.p+'</td>':'')+'</tr>';
       });
       body += '</table></div>';
     });
@@ -693,6 +720,11 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
   if (!body) return null;
   const tt = Object.values(qtyMap).reduce((s,q) => s+q.t, 0);
   const tp = Object.values(qtyMap).reduce((s,q) => s+q.p, 0);
+  const contRows = allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && [10,106,107].includes(Number(r['Item'])));
+  const tAltas = contRows.filter(r=>Number(r['Item'])===107).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const tBajas = contRows.filter(r=>Number(r['Item'])===106).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const tCajas = contRows.filter(r=>Number(r['Item'])===10).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const contBlock = '<div class="th-cont"><table class="th-cont-tbl"><tr><th>T. Altas</th><th>T. Bajas</th><th>Cajas</th></tr><tr><td>'+tAltas+'</td><td>'+tBajas+'</td><td>'+tCajas+'</td></tr></table></div>';
   return '<div class="thermal">' +
     '<div class="th-hdr">' +
     '<div class="th-tit">TICKET DE CARGA</div>' +
@@ -702,6 +734,7 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
     '<div style="font-size:calc(var(--tf)*0.8);margin-top:2px;font-weight:bold;">'+turnos[turnoActivo].nombre.toUpperCase()+'</div>' +
     '</div>'+body+
     '<div class="th-ftr">'+Object.keys(qtyMap).length+' prod · '+tt+' tinas · '+tp+' pzas</div>' +
+    contBlock +
     '</div>';
 }
 
@@ -741,6 +774,10 @@ td:nth-child(2),td:nth-child(3){text-align:right;width:38px;white-space:nowrap;b
 .th-eq-t{font-size:calc(${tf} * 0.9);font-weight:bold;text-transform:uppercase;}
 .th-eq-r{display:flex;justify-content:space-between;font-size:${tf};padding:2px 0;}
 .th-ftr{border-top:2px dashed #000;margin-top:4px;padding-top:3px;font-size:calc(${tf} * 0.8);text-align:center;}
+.th-cont{margin-top:4px;border-top:2px solid #000;padding-top:4px;}
+.th-cont-tbl{width:100%;border-collapse:collapse;font-size:calc(${tf} * 0.85);font-weight:bold;}
+.th-cont-tbl th,.th-cont-tbl td{border:1px solid #000;text-align:center;padding:2px 4px;}
+.th-cont-tbl th{background:#000;color:#fff;}
 </style></head><body>${html}</body></html>`);
   w.document.close(); w.focus();
   setTimeout(() => { w.print(); w.close(); }, 400);
@@ -807,6 +844,9 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
 
   let body = '';
   let totalProds = 0;
+  const showT = modoImpr !== 'piezas';
+  const showP = modoImpr !== 'tinas';
+  const colHead = '<div class="th-cols"><span class="cp">Producto</span>'+(showT?'<span class="ct">T</span>':'')+(showP?'<span class="cpz">Pz</span>':'')+'</div>';
 
   if (rutaEdits[ruta]) {
     rutaEdits[ruta].filter(c => selectedCats.includes(c.cat)).forEach(function(catObj) {
@@ -814,9 +854,9 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
       if (!vis.length) return;
       totalProds += vis.length;
       body += '<div class="th-sec"><div class="th-sec-t">'+catObj.cat+'</div>';
-      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += colHead;
       body += '<table class="th-tbl">';
-      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td><td>'+it.t+'</td><td>'+it.p+'</td></tr>'; });
+      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+it.t+'</td>':'')+(showP?'<td>'+it.p+'</td>':'')+'</tr>'; });
       body += '</table></div>';
     });
   } else {
@@ -825,11 +865,11 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
       if (!vis.length) return;
       totalProds += vis.length;
       body += '<div class="th-sec"><div class="th-sec-t">'+catObj.cat+'</div>';
-      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += colHead;
       body += '<table class="th-tbl">';
       vis.forEach(it => {
         const q = it.custom ? {t:0,p:0} : (qtyMap[it.nombre] || {t:0,p:0});
-        body += '<tr><td>'+it.nombre+'</td><td>'+q.t+'</td><td>'+q.p+'</td></tr>';
+        body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+q.t+'</td>':'')+(showP?'<td>'+q.p+'</td>':'')+'</tr>';
       });
       body += '</table></div>';
     });
@@ -855,6 +895,11 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
     ? '<div style="font-size:0.75em;margin-top:2px;opacity:0.6;">['+selectedCats.join(', ')+']</div>'
     : '';
 
+  const contRowsF = allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && [10,106,107].includes(Number(r['Item'])));
+  const tAltasF = contRowsF.filter(r=>Number(r['Item'])===107).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const tBajasF = contRowsF.filter(r=>Number(r['Item'])===106).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const tCajasF = contRowsF.filter(r=>Number(r['Item'])===10).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
+  const contBlockF = '<div class="th-cont"><table class="th-cont-tbl"><tr><th>T. Altas</th><th>T. Bajas</th><th>Cajas</th></tr><tr><td>'+tAltasF+'</td><td>'+tBajasF+'</td><td>'+tCajasF+'</td></tr></table></div>';
   return '<div class="thermal">' +
     '<div class="th-hdr">' +
     '<div class="th-tit">TICKET DE CARGA</div>' +
@@ -865,6 +910,7 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
     catLabel +
     '</div>'+body+
     '<div class="th-ftr">'+totalProds+' prod &middot; '+tt+' tinas &middot; '+tp+' pzas</div>' +
+    contBlockF +
     '</div>';
 }
 
@@ -916,7 +962,11 @@ table{width:100%;border-collapse:collapse;font-size:${tf};font-family:${ff};}
 td{padding:2px 3px;vertical-align:middle;line-height:1.3;border:1px solid #000;}
 tr:nth-child(even) td{background:#f5f5f5;}
 td:nth-child(2),td:nth-child(3){text-align:right;width:38px;white-space:nowrap;border-left:3px solid #000;}
-.th-ftr{border-top:2px dashed #000;margin-top:4px;padding-top:3px;font-size:calc(${tf} * 0.8);text-align:center;}`;
+.th-ftr{border-top:2px dashed #000;margin-top:4px;padding-top:3px;font-size:calc(${tf} * 0.8);text-align:center;}
+.th-cont{margin-top:4px;border-top:2px solid #000;padding-top:4px;}
+.th-cont-tbl{width:100%;border-collapse:collapse;font-size:calc(${tf} * 0.85);font-weight:bold;}
+.th-cont-tbl th,.th-cont-tbl td{border:1px solid #000;text-align:center;padding:2px 4px;}
+.th-cont-tbl th{background:#000;color:#fff;}`;
 
   const w = window.open('', '_blank', 'width=700,height=900');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tickets \u2014 '+catNames+'</title><style>'+printCSS+'</style></head><body>'+ticketsHtml+'</body></html>');
