@@ -724,7 +724,6 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
   const tAltas = contRows.filter(r=>Number(r['Item'])===107).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
   const tBajas = contRows.filter(r=>Number(r['Item'])===106).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
   const tCajas = contRows.filter(r=>Number(r['Item'])===10).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
-  const contBlock = '<div class="th-cont"><table class="th-cont-tbl"><tr><th>T. Altas</th><th>T. Bajas</th><th>Cajas</th></tr><tr><td>'+tAltas+'</td><td>'+tBajas+'</td><td>'+tCajas+'</td></tr></table></div>';
   return '<div class="thermal">' +
     '<div class="th-hdr">' +
     '<div class="th-tit">TICKET DE CARGA</div>' +
