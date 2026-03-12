@@ -52,6 +52,8 @@ select:disabled{opacity:.35;}
 .btn-rojo:hover{background:#b80410;}
 .btn-verde{background:var(--verde);color:#fff;}
 .btn-verde:hover{background:#15803d;}
+.btn-naranja{background:#ea580c;color:#fff;}
+.btn-naranja:hover{background:#c2410c;}
 .btn-sm{font-size:.7rem;padding:5px 9px;border-radius:5px;}
 .btn-ghost{background:transparent;color:#6b7280;border:1.5px solid var(--borde);}
 .btn-ghost:hover{background:var(--gris);}
@@ -156,7 +158,23 @@ select:disabled{opacity:.35;}
 .th-eq-t{font-size:calc(var(--tf) * 0.9);font-weight:bold;text-transform:uppercase;margin-bottom:2px;}
 .th-eq-r{display:flex;justify-content:space-between;font-size:var(--tf);padding:3px 0;}
 .th-ftr{border-top:2px dashed #000;margin-top:6px;padding-top:4px;font-size:calc(var(--tf) * 0.8);text-align:center;color:#555;}
+
+/* ═══ CATEGORY FILTER PANEL ═══ */
+.cat-filter-panel{background:#fff;border:1.5px solid var(--borde);border-radius:8px;padding:10px;display:none;}
+.cat-filter-panel.open{display:block;}
+.cat-filter-title{font-family:"Syne",sans-serif;font-weight:700;font-size:.72rem;color:var(--azul-os);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
+.cat-filter-count{color:#9ca3af;font-weight:400;font-size:.62rem;font-family:"DM Sans",sans-serif;}
+.cat-filter-list{display:flex;flex-direction:column;gap:4px;max-height:190px;overflow-y:auto;margin-bottom:8px;padding-right:2px;}
+.cat-filter-item{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:5px;background:var(--gris);border:1px solid var(--borde);cursor:pointer;transition:.12s;}
+.cat-filter-item:hover{background:#e8edf5;border-color:var(--azul);}
+.cat-filter-item input[type=checkbox]{accent-color:var(--azul);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.cat-filter-item label{font-size:.73rem;font-family:"DM Sans",sans-serif;cursor:pointer;flex:1;font-weight:500;}
+.cat-color-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cat-filter-actions{display:flex;gap:4px;}
+.cat-filter-sep{border:none;border-top:1px dashed var(--borde);margin:4px 0 8px;}
+
 @media print{
+  .cat-filter-panel{display:none!important;}
   @page{margin:4mm 5mm;}
   body,html{background:#fff!important;}
   .topbar,.tabs-bar,.sidebar,.card-footer,.preview-label,.font-ctrl,.maestro-status,.btn-ghost,.modal-overlay{display:none!important;}
@@ -206,6 +224,20 @@ select:disabled{opacity:.35;}
     <div class="field"><label>Hora</label><input type="time" id="f-hora"></div>
     <button class="btn btn-azul" id="btn-gen" disabled onclick="generarTodos()">⟳ Generar Tickets</button>
     <button class="btn btn-rojo" id="btn-print" style="display:none" onclick="imprimirTodos()">🖨 Imprimir Todos</button>
+    <button class="btn btn-naranja" id="btn-cat-filter" style="display:none" onclick="toggleCatFilter()">🗂 Filtrar Categorías</button>
+    <div class="cat-filter-panel" id="cat-filter-panel">
+      <div class="cat-filter-title">
+        Categorías a imprimir
+        <span class="cat-filter-count" id="cat-filter-count"></span>
+      </div>
+      <div class="cat-filter-list" id="cat-filter-list"></div>
+      <hr class="cat-filter-sep">
+      <div class="cat-filter-actions">
+        <button class="btn btn-azul btn-sm" onclick="selectAllCats(true)">✔ Todo</button>
+        <button class="btn btn-ghost btn-sm" onclick="selectAllCats(false)">✕ Ninguno</button>
+        <button class="btn btn-naranja btn-sm" style="flex:2" onclick="imprimirPorCategoria()">🖨 Imprimir</button>
+      </div>
+    </div>
     <div class="font-ctrl">
       <div class="font-ctrl-top"><label>🔤 Tipo de letra</label></div>
       <select id="font-family-sel" onchange="updateFontFamily(this.value)">
@@ -219,20 +251,6 @@ select:disabled{opacity:.35;}
         <option value="'Trebuchet MS',sans-serif">Trebuchet MS</option>
       </select>
     </div>
-    <div class="font-ctrl">
-      <div class="font-ctrl-top"><label>🔤Imprecion por categoria</label></div>
-      <select id="font-family-sel" onchange="updateFontFamily(this.value)">
-        <option value="'Courier New',Courier,monospace">TRL</option>
-        <option value="'Arial',sans-serif">PANES</option>
-        <option value="'Helvetica',Arial,sans-serif">AS</option>
-        <option value="'Tahoma',sans-serif">PASTEL</option>
-        <option value="'Verdana',sans-serif">GALLETA</option>
-        <option value="'Times New Roman',serif">DULCE</option>
-        <option value="'Georgia',serif">4T</option>
-        <option value="'Trebuchet MS',sans-serif">OTROSA</option>
-      </select>
-    </div>
-    
     <div class="font-ctrl">
       <div class="font-ctrl-top">
         <label>📏 Tamaño de letra</label>
@@ -305,833 +323,15 @@ select:disabled{opacity:.35;}
 </div>
 
 <script>
-/* ═══ CATÁLOGO ITEM → LÍNEA (desde LINEAS_BIMBO.xlsx) ═══ */
+/* ═══ CATÁLOGO ITEM → LÍNEA ═══ */
 const ITEM_CAT_MAP = {
-  "1132":"AS",
-  "1182":"AS",
-  "127842":"PANES",
-  "1390":"DULCE",
-  "150213":"PASTEL",
-  "150233":"AS",
-  "150244":"AS",
-  "150275":"4T",
-  "150284":"TRL",
-  "150379":"AS",
-  "150475":"AS",
-  "150500":"AS",
-  "150543":"TRL",
-  "150582":"PASTEL",
-  "150633":"GALLETA",
-  "150644":"PASTEL",
-  "200106":"TRL",
-  "200119":"TRL",
-  "200172":"AS",
-  "200206":"AS",
-  "200244":"AS",
-  "200277":"GALLETA",
-  "200296":"TRL",
-  "200333":"GALLETA",
-  "200334":"GALLETA",
-  "200352":"TRL",
-  "200356":"TRL",
-  "200358":"PASTEL",
-  "200383":"AS",
-  "200384":"4T",
-  "200385":"4T",
-  "200405":"TRL",
-  "200414":"TRL",
-  "200416":"AS",
-  "200426":"PASTEL",
-  "200436":"AS",
-  "200504":"AS",
-  "200512":"AS",
-  "200513":"AS",
-  "200642":"DULCE",
-  "200657":"TRL",
-  "200676":"AS",
-  "200699":"AS",
-  "200733":"AS",
-  "200734":"AS",
-  "200772":"AS",
-  "200774":"AS",
-  "200784":"4T",
-  "200807":"AS",
-  "200841":"AS",
-  "200842":"AS",
-  "200852":"PASTEL",
-  "200898":"TRL",
-  "200927":"PANES",
-  "200929":"PANES",
-  "200933":"PANES",
-  "200937":"AS",
-  "200938":"AS",
-  "200940":"PASTEL",
-  "200956":"TRL",
-  "200990":"AS",
-  "200992":"4T",
-  "201048":"GALLETA",
-  "201052":"GALLETA",
-  "201060":"AS",
-  "201091":"GALLETA",
-  "201092":"GALLETA",
-  "201093":"GALLETA",
-  "201107":"TRL",
-  "201142":"4T",
-  "201188":"AS",
-  "201212":"AS",
-  "201214":"AS",
-  "201216":"AS",
-  "201218":"AS",
-  "201253":"AS",
-  "201259":"TRL",
-  "201281":"PANES",
-  "201299":"GALLETA",
-  "201315":"AS",
-  "201317":"DULCE",
-  "201373":"PASTEL",
-  "201403":"AS",
-  "201404":"AS",
-  "201420":"GALLETA",
-  "201421":"GALLETA",
-  "201422":"GALLETA",
-  "201423":"GALLETA",
-  "201437":"AS",
-  "201439":"AS",
-  "201450":"GALLETA",
-  "201469":"GALLETA",
-  "201497":"TRL",
-  "201499":"TRL",
-  "201528":"PASTEL",
-  "201529":"PASTEL",
-  "201540":"AS",
-  "201554":"AS",
-  "201568":"AS",
-  "201569":"AS",
-  "201584":"GALLETA",
-  "201585":"GALLETA",
-  "201586":"GALLETA",
-  "201587":"AS",
-  "201593":"TRL",
-  "201617":"4T",
-  "201619":"GALLETA",
-  "201628":"AS",
-  "201665":"PASTEL",
-  "201666":"PASTEL",
-  "201674":"AS",
-  "201677":"TRL",
-  "201686":"AS",
-  "201694":"AS",
-  "201767":"TRL",
-  "201823":"GALLETA",
-  "201842":"AS",
-  "201849":"GALLETA",
-  "201850":"GALLETA",
-  "201881":"AS",
-  "201902":"AS",
-  "201929":"GALLETA",
-  "201940":"4T",
-  "201948":"PANES",
-  "201991":"AS",
-  "201997":"AS",
-  "202029":"TRL",
-  "202030":"TRL",
-  "202041":"PASTEL",
-  "202042":"PASTEL",
-  "202043":"PASTEL",
-  "202066":"DULCE",
-  "202067":"DULCE",
-  "202068":"TRL",
-  "202097":"DULCE",
-  "202098":"AS",
-  "202099":"AS",
-  "202113":"AS",
-  "202138":"PASTEL",
-  "202147":"PASTEL",
-  "202148":"AS",
-  "202159":"4T",
-  "202160":"4T",
-  "202161":"4T",
-  "202175":"PASTEL",
-  "202176":"PASTEL",
-  "202177":"PASTEL",
-  "202178":"PASTEL",
-  "202179":"DULCE",
-  "202183":"DULCE",
-  "202216":"AS",
-  "202218":"AS",
-  "202225":"4T",
-  "202229":"AS",
-  "202258":"TRL",
-  "202259":"TRL",
-  "202260":"TRL",
-  "202275":"TRL",
-  "202290":"PASTEL",
-  "202296":"AS",
-  "202300":"AS",
-  "202316":"AS",
-  "202322":"TRL",
-  "202334":"AS",
-  "202344":"4T",
-  "202362":"TRL",
-  "202373":"TRL",
-  "202378":"GALLETA",
-  "202379":"GALLETA",
-  "202392":"AS",
-  "202393":"AS",
-  "202394":"AS",
-  "202399":"TRL",
-  "202401":"TRL",
-  "202402":"TRL",
-  "202403":"TRL",
-  "202422":"4T",
-  "202425":"PASTEL",
-  "202433":"AS",
-  "202445":"4T",
-  "202446":"4T",
-  "202458":"TRL",
-  "202459":"TRL",
-  "202477":"TRL",
-  "202517":"4T",
-  "202557":"PANES",
-  "202575":"DULCE",
-  "202576":"DULCE",
-  "202577":"DULCE",
-  "202589":"GALLETA",
-  "202591":"GALLETA",
-  "202596":"PASTEL",
-  "202617":"DULCE",
-  "202619":"AS",
-  "202620":"AS",
-  "202621":"AS",
-  "202624":"TRL",
-  "202636":"PANES",
-  "202637":"AS",
-  "202646":"TRL",
-  "202658":"TRL",
-  "202660":"TRL",
-  "202667":"TRL",
-  "202671":"TRL",
-  "202695":"TRL",
-  "202696":"AS",
-  "202717":"AS",
-  "202718":"AS",
-  "202728":"TRL",
-  "202746":"PASTEL",
-  "202753":"DULCE",
-  "202754":"4T",
-  "202759":"DULCE",
-  "202814":"AS",
-  "202818":"AS",
-  "202822":"PASTEL",
-  "202824":"GALLETA",
-  "202838":"4T",
-  "202862":"GALLETA",
-  "202869":"4T",
-  "202892":"PANES",
-  "202893":"PANES",
-  "202897":"TRL",
-  "202926":"4T",
-  "202948":"4T",
-  "202963":"AS",
-  "202964":"AS",
-  "202965":"AS",
-  "202968":"4T",
-  "202972":"TRL",
-  "202994":"4T",
-  "202999":"GALLETA",
-  "203000":"GALLETA",
-  "203001":"GALLETA",
-  "203002":"GALLETA",
-  "203003":"TRL",
-  "203013":"AS",
-  "203025":"DULCE",
-  "203033":"TRL",
-  "203034":"TRL",
-  "203035":"TRL",
-  "203053":"DULCE",
-  "203055":"TRL",
-  "203070":"TRL",
-  "203079":"TRL",
-  "203082":"TRL",
-  "203084":"TRL",
-  "203102":"DULCE",
-  "203112":"GALLETA",
-  "203124":"AS",
-  "203148":"TRL",
-  "203149":"AS",
-  "203159":"AS",
-  "203165":"AS",
-  "203166":"AS",
-  "203167":"AS",
-  "203168":"AS",
-  "203169":"AS",
-  "203183":"PASTEL",
-  "203184":"TRL",
-  "203185":"TRL",
-  "203200":"AS",
-  "203202":"GALLETA",
-  "203204":"AS",
-  "203208":"AS",
-  "203209":"GALLETA",
-  "203210":"GALLETA",
-  "203212":"AS",
-  "203214":"GALLETA",
-  "203217":"AS",
-  "203219":"GALLETA",
-  "203236":"AS",
-  "203237":"AS",
-  "203240":"AS",
-  "203246":"TRL",
-  "203257":"AS",
-  "203263":"AS",
-  "203264":"AS",
-  "203265":"AS",
-  "203281":"AS",
-  "203291":"GALLETA",
-  "203292":"GALLETA",
-  "203293":"AS",
-  "203294":"DULCE",
-  "203300":"DULCE",
-  "203301":"TRL",
-  "203350":"4T",
-  "203351":"4T",
-  "203408":"DULCE",
-  "203409":"DULCE",
-  "203416":"AS",
-  "203430":"TRL",
-  "203440":"4T",
-  "203444":"DULCE",
-  "203456":"AS",
-  "203460":"DULCE",
-  "203466":"GALLETA",
-  "203528":"GALLETA",
-  "203532":"AS",
-  "203533":"AS",
-  "203562":"4T",
-  "203571":"4T",
-  "203572":"4T",
-  "203573":"4T",
-  "203590":"AS",
-  "203600":"TRL",
-  "203602":"PASTEL",
-  "203611":"4T",
-  "203614":"DULCE",
-  "203630":"TRL",
-  "203631":"TRL",
-  "203632":"TRL",
-  "203633":"AS",
-  "203639":"TRL",
-  "203647":"DULCE",
-  "203648":"AS",
-  "203649":"4T",
-  "203655":"4T",
-  "203657":"GALLETA",
-  "203658":"GALLETA",
-  "203660":"GALLETA",
-  "203674":"AS",
-  "203675":"DULCE",
-  "203713":"AS",
-  "203723":"PASTEL",
-  "203724":"DULCE",
-  "203729":"AS",
-  "203739":"PASTEL",
-  "203740":"AS",
-  "203758":"PASTEL",
-  "203772":"GALLETA",
-  "203773":"GALLETA",
-  "203782":"TRL",
-  "203787":"GALLETA",
-  "203788":"GALLETA",
-  "203789":"GALLETA",
-  "203790":"DULCE",
-  "203794":"4T",
-  "203798":"GALLETA",
-  "203799":"TRL",
-  "203808":"AS",
-  "203819":"PASTEL",
-  "203821":"PASTEL",
-  "203823":"DULCE",
-  "203824":"DULCE",
-  "203825":"DULCE",
-  "203835":"TRL",
-  "203841":"TRL",
-  "203843":"TRL",
-  "203845":"TRL",
-  "203847":"TRL",
-  "203848":"TRL",
-  "203849":"TRL",
-  "203851":"TRL",
-  "203854":"GALLETA",
-  "203856":"4T",
-  "203857":"TRL",
-  "203858":"TRL",
-  "203879":"TRL",
-  "203880":"TRL",
-  "203885":"PASTEL",
-  "203886":"AS",
-  "203888":"TRL",
-  "203889":"DULCE",
-  "203895":"4T",
-  "203907":"DULCE",
-  "203908":"PASTEL",
-  "203909":"GALLETA",
-  "203920":"PANES",
-  "203924":"AS",
-  "203925":"AS",
-  "203926":"AS",
-  "203927":"AS",
-  "203943":"AS",
-  "203944":"PASTEL",
-  "203967":"DULCE",
-  "203969":"4T",
-  "203973":"TRL",
-  "203976":"TRL",
-  "203977":"PASTEL",
-  "203986":"DULCE",
-  "203992":"GALLETA",
-  "204008":"GALLETA",
-  "204011":"GALLETA",
-  "204014":"4T",
-  "204018":"AS",
-  "204023":"DULCE",
-  "204024":"DULCE",
-  "204027":"PANES",
-  "204029":"DULCE",
-  "204031":"AS",
-  "204032":"TRL",
-  "204036":"AS",
-  "204051":"4T",
-  "204052":"PASTEL",
-  "204055":"4T",
-  "204057":"GALLETA",
-  "204058":"TRL",
-  "204066":"AS",
-  "204069":"PANES",
-  "204071":"AS",
-  "204080":"PANES",
-  "204081":"AS",
-  "204083":"AS",
-  "204084":"PASTEL",
-  "204085":"AS",
-  "204086":"AS",
-  "204087":"AS",
-  "204089":"GALLETA",
-  "204099":"4T",
-  "204120":"DULCE",
-  "204127":"4T",
-  "204138":"GALLETA",
-  "204143":"4T",
-  "204145":"AS",
-  "204146":"AS",
-  "204148":"DULCE",
-  "204151":"4T",
-  "204156":"DULCE",
-  "204158":"PASTEL",
-  "204160":"DULCE",
-  "204163":"TRL",
-  "204165":"DULCE",
-  "204168":"TRL",
-  "204171":"GALLETA",
-  "204172":"GALLETA",
-  "204173":"GALLETA",
-  "204179":"4T",
-  "204180":"PASTEL",
-  "204181":"TRL",
-  "204184":"DULCE",
-  "204185":"TRL",
-  "204198":"GALLETA",
-  "204199":"GALLETA",
-  "204202":"4T",
-  "204203":"TRL",
-  "204205":"PANES",
-  "204209":"4T",
-  "204212":"TRL",
-  "204217":"AS",
-  "204227":"GALLETA",
-  "204228":"DULCE",
-  "204233":"DULCE",
-  "204234":"PASTEL",
-  "204239":"AS",
-  "204241":"DULCE",
-  "204246":"GALLETA",
-  "204247":"PASTEL",
-  "204257":"AS",
-  "204258":"AS",
-  "204259":"AS",
-  "204263":"GALLETA",
-  "204265":"TRL",
-  "204275":"4T",
-  "204285":"4T",
-  "204287":"PASTEL",
-  "204288":"GALLETA",
-  "204289":"PASTEL",
-  "204290":"DULCE",
-  "204294":"PASTEL",
-  "204311":"DULCE",
-  "204314":"TRL",
-  "204317":"4T",
-  "204325":"AS",
-  "204326":"AS",
-  "204340":"GALLETA",
-  "204342":"GALLETA",
-  "204344":"GALLETA",
-  "204353":"AS",
-  "204354":"AS",
-  "204356":"PASTEL",
-  "204367":"TRL",
-  "204368":"GALLETA",
-  "204375":"PANES",
-  "204376":"TRL",
-  "204377":"TRL",
-  "204379":"DULCE",
-  "204385":"TRL",
-  "204386":"4T",
-  "204393":"AS",
-  "204407":"AS",
-  "204408":"AS",
-  "204412":"4T",
-  "204413":"4T",
-  "204433":"PASTEL",
-  "204435":"TRL",
-  "204446":"4T",
-  "204458":"AS",
-  "204460":"TRL",
-  "204461":"TRL",
-  "204462":"TRL",
-  "204463":"TRL",
-  "204465":"4T",
-  "204466":"AS",
-  "204472":"AS",
-  "204473":"AS",
-  "204477":"PANES",
-  "204483":"TRL",
-  "204513":"AS",
-  "204514":"AS",
-  "204521":"GALLETA",
-  "204532":"AS",
-  "204533":"DULCE",
-  "204535":"PASTEL",
-  "204537":"GALLETA",
-  "204538":"PANES",
-  "204539":"PANES",
-  "204553":"PASTEL",
-  "204560":"DULCE",
-  "204565":"PASTEL",
-  "204566":"PASTEL",
-  "204576":"PANES",
-  "204577":"PANES",
-  "204580":"AS",
-  "204584":"DULCE",
-  "204585":"GALLETA",
-  "204594":"AS",
-  "204596":"AS",
-  "204607":"PASTEL",
-  "204610":"AS",
-  "204616":"PASTEL",
-  "204629":"4T",
-  "204639":"PASTEL",
-  "204645":"4T",
-  "204677":"PASTEL",
-  "204678":"TRL",
-  "204682":"PANES",
-  "204692":"TRL",
-  "204695":"AS",
-  "204697":"TRL",
-  "204698":"DULCE",
-  "204699":"DULCE",
-  "204725":"4T",
-  "204732":"PASTEL",
-  "204755":"PASTEL",
-  "204756":"DULCE",
-  "204757":"DULCE",
-  "204771":"TRL",
-  "204772":"PASTEL",
-  "204775":"4T",
-  "204777":"PASTEL",
-  "204779":"PASTEL",
-  "204780":"PASTEL",
-  "204798":"4T",
-  "204800":"AS",
-  "204808":"TRL",
-  "204826":"PASTEL",
-  "204828":"PASTEL",
-  "204845":"PASTEL",
-  "204847":"PASTEL",
-  "204850":"TRL",
-  "204854":"4T",
-  "204860":"GALLETA",
-  "204861":"PASTEL",
-  "204875":"DULCE",
-  "204890":"4T",
-  "204897":"PASTEL",
-  "204903":"DULCE",
-  "204904":"DULCE",
-  "204922":"PASTEL",
-  "204930":"PASTEL",
-  "204937":"TRL",
-  "204938":"AS",
-  "204944":"DULCE",
-  "204960":"4T",
-  "204961":"PANES",
-  "204962":"AS",
-  "204963":"TRL",
-  "204968":"PANES",
-  "204969":"PANES",
-  "204970":"AS",
-  "204973":"PANES",
-  "204974":"PANES",
-  "204982":"AS",
-  "204983":"AS",
-  "204984":"AS",
-  "204987":"PASTEL",
-  "204993":"4T",
-  "205007":"TRL",
-  "205010":"GALLETA",
-  "205013":"DULCE",
-  "205015":"TRL",
-  "205018":"PASTEL",
-  "205021":"4T",
-  "205023":"PASTEL",
-  "205065":"PASTEL",
-  "205070":"AS",
-  "205083":"TRL",
-  "205089":"4T",
-  "205102":"TRL",
-  "205105":"4T",
-  "205106":"PASTEL",
-  "205109":"AS",
-  "205123":"DULCE",
-  "205124":"TRL",
-  "205156":"AS",
-  "205163":"PASTEL",
-  "205174":"4T",
-  "205214":"GALLETA",
-  "205256":"PASTEL",
-  "205257":"PASTEL",
-  "205258":"PASTEL",
-  "205264":"4T",
-  "205268":"PASTEL",
-  "205274":"4T",
-  "205277":"AS",
-  "205278":"PASTEL",
-  "205279":"PASTEL",
-  "205284":"PASTEL",
-  "205285":"PASTEL",
-  "205291":"PASTEL",
-  "205292":"PASTEL",
-  "205294":"PASTEL",
-  "205321":"DULCE",
-  "205322":"DULCE",
-  "205338":"DULCE",
-  "205340":"DULCE",
-  "205341":"DULCE",
-  "205342":"4T",
-  "205344":"DULCE",
-  "205345":"DULCE",
-  "205356":"TRL",
-  "205357":"TRL",
-  "205359":"DULCE",
-  "205371":"4T",
-  "205375":"4T",
-  "205376":"4T",
-  "205384":"PASTEL",
-  "205407":"GALLETA",
-  "205408":"GALLETA",
-  "205424":"DULCE",
-  "205427":"GALLETA",
-  "205437":"PASTEL",
-  "205448":"PASTEL",
-  "205449":"GALLETA",
-  "205454":"PASTEL",
-  "205455":"PASTEL",
-  "205486":"TRL",
-  "30007":"DULCE",
-  "30314":"AS",
-  "30532":"GALLETA",
-  "31184":"AS",
-  "31187":"AS",
-  "31198":"AS",
-  "31284":"DULCE",
-  "31310":"GALLETA",
-  "31473":"AS",
-  "31507":"GALLETA",
-  "31690":"AS",
-  "32303":"TRL",
-  "32334":"AS",
-  "32394":"DULCE",
-  "32640":"AS",
-  "32873":"TRL",
-  "32940":"GALLETA",
-  "33260":"AS",
-  "33262":"AS",
-  "33265":"AS",
-  "33440":"AS",
-  "33441":"AS",
-  "33853":"GALLETA",
-  "34054":"DULCE",
-  "34226":"TRL",
-  "34258":"AS",
-  "34794":"AS",
-  "35052":"PASTEL",
-  "35142":"AS",
-  "35145":"AS",
-  "35241":"AS",
-  "35244":"AS",
-  "35453":"PASTEL",
-  "35484":"PASTEL",
-  "35728":"AS",
-  "36524":"4T",
-  "36598":"TRL",
-  "36610":"PASTEL",
-  "36641":"AS",
-  "36711":"DULCE",
-  "36894":"AS",
-  "37006":"DULCE",
-  "37131":"PANES",
-  "37135":"PANES",
-  "37226":"AS",
-  "37268":"GALLETA",
-  "37358":"GALLETA",
-  "37427":"PASTEL",
-  "37538":"TRL",
-  "37577":"TRL",
-  "37625":"TRL",
-  "37932":"4T",
-  "38172":"AS",
-  "38492":"GALLETA",
-  "38599":"AS",
-  "38650":"4T",
-  "38724":"AS",
-  "39140":"DULCE",
-  "39161":"4T",
-  "39244":"GALLETA",
-  "39324":"AS",
-  "39325":"AS",
-  "39374":"AS",
-  "40430":"4T",
-  "41843":"DULCE",
-  "42437":"AS",
-  "43005":"PANES",
-  "43006":"PANES",
-  "43023":"4T",
-  "43038":"TRL",
-  "43040":"TRL",
-  "43058":"GALLETA",
-  "43060":"AS",
-  "43064":"PASTEL",
-  "43065":"PASTEL",
-  "43068":"PASTEL",
-  "43069":"PASTEL",
-  "43070":"GALLETA",
-  "43075":"GALLETA",
-  "43084":"PASTEL",
-  "43118":"DULCE",
-  "43134":"AS",
-  "43136":"AS",
-  "43156":"AS",
-  "43159":"4T",
-  "43160":"AS",
-  "43161":"AS",
-  "43169":"DULCE",
-  "43173":"AS",
-  "43174":"DULCE",
-  "43175":"PANES",
-  "43185":"AS",
-  "43186":"AS",
-  "43187":"PANES",
-  "43188":"PANES",
-  "43189":"AS",
-  "43190":"AS",
-  "43192":"AS",
-  "43195":"4T",
-  "43196":"DULCE",
-  "43197":"DULCE",
-  "43198":"DULCE",
-  "43199":"DULCE",
-  "43200":"DULCE",
-  "43201":"DULCE",
-  "43202":"DULCE",
-  "43203":"DULCE",
-  "43204":"DULCE",
-  "43206":"DULCE",
-  "43207":"DULCE",
-  "43209":"DULCE",
-  "43212":"AS",
-  "43215":"PANES",
-  "43222":"TRL",
-  "43223":"AS",
-  "43230":"GALLETA",
-  "43231":"PANES",
-  "43255":"AS",
-  "43256":"AS",
-  "43305":"4T",
-  "43307":"PASTEL",
-  "43316":"PASTEL",
-  "43335":"AS",
-  "43338":"AS",
-  "43342":"AS",
-  "43344":"AS",
-  "43345":"AS",
-  "43348":"AS",
-  "43350":"4T",
-  "43361":"AS",
-  "44371":"AS",
-  "44829":"4T",
-  "44833":"TRL",
-  "44950":"DULCE",
-  "44951":"DULCE",
-  "45496":"PANES",
-  "45527":"AS",
-  "4645":"TRL",
-  "47104":"AS",
-  "47105":"AS",
-  "47332":"AS",
-  "4767":"AS",
-  "47886":"PASTEL",
-  "48001":"AS",
-  "48002":"TRL",
-  "48135":"PASTEL",
-  "48136":"4T",
-  "48137":"PASTEL",
-  "48345":"AS",
-  "48373":"4T",
-  "48374":"AS",
-  "48557":"AS",
-  "48598":"DULCE",
-  "48965":"AS",
-  "48996":"4T",
-  "49028":"4T",
-  "49950":"AS",
-  "506068":"4T",
-  "506069":"4T",
-  "506498":"AS",
-  "506501":"AS",
-  "5097":"TRL",
-  "6000":"DULCE",
-  "6133":"4T",
-  "6206":"TRL",
-  "6219":"TRL",
-  "6451":"AS",
-  "739":"TRL",
-  "835":"AS",
-  "8863":"4T",
-  "8864":"4T",
-  "8865":"4T",
-  "9098":"TRL",
-  "935":"GALLETA",
-  "99200784":"4T",
-  "99201299":"GALLETA",
-  "99201619":"GALLETA",
-  "99201849":"GALLETA",
-  "99203562":"4T",
-  "9930532":"GALLETA",
-  "9943231":"PANES"
+  "1132":"AS","1182":"AS","127842":"PANES","1390":"DULCE","150213":"PASTEL","150233":"AS","150244":"AS","150275":"4T","150284":"TRL","150379":"AS","150475":"AS","150500":"AS","150543":"TRL","150582":"PASTEL","150633":"GALLETA","150644":"PASTEL","200106":"TRL","200119":"TRL","200172":"AS","200206":"AS","200244":"AS","200277":"GALLETA","200296":"TRL","200333":"GALLETA","200334":"GALLETA","200352":"TRL","200356":"TRL","200358":"PASTEL","200383":"AS","200384":"4T","200385":"4T","200405":"TRL","200414":"TRL","200416":"AS","200426":"PASTEL","200436":"AS","200504":"AS","200512":"AS","200513":"AS","200642":"DULCE","200657":"TRL","200676":"AS","200699":"AS","200733":"AS","200734":"AS","200772":"AS","200774":"AS","200784":"4T","200807":"AS","200841":"AS","200842":"AS","200852":"PASTEL","200898":"TRL","200927":"PANES","200929":"PANES","200933":"PANES","200937":"AS","200938":"AS","200940":"PASTEL","200956":"TRL","200990":"AS","200992":"4T","201048":"GALLETA","201052":"GALLETA","201060":"AS","201091":"GALLETA","201092":"GALLETA","201093":"GALLETA","201107":"TRL","201142":"4T","201188":"AS","201212":"AS","201214":"AS","201216":"AS","201218":"AS","201253":"AS","201259":"TRL","201281":"PANES","201299":"GALLETA","201315":"AS","201317":"DULCE","201373":"PASTEL","201403":"AS","201404":"AS","201420":"GALLETA","201421":"GALLETA","201422":"GALLETA","201423":"GALLETA","201437":"AS","201439":"AS","201450":"GALLETA","201469":"GALLETA","201497":"TRL","201499":"TRL","201528":"PASTEL","201529":"PASTEL","201540":"AS","201554":"AS","201568":"AS","201569":"AS","201584":"GALLETA","201585":"GALLETA","201586":"GALLETA","201587":"AS","201593":"TRL","201617":"4T","201619":"GALLETA","201628":"AS","201665":"PASTEL","201666":"PASTEL","201674":"AS","201677":"TRL","201686":"AS","201694":"AS","201767":"TRL","201823":"GALLETA","201842":"AS","201849":"GALLETA","201850":"GALLETA","201881":"AS","201902":"AS","201929":"GALLETA","201940":"4T","201948":"PANES","201991":"AS","201997":"AS","202029":"TRL","202030":"TRL","202041":"PASTEL","202042":"PASTEL","202043":"PASTEL","202066":"DULCE","202067":"DULCE","202068":"TRL","202097":"DULCE","202098":"AS","202099":"AS","202113":"AS","202138":"PASTEL","202147":"PASTEL","202148":"AS","202159":"4T","202160":"4T","202161":"4T","202175":"PASTEL","202176":"PASTEL","202177":"PASTEL","202178":"PASTEL","202179":"DULCE","202183":"DULCE","202216":"AS","202218":"AS","202225":"4T","202229":"AS","202258":"TRL","202259":"TRL","202260":"TRL","202275":"TRL","202290":"PASTEL","202296":"AS","202300":"AS","202316":"AS","202322":"TRL","202334":"AS","202344":"4T","202362":"TRL","202373":"TRL","202378":"GALLETA","202379":"GALLETA","202392":"AS","202393":"AS","202394":"AS","202399":"TRL","202401":"TRL","202402":"TRL","202403":"TRL","202422":"4T","202425":"PASTEL","202433":"AS","202445":"4T","202446":"4T","202458":"TRL","202459":"TRL","202477":"TRL","202517":"4T","202557":"PANES","202575":"DULCE","202576":"DULCE","202577":"DULCE","202589":"GALLETA","202591":"GALLETA","202596":"PASTEL","202617":"DULCE","202619":"AS","202620":"AS","202621":"AS","202624":"TRL","202636":"PANES","202637":"AS","202646":"TRL","202658":"TRL","202660":"TRL","202667":"TRL","202671":"TRL","202695":"TRL","202696":"AS","202717":"AS","202718":"AS","202728":"TRL","202746":"PASTEL","202753":"DULCE","202754":"4T","202759":"DULCE","202814":"AS","202818":"AS","202822":"PASTEL","202824":"GALLETA","202838":"4T","202862":"GALLETA","202869":"4T","202892":"PANES","202893":"PANES","202897":"TRL","202926":"4T","202948":"4T","202963":"AS","202964":"AS","202965":"AS","202968":"4T","202972":"TRL","202994":"4T","202999":"GALLETA","203000":"GALLETA","203001":"GALLETA","203002":"GALLETA","203003":"TRL","203013":"AS","203025":"DULCE","203033":"TRL","203034":"TRL","203035":"TRL","203053":"DULCE","203055":"TRL","203070":"TRL","203079":"TRL","203082":"TRL","203084":"TRL","203102":"DULCE","203112":"GALLETA","203124":"AS","203148":"TRL","203149":"AS","203159":"AS","203165":"AS","203166":"AS","203167":"AS","203168":"AS","203169":"AS","203183":"PASTEL","203184":"TRL","203185":"TRL","203200":"AS","203202":"GALLETA","203204":"AS","203208":"AS","203209":"GALLETA","203210":"GALLETA","203212":"AS","203214":"GALLETA","203217":"AS","203219":"GALLETA","203236":"AS","203237":"AS","203240":"AS","203246":"TRL","203257":"AS","203263":"AS","203264":"AS","203265":"AS","203281":"AS","203291":"GALLETA","203292":"GALLETA","203293":"AS","203294":"DULCE","203300":"DULCE","203301":"TRL","203350":"4T","203351":"4T","203408":"DULCE","203409":"DULCE","203416":"AS","203430":"TRL","203440":"4T","203444":"DULCE","203456":"AS","203460":"DULCE","203466":"GALLETA","203528":"GALLETA","203532":"AS","203533":"AS","203562":"4T","203571":"4T","203572":"4T","203573":"4T","203590":"AS","203600":"TRL","203602":"PASTEL","203611":"4T","203614":"DULCE","203630":"TRL","203631":"TRL","203632":"TRL","203633":"AS","203639":"TRL","203647":"DULCE","203648":"AS","203649":"4T","203655":"4T","203657":"GALLETA","203658":"GALLETA","203660":"GALLETA","203674":"AS","203675":"DULCE","203713":"AS","203723":"PASTEL","203724":"DULCE","203729":"AS","203739":"PASTEL","203740":"AS","203758":"PASTEL","203772":"GALLETA","203773":"GALLETA","203782":"TRL","203787":"GALLETA","203788":"GALLETA","203789":"GALLETA","203790":"DULCE","203794":"4T","203798":"GALLETA","203799":"TRL","203808":"AS","203819":"PASTEL","203821":"PASTEL","203823":"DULCE","203824":"DULCE","203825":"DULCE","203835":"TRL","203841":"TRL","203843":"TRL","203845":"TRL","203847":"TRL","203848":"TRL","203849":"TRL","203851":"TRL","203854":"GALLETA","203856":"4T","203857":"TRL","203858":"TRL","203879":"TRL","203880":"TRL","203885":"PASTEL","203886":"AS","203888":"TRL","203889":"DULCE","203895":"4T","203907":"DULCE","203908":"PASTEL","203909":"GALLETA","203920":"PANES","203924":"AS","203925":"AS","203926":"AS","203927":"AS","203943":"AS","203944":"PASTEL","203967":"DULCE","203969":"4T","203973":"TRL","203976":"TRL","203977":"PASTEL","203986":"DULCE","203992":"GALLETA","204008":"GALLETA","204011":"GALLETA","204014":"4T","204018":"AS","204023":"DULCE","204024":"DULCE","204027":"PANES","204029":"DULCE","204031":"AS","204032":"TRL","204036":"AS","204051":"4T","204052":"PASTEL","204055":"4T","204057":"GALLETA","204058":"TRL","204066":"AS","204069":"PANES","204071":"AS","204080":"PANES","204081":"AS","204083":"AS","204084":"PASTEL","204085":"AS","204086":"AS","204087":"AS","204089":"GALLETA","204099":"4T","204120":"DULCE","204127":"4T","204138":"GALLETA","204143":"4T","204145":"AS","204146":"AS","204148":"DULCE","204151":"4T","204156":"DULCE","204158":"PASTEL","204160":"DULCE","204163":"TRL","204165":"DULCE","204168":"TRL","204171":"GALLETA","204172":"GALLETA","204173":"GALLETA","204179":"4T","204180":"PASTEL","204181":"TRL","204184":"DULCE","204185":"TRL","204198":"GALLETA","204199":"GALLETA","204202":"4T","204203":"TRL","204205":"PANES","204209":"4T","204212":"TRL","204217":"AS","204227":"GALLETA","204228":"DULCE","204233":"DULCE","204234":"PASTEL","204239":"AS","204241":"DULCE","204246":"GALLETA","204247":"PASTEL","204257":"AS","204258":"AS","204259":"AS","204263":"GALLETA","204265":"TRL","204275":"4T","204285":"4T","204287":"PASTEL","204288":"GALLETA","204289":"PASTEL","204290":"DULCE","204294":"PASTEL","204311":"DULCE","204314":"TRL","204317":"4T","204325":"AS","204326":"AS","204340":"GALLETA","204342":"GALLETA","204344":"GALLETA","204353":"AS","204354":"AS","204356":"PASTEL","204367":"TRL","204368":"GALLETA","204375":"PANES","204376":"TRL","204377":"TRL","204379":"DULCE","204385":"TRL","204386":"4T","204393":"AS","204407":"AS","204408":"AS","204412":"4T","204413":"4T","204433":"PASTEL","204435":"TRL","204446":"4T","204458":"AS","204460":"TRL","204461":"TRL","204462":"TRL","204463":"TRL","204465":"4T","204466":"AS","204472":"AS","204473":"AS","204477":"PANES","204483":"TRL","204513":"AS","204514":"AS","204521":"GALLETA","204532":"AS","204533":"DULCE","204535":"PASTEL","204537":"GALLETA","204538":"PANES","204539":"PANES","204553":"PASTEL","204560":"DULCE","204565":"PASTEL","204566":"PASTEL","204576":"PANES","204577":"PANES","204580":"AS","204584":"DULCE","204585":"GALLETA","204594":"AS","204596":"AS","204607":"PASTEL","204610":"AS","204616":"PASTEL","204629":"4T","204639":"PASTEL","204645":"4T","204677":"PASTEL","204678":"TRL","204682":"PANES","204692":"TRL","204695":"AS","204697":"TRL","204698":"DULCE","204699":"DULCE","204725":"4T","204732":"PASTEL","204755":"PASTEL","204756":"DULCE","204757":"DULCE","204771":"TRL","204772":"PASTEL","204775":"4T","204777":"PASTEL","204779":"PASTEL","204780":"PASTEL","204798":"4T","204800":"AS","204808":"TRL","204826":"PASTEL","204828":"PASTEL","204845":"PASTEL","204847":"PASTEL","204850":"TRL","204854":"4T","204860":"GALLETA","204861":"PASTEL","204875":"DULCE","204890":"4T","204897":"PASTEL","204903":"DULCE","204904":"DULCE","204922":"PASTEL","204930":"PASTEL","204937":"TRL","204938":"AS","204944":"DULCE","204960":"4T","204961":"PANES","204962":"AS","204963":"TRL","204968":"PANES","204969":"PANES","204970":"AS","204973":"PANES","204974":"PANES","204982":"AS","204983":"AS","204984":"AS","204987":"PASTEL","204993":"4T","205007":"TRL","205010":"GALLETA","205013":"DULCE","205015":"TRL","205018":"PASTEL","205021":"4T","205023":"PASTEL","205065":"PASTEL","205070":"AS","205083":"TRL","205089":"4T","205102":"TRL","205105":"4T","205106":"PASTEL","205109":"AS","205123":"DULCE","205124":"TRL","205156":"AS","205163":"PASTEL","205174":"4T","205214":"GALLETA","205256":"PASTEL","205257":"PASTEL","205258":"PASTEL","205264":"4T","205268":"PASTEL","205274":"4T","205277":"AS","205278":"PASTEL","205279":"PASTEL","205284":"PASTEL","205285":"PASTEL","205291":"PASTEL","205292":"PASTEL","205294":"PASTEL","205321":"DULCE","205322":"DULCE","205338":"DULCE","205340":"DULCE","205341":"DULCE","205342":"4T","205344":"DULCE","205345":"DULCE","205356":"TRL","205357":"TRL","205359":"DULCE","205371":"4T","205375":"4T","205376":"4T","205384":"PASTEL","205407":"GALLETA","205408":"GALLETA","205424":"DULCE","205427":"GALLETA","205437":"PASTEL","205448":"PASTEL","205449":"GALLETA","205454":"PASTEL","205455":"PASTEL","205486":"TRL","30007":"DULCE","30314":"AS","30532":"GALLETA","31184":"AS","31187":"AS","31198":"AS","31284":"DULCE","31310":"GALLETA","31473":"AS","31507":"GALLETA","31690":"AS","32303":"TRL","32334":"AS","32394":"DULCE","32640":"AS","32873":"TRL","32940":"GALLETA","33260":"AS","33262":"AS","33265":"AS","33440":"AS","33441":"AS","33853":"GALLETA","34054":"DULCE","34226":"TRL","34258":"AS","34794":"AS","35052":"PASTEL","35142":"AS","35145":"AS","35241":"AS","35244":"AS","35453":"PASTEL","35484":"PASTEL","35728":"AS","36524":"4T","36598":"TRL","36610":"PASTEL","36641":"AS","36711":"DULCE","36894":"AS","37006":"DULCE","37131":"PANES","37135":"PANES","37226":"AS","37268":"GALLETA","37358":"GALLETA","37427":"PASTEL","37538":"TRL","37577":"TRL","37625":"TRL","37932":"4T","38172":"AS","38492":"GALLETA","38599":"AS","38650":"4T","38724":"AS","39140":"DULCE","39161":"4T","39244":"GALLETA","39324":"AS","39325":"AS","39374":"AS","40430":"4T","41843":"DULCE","42437":"AS","43005":"PANES","43006":"PANES","43023":"4T","43038":"TRL","43040":"TRL","43058":"GALLETA","43060":"AS","43064":"PASTEL","43065":"PASTEL","43068":"PASTEL","43069":"PASTEL","43070":"GALLETA","43075":"GALLETA","43084":"PASTEL","43118":"DULCE","43134":"AS","43136":"AS","43156":"AS","43159":"4T","43160":"AS","43161":"AS","43169":"DULCE","43173":"AS","43174":"DULCE","43175":"PANES","43185":"AS","43186":"AS","43187":"PANES","43188":"PANES","43189":"AS","43190":"AS","43192":"AS","43195":"4T","43196":"DULCE","43197":"DULCE","43198":"DULCE","43199":"DULCE","43200":"DULCE","43201":"DULCE","43202":"DULCE","43203":"DULCE","43204":"DULCE","43206":"DULCE","43207":"DULCE","43209":"DULCE","43212":"AS","43215":"PANES","43222":"TRL","43223":"AS","43230":"GALLETA","43231":"PANES","43255":"AS","43256":"AS","43305":"4T","43307":"PASTEL","43316":"PASTEL","43335":"AS","43338":"AS","43342":"AS","43344":"AS","43345":"AS","43348":"AS","43350":"4T","43361":"AS","44371":"AS","44829":"4T","44833":"TRL","44950":"DULCE","44951":"DULCE","45496":"PANES","45527":"AS","4645":"TRL","47104":"AS","47105":"AS","47332":"AS","4767":"AS","47886":"PASTEL","48001":"AS","48002":"TRL","48135":"PASTEL","48136":"4T","48137":"PASTEL","48345":"AS","48373":"4T","48374":"AS","48557":"AS","48598":"DULCE","48965":"AS","48996":"4T","49028":"4T","49950":"AS","506068":"4T","506069":"4T","506498":"AS","506501":"AS","5097":"TRL","6000":"DULCE","6133":"4T","6206":"TRL","6219":"TRL","6451":"AS","739":"TRL","835":"AS","8863":"4T","8864":"4T","8865":"4T","9098":"TRL","935":"GALLETA","99200784":"4T","99201299":"GALLETA","99201619":"GALLETA","99201849":"GALLETA","99203562":"4T","9930532":"GALLETA","9943231":"PANES"
 };
 
 const CATS_ORDER = ['TRL','PANES','AS','PASTEL','GALLETA','DULCE','4T'];
 
-/* Maestro precargado desde LINEAS_BIMBO.xlsx */
-const MAESTRO_DEFAULT = [{"cat":"TRL","items":[{"nombre":"Saladas 200p 2.4kg lar","item":"739","custom":false},{"nombre":"Mantecada vainilla 3p 157g mb tr","item":"4645","custom":false},{"nombre":"Divididas en Tiras Doraditas 127g MTA TR","item":"5097","custom":false},{"nombre":"Deliciosas vainilla 130g mtb lar","item":"6206","custom":false},{"nombre":"Deliciosas vainilla 230g mtb lar","item":"6219","custom":false},{"nombre":"Bigotes chocolate 60g mta tr","item":"32303","custom":false},{"nombre":"Magnas 200g SP MTB LAR","item":"34226","custom":false},{"nombre":"Animalitos Karamelo Hierro 200g MTA LAR","item":"36598","custom":false},{"nombre":"Bigotes Cajeta 60g MTA TR","item":"37538","custom":false},{"nombre":"Deliciosas betunadas 216g prom cu lar","item":"37577","custom":false},{"nombre":"Pachoncitos 2p 140g SP MTB TR","item":"37625","custom":false},{"nombre":"Conchas 2p 120g mtb tr","item":"43038","custom":false},{"nombre":"Doraditas 110g mta tr","item":"43040","custom":false},{"nombre":"Galleta Molida Salada 5Kg MTA LAR","item":"43222","custom":false},{"nombre":"Canapinas 95g CU LAR","item":"150284","custom":false},{"nombre":"Variedad Polvorones Nvo 700g CU GBI","item":"150543","custom":false},{"nombre":"Polvoroncitos 6p 90g MTB TR","item":"200106","custom":false},{"nombre":"Polvoroncitos caseros panera 300g mtb tr","item":"200119","custom":false},{"nombre":"Tiras doraditas 58g mtb tr","item":"200352","custom":false},{"nombre":"Galleta Avena 2p 66g MTA TR","item":"200356","custom":false},{"nombre":"Mantecada Vainilla SP 3p 157g MB TR","item":"200405","custom":false},{"nombre":"Mantecadas Chocolate 3p 142.5g MTB TR","item":"200414","custom":false},{"nombre":"Deliciosas chocochispas nvo 130g cu lar","item":"200657","custom":false},{"nombre":"Deliciosas ChocoChispas 80g CU LAR","item":"200898","custom":false},{"nombre":"Deliciosas chocochispas 230g cu lar","item":"200956","custom":false},{"nombre":"Deliciosas chochitos 216g cu lar","item":"201259","custom":false},{"nombre":"Coloretes 52g CU LAR","item":"201499","custom":false},{"nombre":"Div tiras doradita cajeta 3p 110g mta tr","item":"201593","custom":false},{"nombre":"Semitas Ref 2p 184g MTA TR","item":"201677","custom":false},{"nombre":"Tartas Fresa 100p 3660g Granel CU GBI","item":"201767","custom":false},{"nombre":"Favoritas Nuez 155g CU LAR","item":"202029","custom":false},{"nombre":"Favoritas Vainilla 155g CU LAR","item":"202030","custom":false},{"nombre":"Muffin Casero CP 130g MTB TR","item":"202068","custom":false},{"nombre":"Tartinas Fresa CP 6p 100g MTB TR","item":"202258","custom":false},{"nombre":"Tartinas Pina CP 6p 100g MTB TR","item":"202259","custom":false},{"nombre":"Tartinas Zarzamora CP 6p 100g MTB TR","item":"202260","custom":false},{"nombre":"Wafer Nata 50g CU GBI","item":"202275","custom":false},{"nombre":"Cuernitos NF CP 2p 100g MTA TR","item":"202322","custom":false},{"nombre":"Cuernitos NF SP 2p 100g MTA TR","item":"202362","custom":false},{"nombre":"Panque Casero CP 235g MTA TR","item":"202373","custom":false},{"nombre":"Tartas Mix Mora/Chabacano 110g CU GBI","item":"202399","custom":false},{"nombre":"Tartinas Fresa SP 6p 100g MTB TR","item":"202401","custom":false},{"nombre":"Tartinas Pina SP 6p 100g MTB TR","item":"202402","custom":false},{"nombre":"Tartinas Zarzamora SP 6p 100g MTB TR","item":"202403","custom":false},{"nombre":"Favoritas Nuez SP 155g CU LAR","item":"202458","custom":false},{"nombre":"Favoritas Vainilla SP 155g CU LAR","item":"202459","custom":false},{"nombre":"Empanada Cajeta 2p 80g MTA JUL","item":"202477","custom":false},{"nombre":"Canapinas SP 95g Bolsa CU LAR","item":"202646","custom":false},{"nombre":"Saladas NE CP 175g CU LAR","item":"202660","custom":false},{"nombre":"Empanadita Fresa 2p 54g Bolsa MTB TR","item":"202667","custom":false},{"nombre":"Muffin Chocolate CP 130g Bolsa MTB TR","item":"202671","custom":false},{"nombre":"Muffin Casero SP 130g MTB TR","item":"202695","custom":false},{"nombre":"Deliciosas VainillaNE 1p90g Bolsa MTA LAR","item":"202728","custom":false},{"nombre":"Panera Oreja 20p 180g Blister GBI","item":"202972","custom":false},{"nombre":"Mantecadas NaranjaChoco 3p 165g Bolsa TR","item":"203003","custom":false},{"nombre":"Mini Chocotorro 1p 24g Bolsa WON","item":"203033","custom":false},{"nombre":"Mini Twinkies Vainilla 1p 27g Bolsa WON","item":"203034","custom":false},{"nombre":"Decanelas Rosquillas 1p 185g Tubo LAR","item":"203035","custom":false},{"nombre":"Empanada Cajeta CP 6p 240g Tira JUL","item":"203070","custom":false},{"nombre":"Polvoron Arandano 1p 84g Flowpack GBI","item":"203079","custom":false},{"nombre":"Tarta Luxury 6p 110.1g Flowpack GBI","item":"203148","custom":false},{"nombre":"Empanada Cajeta CP 2p 80g Flowpack JUL","item":"203184","custom":false},{"nombre":"Marias SP 1p 170g Tubo LAR","item":"203301","custom":false},{"nombre":"Polvoron Chocoamaranto 1p 84g Flowpack GBI","item":"203430","custom":false},{"nombre":"Empanada Cajeta 10p 40g TIRA JUL","item":"203631","custom":false},{"nombre":"Tartas Fresa 10p 183.50g Tubo GBI","item":"203185","custom":false},{"nombre":"Lors 18Kg CU MLA","item":"44833","custom":false},{"nombre":"Doraditas Nuez 1p 127g FLOW TR","item":"203082","custom":false},{"nombre":"Tartas Mix 110g CU GBI","item":"201497","custom":false},{"nombre":"Always Besos Naranja 1p 100g LATA GBI","item":"203600","custom":false},{"nombre":"Galleta Avena Arandano 2p 66g FLOW TR","item":"203630","custom":false},{"nombre":"Galleta Avena Chocolate Linaza 2p 66g FLOW TR","item":"203632","custom":false},{"nombre":"Always Besos Choco NC 1p 100g Lata GBI","item":"203246","custom":false},{"nombre":"Panque Marmol CafeLeche 1p 255g FLOW TR","item":"203055","custom":false},{"nombre":"Mantecada Zero 2p 105g FLOW TR","item":"203639","custom":false},{"nombre":"Tartas Guayaba 6p 110.1g FLOW GBI","item":"203888","custom":false},{"nombre":"Tartas Mix 1p 110.1g Temp Sum Flow GBI","item":"203973","custom":false},{"nombre":"Tartinas Fresa 8p 133.3g FLOW TR","item":"203799","custom":false},{"nombre":"Tartinas Pina 8p 133.3g FLOW TR","item":"203857","custom":false},{"nombre":"Tartinas Zarzamora 8p 133.3g FLOW TR","item":"203858","custom":false},{"nombre":"Empanada Cajeta NC 11p 40g TIRA JUL","item":"204058","custom":false},{"nombre":"Orejitas Mantequilla 71g CU GBI","item":"201107","custom":false},{"nombre":"Tartas Cajetas 6p 110.1g FLOW GBI","item":"203782","custom":false},{"nombre":"Besos Nuez 1p 60g FLOW GBI","item":"203880","custom":false},{"nombre":"Besos Coco 1p 90g Cj CU GBI","item":"202624","custom":false},{"nombre":"Orejitas 1p 55g Cj CU GBI","item":"202897","custom":false},{"nombre":"Deliciosas Chochitos 1p 230g FLOW LAR","item":"203845","custom":false},{"nombre":"Deliciosas Vainilla PC 1p 230g FLOW LAR","item":"204032","custom":false},{"nombre":"Tartinas Durazno 6p 100g FLOW TR","item":"203976","custom":false},{"nombre":"Deliciosas Betunadas 1p 230g FLOW LAR","item":"203841","custom":false},{"nombre":"Deliciosas Bombon 1p 170g FLOW LAR","item":"203843","custom":false},{"nombre":"Deliciosas Vainilla 6p 60g TIRA LAR","item":"204163","custom":false},{"nombre":"Deliciosas Chocochispas 6p 60g TIRA LAR","item":"204185","custom":false},{"nombre":"Pastitas Cuadradas 7p 54g TIRA TR","item":"204203","custom":false},{"nombre":"Besos Manzana Canela 1p 60g FLOW GBI","item":"204168","custom":false},{"nombre":"Mias Arandano 12p 96g FLOW GBI","item":"204181","custom":false},{"nombre":"Magnas CP 1p 200g Tubo LAR","item":"203084","custom":false},{"nombre":"Animalitos Karamelo 1p 200g FLOW LAR","item":"203835","custom":false},{"nombre":"Bigotes Chocolate 1p 80g FLOW TR","item":"204367","custom":false},{"nombre":"Bigotes Cajeta 1p 80g FLOW TR","item":"204376","custom":false},{"nombre":"Tartas Cajeta 20p 2202g CJ GBI","item":"204265","custom":false},{"nombre":"Canapinas 1p 140g TUBO LAR","item":"32873","custom":false},{"nombre":"Mantecadas Vainilla 4p 210g ME TR","item":"204314","custom":false},{"nombre":"Horneadita Crema Pastelera 6p 60g TIRA TR","item":"204435","custom":false},{"nombre":"Tartas Cajeta 8p 146.8g FLOW GBI","item":"204461","custom":false},{"nombre":"Tartas Chabacano 8p 146.8g FLOW GBI","item":"204463","custom":false},{"nombre":"Mini Twinkies Chocolate 2p 54g FLOW WON","item":"204385","custom":false},{"nombre":"Tartas Chocolate 8p 146.8g FLOW GBI","item":"204460","custom":false},{"nombre":"Mantecadas Arroz Leche 2p 105g FLOW TR","item":"204678","custom":false},{"nombre":"Magnas SP 200g Bolsa MTB LAR","item":"202658","custom":false},{"nombre":"Magnas SP 200g Bolsa MTB LAR","item":"202658","custom":false},{"nombre":"Mantecada Vainilla 3p 157.5g CP FLOW TR","item":"204808","custom":false},{"nombre":"Tartas Guayaba 8p 146.8g FLOW GBI","item":"204462","custom":false},{"nombre":"Mantecadas Manzana Canela 2p 105g FLOW TR","item":"204692","custom":false},{"nombre":"Mini Polvoroncitos 5p 50g TIRA TR","item":"204212","custom":false},{"nombre":"Favoritas Nuez 1p 100g FLOW LAR","item":"203849","custom":false},{"nombre":"Favoritas Vainilla 1p 100g FLOW LAR","item":"203851","custom":false},{"nombre":"Bigotes Duo Chocolate 2p 160g FLOW TR","item":"204937","custom":false},{"nombre":"Madalenas Cuadradas 1p 44g FLOW TR","item":"204963","custom":false},{"nombre":"Mantecada Vainilla 6p 52.5g TIRA TR","item":"204483","custom":false},{"nombre":"Deliciosas Chocochispas 1p 60g FLOW LAR","item":"203847","custom":false},{"nombre":"Deliciosas Vainilla 1p 60g FLOW LAR","item":"203848","custom":false},{"nombre":"Empanizador Panko 1p 4.5kg BOLSA BIM","item":"204697","custom":false},{"nombre":"Muffin Vainilla 1p 110g FLOW TR","item":"204850","custom":false},{"nombre":"Semitas Piloncillo 1p 92g FLOW TR","item":"205007","custom":false},{"nombre":"Tartaletas Fresa 8p 148g FLOW SUA","item":"205015","custom":false},{"nombre":"Tropical Cookies 9p 80g FLOW GBI","item":"204377","custom":false},{"nombre":"Surtido Fino Sp 1p 375g ME GBI","item":"48002","custom":false},{"nombre":"Canapinas May 80g CU LAR","item":"9098","custom":false},{"nombre":"Besos Chocolate 1p 60g FLOW GBI","item":"203879","custom":false},{"nombre":"Cremositas 1p 200g FLOW LAR","item":"205124","custom":false},{"nombre":"Butter Danesas 1p 300g LATA GBI","item":"204771","custom":false},{"nombre":"Tartas Fresa 4p 73.4g FLOW GBI","item":"205102","custom":false},{"nombre":"Costal Explosion Tartas 400g CU GBI","item":"200296","custom":false},{"nombre":"Mantecada Vainilla 1p 52.5g FLOW TR","item":"205083","custom":false},{"nombre":"Camioncito 40s 1p 20g BOLSA BIM","item":"205486","custom":false},{"nombre":"Pastitas Cuadradas 7p 378g TIRA TR","item":"205356","custom":false},{"nombre":"Mini Polvoroncitos 5p 250g TIRA TR","item":"205357","custom":false}]},{"cat":"PANES","items":[{"nombre":"Pan Multigrano 610g MTA BIM","item":"37131","custom":false},{"nombre":"Pan multigrano linaza 610g mta bim","item":"37135","custom":false},{"nombre":"Bimbollos super 6p 480g mta bim","item":"43005","custom":false},{"nombre":"Pan integral 370g mta bim","item":"43006","custom":false},{"nombre":"Pan blanco chico 360g mta bim","item":"43175","custom":false},{"nombre":"Pan integral 675g mta bim","item":"43187","custom":false},{"nombre":"Medias noches 8p 340g mta bim","item":"43188","custom":false},{"nombre":"Pastisetas 75g mtb sua","item":"43215","custom":false},{"nombre":"Pan blanco 640g mta bim","item":"43231","custom":false},{"nombre":"Pastisetas sin Azucar 10p 70g MTB SUA","item":"45496","custom":false},{"nombre":"Pastisetas Chocolate 9p 94g MTB SUA","item":"201281","custom":false},{"nombre":"Danesas CP 85g SUA","item":"201948","custom":false},{"nombre":"Pan Integral CP 370g MTA BIM","item":"202557","custom":false},{"nombre":"Super Hot Dogs 8p 526g MTA WON","item":"202636","custom":false},{"nombre":"Pastisetas PC 20p 150g Cj CU SUA","item":"202892","custom":false},{"nombre":"Pastisetas snAzucar PC 2p 140g Cj CU SUA","item":"202893","custom":false},{"nombre":"Panditas 1p 60g FLOW RIC","item":"127842","custom":false},{"nombre":"Diamantes 1p 110g FLOW SUA","item":"203920","custom":false},{"nombre":"Bimbollos Parrilleros 6p 516g BOLSA BIM","item":"204069","custom":false},{"nombre":"Pan Integral 1p 615g BOLSA BIM","item":"204080","custom":false},{"nombre":"Pan Artesano 1p 567g CP BOLSA BIM","item":"204205","custom":false},{"nombre":"PanMultigrano CeroCero 1p 610g NC BOLSA BIM","item":"200927","custom":false},{"nombre":"Pan Linaza 1p 610g NC BOLSA BIM","item":"200929","custom":false},{"nombre":"Pan Cero Cero 1p 610g NC BOLSA BIM","item":"200933","custom":false},{"nombre":"Pan Artesano 1p 567g PC BOLSA BIM","item":"204027","custom":false},{"nombre":"Pan blanco 640g mta bim","item":"9943231","custom":false},{"nombre":"Pan Blanco 1p 620g BOLSA BIM","item":"204375","custom":false},{"nombre":"Pastisetas Originales 12p 90g FLOW SUA","item":"204477","custom":false},{"nombre":"Pastisetas Base Chocolate 12p 125g FLOW SUA","item":"204538","custom":false},{"nombre":"Pastisetas sin Azucar 12p 84g FLOW SUA","item":"204539","custom":false},{"nombre":"Pan Integral 1p 300g BOLSA BIM","item":"204576","custom":false},{"nombre":"Pan Blanco 1p 300g BOLSA BIM","item":"204577","custom":false},{"nombre":"Bollos Super 12p 960g BOLSA BIM","item":"204682","custom":false},{"nombre":"Pan Blanco 1p 620g 5 BOLSA BIM","item":"204961","custom":false},{"nombre":"Pan Artesano 1p 567g 5 BOLSA BIM","item":"204968","custom":false},{"nombre":"Pan Cero Cero 1p 610g 5 BOLSA BIM","item":"204969","custom":false},{"nombre":"PanMultigrano CeroCero 1p 610g 5 BOLSA BIM","item":"204973","custom":false},{"nombre":"Pan Linaza 1p 610g 5 BOLSA BIM","item":"204974","custom":false}]},{"cat":"AS","items":[{"nombre":"Mantecadas chocolate 3p mtb tr","item":"835","custom":false},{"nombre":"Mini Pastelitos Club 12p 330g Cj MTA MLA","item":"1132","custom":false},{"nombre":"Tostado 210g cu bim","item":"1182","custom":false},{"nombre":"Tostado doble fibra 250g cu bim","item":"4767","custom":false},{"nombre":"Canelitas kc 360g mla","item":"30314","custom":false},{"nombre":"Tostada clasica 216g cjm san","item":"31184","custom":false},{"nombre":"Tostada Clasica 240g CJM SAN","item":"31187","custom":false},{"nombre":"Salmas 8p 144g CJM SAN","item":"31198","custom":false},{"nombre":"Salmas 20p 360g CJM SAN","item":"31473","custom":false},{"nombre":"Tostado integral 250g cu bim","item":"31690","custom":false},{"nombre":"Tostadas Nopal 216g CJM SAN","item":"32334","custom":false},{"nombre":"Tubo galleta gansito 10p 215g mtb mla","item":"32640","custom":false},{"nombre":"Panera Donas Azucar 12p 630g MTA BIM","item":"33260","custom":false},{"nombre":"Charola mantecadas 10p 625g mta bim","item":"33262","custom":false},{"nombre":"Charola Nito 15p 930g MTA BIM","item":"33265","custom":false},{"nombre":"Bran Frut Fresa 6p 240g Cj CU BIM","item":"33440","custom":false},{"nombre":"Bran frut pina 6p 240g cj cu bim","item":"33441","custom":false},{"nombre":"Totopo chilaquiles 500g tnb mr","item":"34258","custom":false},{"nombre":"Super Bollos 5in 8p 540g TNB WON","item":"34794","custom":false},{"nombre":"Super pan blanco ajonjoli 567g mta won","item":"35142","custom":false},{"nombre":"Wonder 100pct con Ajonjoli 567g MTA WON","item":"35145","custom":false},{"nombre":"Mi Pinguino 20p 600g Cj MTA MLA","item":"35241","custom":false},{"nombre":"Mi Gansito 20p 500g Cj MTA MLA","item":"35244","custom":false},{"nombre":"Tortillina 50pct menos grasa 306g mtb tr","item":"35728","custom":false},{"nombre":"Cuernitos Rebanados ME 200g MTA TR","item":"36641","custom":false},{"nombre":"Pan Molido 1.5Kg MTA BIM","item":"36894","custom":false},{"nombre":"Bolsa Bocadin 158g RIC","item":"37226","custom":false},{"nombre":"Pan Doble Fibra 567g MTA BIM","item":"38172","custom":false},{"nombre":"Tortillinas mantequilla 12p 306g mta tr","item":"38599","custom":false},{"nombre":"Bigotes 3p 180g me mtb tr","item":"38724","custom":false},{"nombre":"Polvorones KC 375g Cj CU MLA","item":"39324","custom":false},{"nombre":"Sponch KC 270g Cj CU MLA","item":"39325","custom":false},{"nombre":"Pan cero cero 0pct azucar 567g mta bim","item":"39374","custom":false},{"nombre":"Barra Multigrano Nuez 6p 204g Cj CU BIM","item":"42437","custom":false},{"nombre":"Bimbolunch 354g me mta bim","item":"43060","custom":false},{"nombre":"Super Bollos 5in 8p 540g MTA WON","item":"43134","custom":false},{"nombre":"Hot Dogs 8p 290g MTA WON","item":"43136","custom":false},{"nombre":"Mantecadas me 8p 250g mta bim","item":"43156","custom":false},{"nombre":"7 granos 680g mta oro","item":"43160","custom":false},{"nombre":"Pan 100pct integral 680g mta oro","item":"43161","custom":false},{"nombre":"Pan 12 granos 680g mta oro","item":"43173","custom":false},{"nombre":"Pan Integral 480g MTA BIM","item":"43185","custom":false},{"nombre":"Pan integral 680g mta bim","item":"43186","custom":false},{"nombre":"Medias Noches 16p 680g MTA BIM","item":"43189","custom":false},{"nombre":"Bimbollos 8p 450g MTA BIM","item":"43190","custom":false},{"nombre":"Bimbollos 12p 675g mta bim","item":"43192","custom":false},{"nombre":"Bimbollos con Ajn 18p 1440g MTA BIM","item":"43212","custom":false},{"nombre":"Pan Blanco 460g MTA BIM","item":"43223","custom":false},{"nombre":"Pastisetas 20p 150g MTA SUA","item":"43255","custom":false},{"nombre":"Pastiseta 40p 300g mta sua","item":"43256","custom":false},{"nombre":"Super Hot Dogs 8p 435g MTA WON","item":"43335","custom":false},{"nombre":"Pan blanco 680g mta bim","item":"43338","custom":false},{"nombre":"Nito ME 4p 248g MTB BIM","item":"43342","custom":false},{"nombre":"Donas azucar me 8p 210g mta bim","item":"43344","custom":false},{"nombre":"Pan Multigrano 680g MTA ORO","item":"43345","custom":false},{"nombre":"Tortillinas 50p 1275Kg MTA TR","item":"43348","custom":false},{"nombre":"Super Hot Dogs 12p 650g MTA WON","item":"43361","custom":false},{"nombre":"Mantecadas 2p 105g mtb tr","item":"44371","custom":false},{"nombre":"Mantecadas Nuez 8p 246g ME MTA BIM","item":"45527","custom":false},{"nombre":"Salmas azul 7p 126g cjm san","item":"47104","custom":false},{"nombre":"Salmas nopal 7p 126g cjm san","item":"47105","custom":false},{"nombre":"Bimbollos parrilleros 780g 8p mta bim","item":"47332","custom":false},{"nombre":"Pan mantequilla buttermilk 680g mta oro","item":"48345","custom":false},{"nombre":"Totopo Chilaquiles 500g MTA MR","item":"48374","custom":false},{"nombre":"Bimbollos Parrilleros 12p 1170g MTA BIM","item":"48557","custom":false},{"nombre":"Barra Multigran Linaza 6p 192g Cj CU BIM","item":"48965","custom":false},{"nombre":"Pan Tostado Cero Cero 12p 250g CU BIM","item":"49950","custom":false},{"nombre":"Flow pack pinguinos 4p 160g mta mla","item":"150233","custom":false},{"nombre":"Tortillinas 100pctint sp 10p 275g mta tr","item":"150244","custom":false},{"nombre":"Flow pack choco roles 4p 160g mtb mla","item":"150379","custom":false},{"nombre":"Flow pack latte crem choc 200g mtb mla","item":"150475","custom":false},{"nombre":"Pan 0 Gluten Nvo Empaque 423g MTA SAN","item":"150500","custom":false},{"nombre":"Twin Pack Sup Pan Bco Ajon 1134g MTA WON","item":"200172","custom":false},{"nombre":"Twin pack 100pct/ajonj 2p 1134g mta won","item":"200206","custom":false},{"nombre":"Tostaditas Onduladas 20p 200g TNB MR","item":"200244","custom":false},{"nombre":"Tortilla hna rc gdl sp 10p 260g mta dh","item":"200383","custom":false},{"nombre":"Mantecadas choc vain 4p 200g me mtb tr","item":"200416","custom":false},{"nombre":"Mini Doraditas 20p 900g Cj MTA TR","item":"200504","custom":false},{"nombre":"Galleta Arroz y Maiz 9p 108g Cj CU SAN","item":"200512","custom":false},{"nombre":"Galleta Arroz y Quinoa 9p 108g Cj CU SAN","item":"200513","custom":false},{"nombre":"Tostado 270g CU BIM","item":"200676","custom":false},{"nombre":"Pan artesano 567g mta bim","item":"200699","custom":false},{"nombre":"Tortilla Harina Nal 45p 1170g ME MTA DH","item":"200733","custom":false},{"nombre":"Tortilla harina int 45p 1125g me mta dh","item":"200734","custom":false},{"nombre":"Thins multigrano 6p 255g mta oro","item":"200772","custom":false},{"nombre":"Thins integral 6p 255g mta oro","item":"200774","custom":false},{"nombre":"Bollo Brioche Bim 6p 465g MTA BIM","item":"200807","custom":false},{"nombre":"Totopos 320g bolsa tnb dh","item":"200841","custom":false},{"nombre":"Totopos 320g Bolsa CU DH","item":"200842","custom":false},{"nombre":"Thins integral 18p 765g tnb oro","item":"200937","custom":false},{"nombre":"Thins multigrano 18p 765g tnb oro","item":"200938","custom":false},{"nombre":"Polvorones Bites PC 5p 275g Bolsa CU MLA","item":"200990","custom":false},{"nombre":"Pan avena 680g mta oro","item":"201060","custom":false},{"nombre":"Bollos artesano 8p 640g bolsa mta bim","item":"201188","custom":false},{"nombre":"MM Bollos Hamburguesa 675g MTA NP","item":"201212","custom":false},{"nombre":"Mm pan hot dogs 600g mta np","item":"201214","custom":false},{"nombre":"MM Pan Caja Blanco 567g MTA NP","item":"201216","custom":false},{"nombre":"MM Pan Caja Integral 610g MTA NP","item":"201218","custom":false},{"nombre":"Tortilla Hna Precocida 12p 348g MTA TR","item":"201253","custom":false},{"nombre":"Mini Pinguinos Hall 20p 600g Cj MTA MLA","item":"201315","custom":false},{"nombre":"Pinguinos Navidad 8p 240g Cj MTA MLA","item":"201403","custom":false},{"nombre":"Pinguinos Navidad 20p 600g Cj MTA MLA","item":"201404","custom":false},{"nombre":"Bimbunuelos SP 6p 99g Flowpack BIM","item":"201437","custom":false},{"nombre":"Mantecadas Vaini SP 6p 188g Flowpack BIM","item":"201439","custom":false},{"nombre":"Medias Noches Brioche 384g MTA BIM","item":"201540","custom":false},{"nombre":"Pastisetas Sin Azucar PC 280g Cj CU SUA","item":"201554","custom":false},{"nombre":"100pct c/ajonjoli 567g tnb won","item":"201568","custom":false},{"nombre":"Super Pan Blanco Ajonjoli 567gTNB WON","item":"201569","custom":false},{"nombre":"Vital Arandano 680g MTA BIM","item":"201587","custom":false},{"nombre":"Tortillinas Burreras 10p 500g MTA TR","item":"201628","custom":false},{"nombre":"Pan Centeno 567g MTA BIM","item":"201674","custom":false},{"nombre":"Tortilla sp 10p 220g bolsa mta dh","item":"201686","custom":false},{"nombre":"Polvoroncitos 300g flowpack mta tr","item":"201694","custom":false},{"nombre":"Mini Pay Pina 330 Cj CU MLA","item":"201842","custom":false},{"nombre":"Pan Quinoa Granos 360g MTA WON","item":"201881","custom":false},{"nombre":"Submarinos Fresa 280 Cj CU MLA","item":"201902","custom":false},{"nombre":"Little bites chocolate chip 234g cu bim","item":"201991","custom":false},{"nombre":"Tostado Doble Fibra 18p 321g CU BIM","item":"201997","custom":false},{"nombre":"Pastisetas 40p 300g CU SUA","item":"202113","custom":false},{"nombre":"Empanizador Crujiente RRP 400g CU BIM","item":"202148","custom":false},{"nombre":"Canelitas 3p 270g ME CU MLA","item":"202216","custom":false},{"nombre":"Polvorones 3p 330g ME CU MLA","item":"202218","custom":false},{"nombre":"Mantecadas Vainilla 6p 315g ME MTA TR","item":"202229","custom":false},{"nombre":"Totopos Ancestrales 280g CJM SAN","item":"202296","custom":false},{"nombre":"Totopos Clasicos 280g CJM SAN","item":"202300","custom":false},{"nombre":"Pan Masa Madre 680g MTA ORO","item":"202334","custom":false},{"nombre":"Mini Pinguino 8p 200g Cj CU MLA","item":"202392","custom":false},{"nombre":"Mini Choco Rol 8p 224g Cj CU MLA","item":"202393","custom":false},{"nombre":"Mini Gansito 8p 192g Cj CU MLA","item":"202394","custom":false},{"nombre":"Cuernitos Reb NF SP 4p 200g MTA TR","item":"202433","custom":false},{"nombre":"Mini Choco Rol 24p 672g Cj MTB MLA","item":"202619","custom":false},{"nombre":"Mini Gansito 24p 576g Cj MTB MLA","item":"202620","custom":false},{"nombre":"Mini Pinguino 24p 600g Cj MTA MLA","item":"202621","custom":false},{"nombre":"Super Hot Dogs 12p 789g MTA WON","item":"202637","custom":false},{"nombre":"Panque Casero SP 235g MTA TR","item":"202696","custom":false},{"nombre":"Favoritas Vainill Tripack PC 465g CU LAR","item":"202717","custom":false},{"nombre":"Cuernitos 200g Bolsa MTA BIM","item":"202718","custom":false},{"nombre":"Pan con Quinoa 1p 610g Bolsa MTA WON","item":"202818","custom":false},{"nombre":"Canelitas Bites 5p 225g Cj MLA","item":"202963","custom":false},{"nombre":"Polvorones Bites 5p 225g Cj MLA","item":"202964","custom":false},{"nombre":"Triki Trakes Bites 5p 225g Cj MLA","item":"202965","custom":false},{"nombre":"Galleta ArrozChocArandan 8p208g Caja WON","item":"203013","custom":false},{"nombre":"Tripack Napolitano SP 3p 210g Flowpack MLA","item":"203124","custom":false},{"nombre":"Pan Molido Cero Cero RRP 1p 210g FP BIM","item":"203149","custom":false},{"nombre":"Pastelito Principe SF 1p 38g Cj MLA","item":"203169","custom":false},{"nombre":"Principe Avellana KC PC 5p 315g Cj MLA","item":"203200","custom":false},{"nombre":"Principe Choc KC PC 5p 315g Cj MLA","item":"203208","custom":false},{"nombre":"Principe Limon KC PC 5p 315g Cj MLA","item":"203212","custom":false},{"nombre":"Triki Trakes KC PC 5p 255g Cj MLA","item":"203217","custom":false},{"nombre":"Mini Pay Nuez 6p 288g Cj MLA","item":"203236","custom":false},{"nombre":"Mini Pay Pina 6p 330 Cj MLA","item":"203237","custom":false},{"nombre":"Pan para Paninis 6p 300g Flowpack ORO","item":"203240","custom":false},{"nombre":"Donas SP 6p 158g Flowpack BIM","item":"203265","custom":false},{"nombre":"Snowballs 6p 240g Cj MLA","item":"203281","custom":false},{"nombre":"Barritas Mora KC PC 4p 268g Cj MLA","item":"203293","custom":false},{"nombre":"Bimbollo Cero Cero 6p 528g Bolsa BIM","item":"203263","custom":false},{"nombre":"Medias Noches CeroCero 8p 384g Bolsa BIM","item":"203264","custom":false},{"nombre":"Mini Pinguinos Fresas 8p 200g Cj MLA","item":"202814","custom":false},{"nombre":"Natura Fresa 5p 225g Cj BIM","item":"203159","custom":false},{"nombre":"Pastelito Principe 5p 190g FLOW MLA","item":"203257","custom":false},{"nombre":"Principe Choc Bco KC PC 5p 315g Cj MLA","item":"203204","custom":false},{"nombre":"Polvorones CA 375g Cj CU MLA","item":"6451","custom":false},{"nombre":"Mini Submarinos 8p 200g Cj MLA","item":"203456","custom":false},{"nombre":"Bran Frut Fresa 5p 200g Cj BIM","item":"203165","custom":false},{"nombre":"Bran Frut Pina 5p 200g Cj BIM","item":"203166","custom":false},{"nombre":"Multigrano Nuez 5p 170g Cj BIM","item":"203168","custom":false},{"nombre":"Polvorones PC KC 4p 296g CJ MLA","item":"203532","custom":false},{"nombre":"Canelitas KC PC 5p 300g CJ MLA","item":"203416","custom":false},{"nombre":"Sponch KC PC 5p 225g CJ MLA","item":"203533","custom":false},{"nombre":"Pinguinos Halloween 4p 160g FLOW MLA","item":"203740","custom":false},{"nombre":"Pan Natural 1p 680g BOLSA BIM","item":"203648","custom":false},{"nombre":"Pan Masa Madre NE 1p 680g BOLSA ORO","item":"203674","custom":false},{"nombre":"Tostaditas Horneadas 20p 160g BOLSA SAN","item":"203633","custom":false},{"nombre":"PMolido PescadoMariscos 1p 210g FLOW BIM","item":"203713","custom":false},{"nombre":"PCeroCero sin Harina 1p 680g BOLSA BIM","item":"203590","custom":false},{"nombre":"PanBlancoGreatValue 1p 567g BOLSA NP","item":"203924","custom":false},{"nombre":"Pan Integral GreatValue 1p 610g BOLSA NP","item":"203925","custom":false},{"nombre":"Bollos Great Value 8p 450g BOLSA NP","item":"203926","custom":false},{"nombre":"Hot Dog Great Value 8p 300g BOLSA NP","item":"203927","custom":false},{"nombre":"Tortillinas Parrilleras 10p 290g BOLSA TR","item":"203729","custom":false},{"nombre":"Choco Roles Frutos Rojos 8p 224g CJ MLA","item":"203886","custom":false},{"nombre":"Mini Tostado Mantequilla 12p 115g BIM","item":"203808","custom":false},{"nombre":"Pan Natural 1p 610g BOLSA BIM","item":"204081","custom":false},{"nombre":"Bimbollos Parrilleros 12p 1032g BOLSA BIM","item":"204071","custom":false},{"nombre":"Bimbollos Parrilleros 8p 688g BOLSA BIM","item":"204087","custom":false},{"nombre":"Pan Integral 1p 620g BOLSA BIM","item":"204066","custom":false},{"nombre":"Donas Azucaradas 2p 52.5g FLOW BIM","item":"204018","custom":false},{"nombre":"Surtido Rico 1p 770g ME GBI","item":"48001","custom":false},{"nombre":"Pan para Paninis 9p 450g Prm FLOW ORO","item":"204239","custom":false},{"nombre":"Pan Natural 1p 612g MC BOLSA BIM","item":"204259","custom":false},{"nombre":"Pan Centeno 1p 600g BOLSA ORO","item":"204085","custom":false},{"nombre":"Pan Molido Clasico 1p 400g DYP BIM","item":"204031","custom":false},{"nombre":"Pan Molido 100g FLOW BIM","item":"204083","custom":false},{"nombre":"12 Granos 1p 600g BOLSA WON","item":"204086","custom":false},{"nombre":"Donitas Espolvoreadas 3p 52.5g FLOW BIM","item":"204036","custom":false},{"nombre":"Donitas Espolvoreadas 10p 525g CJ BIM","item":"204145","custom":false},{"nombre":"Pan Artesano Multigrano 1p 610g BOLSA BM","item":"204217","custom":false},{"nombre":"Pan Cero Cero CH 1p 340g BOLSA BIM","item":"204325","custom":false},{"nombre":"Pan Multigrano Cero Cero CH 1p 340g BOLSA BIM","item":"204326","custom":false},{"nombre":"Thins Cero Cero 6p 255g FLOW BIM","item":"204393","custom":false},{"nombre":"Bigotes 3p 240g ME TR","item":"204466","custom":false},{"nombre":"Wonder 100 con Ajonjoli 1p 567g MC BOLSA WON","item":"204257","custom":false},{"nombre":"Super PanBlanco Ajonjoli 1p 567g MC BOLSA WON","item":"204258","custom":false},{"nombre":"Galleta Arroz Integ 9p 108g Cj CU SAN","item":"200436","custom":false},{"nombre":"Multigrano Linaza 5p 160g Cj BIM","item":"203167","custom":false},{"nombre":"Mini Gansito 4p 96g FLOW MLA","item":"204513","custom":false},{"nombre":"Mini Choco Roles 4p 112g FLOW MLA","item":"204514","custom":false},{"nombre":"Little Bites Chispas Chocolate 5p 234g CJ BIM","item":"204532","custom":false},{"nombre":"MrBrown Minis 5p 275g CJ MLA","item":"204596","custom":false},{"nombre":"Dino Chispas 4p 68g CJ MLA","item":"204353","custom":false},{"nombre":"Dino Vainilla 4p 68g CJ MLA","item":"204354","custom":false},{"nombre":"Pan Integral 1p 350g BOLSA BIM","item":"204407","custom":false},{"nombre":"PanBlanco 1p 350g BOLSA BIM","item":"204408","custom":false},{"nombre":"Triki Trakes Bombon MedKC 4p 204g CA CJ MLA","item":"204610","custom":false},{"nombre":"Donitas Espolvoreadas 3p 52.5g NC FLOW BIM","item":"204594","custom":false},{"nombre":"Pan Integral 1p 620g 5 BOLSA BIM","item":"204962","custom":false},{"nombre":"Pan Natural 1p 612g 5 BOLSA BIM","item":"204982","custom":false},{"nombre":"Super PanBlanco Ajonjoli 1p 567g 5 BOLSA WON","item":"204983","custom":false},{"nombre":"Wonder 100 conAjonjoli 1p 567g 5 BOLSA WON","item":"204984","custom":false},{"nombre":"Pan Artesano Multigrano 1p 610g 5 BOLSA BM","item":"204970","custom":false},{"nombre":"Mantequilla 6p 300g FLOW ORO","item":"204472","custom":false},{"nombre":"Multigrano 6p 300g FLOW ORO","item":"204473","custom":false},{"nombre":"Mantecadas Naranja conChispas 2p 110g FLOW TR","item":"204580","custom":false},{"nombre":"GrisinesRomeroOliva 1p 120g FLOW BIM EXP","item":"506501","custom":false},{"nombre":"Pan Artesano Honey Wheat 1p 610g BOLSA BIM","item":"204800","custom":false},{"nombre":"Bimbolunch 12p 708g CJ BIM","item":"204146","custom":false},{"nombre":"Mix Bigotes 10p 800g CJ TR","item":"204458","custom":false},{"nombre":"Principe Chocolate CA 8p 84g CU MLA","item":"202316","custom":false},{"nombre":"Fruit Grain Fresa 222g Cj CU BM","item":"202098","custom":false},{"nombre":"Pan Rinde 1p 620g BOLSA BIM","item":"205109","custom":false},{"nombre":"Medias Noches Parrilleras 8p 526g BOLSA BIM","item":"203943","custom":false},{"nombre":"Pastisetas 40p 300g NC CJ SUA","item":"204938","custom":false},{"nombre":"Empanizador Pan ko 1p 300g DYP BIM","item":"204695","custom":false},{"nombre":"Mini Tostado Arandanos 12p 115g ME BIM","item":"205070","custom":false},{"nombre":"Sorpresa Bob Esponja 3p 106g CJ MLA","item":"205277","custom":false},{"nombre":"Fruit Grain Manzana 222g Cj CU BM","item":"202099","custom":false},{"nombre":"Grisines CebMorada 1p 120g FLOW BIM EXP","item":"506498","custom":false},{"nombre":"Pan S Gluten Semillas 1p 430g NC FLOW BIM","item":"205156","custom":false}]},{"cat":"PASTEL","items":[{"nombre":"Tri pack gansito 150g sp mtb mla","item":"35052","custom":false},{"nombre":"Chocotorro fresa 1p 50g sp mtb mla","item":"35453","custom":false},{"nombre":"Choco roles 2p 80g cc mta mla","item":"35484","custom":false},{"nombre":"Bolsa mini rocko 40p 10g cu mla","item":"36610","custom":false},{"nombre":"Leche gansito 236ml mla","item":"37427","custom":false},{"nombre":"Submarinos fresa 3p 105g sp mta mla","item":"43064","custom":false},{"nombre":"Rollo fresa 2p 75g mta mla","item":"43065","custom":false},{"nombre":"Rocko tira 10p 44g mta mla","item":"43068","custom":false},{"nombre":"Pinguinos 2p 80g mta mla","item":"43069","custom":false},{"nombre":"Submarinos chocolate 3p 105g sp mta mla","item":"43084","custom":false},{"nombre":"Gansito 1p 50g C/Charola MTA MLA","item":"43307","custom":false},{"nombre":"Submarinos vainilla 3p 105g sp mta mla","item":"43316","custom":false},{"nombre":"Pinguinos 3p 120g Prom MTA MLA","item":"47886","custom":false},{"nombre":"Bimbollos fs 8p 450g mta bim","item":"48135","custom":false},{"nombre":"Medias noches fs 16p 680g mta bim","item":"48137","custom":false},{"nombre":"Medias Noches FS Nvo 8p 340g MTA BIM","item":"150213","custom":false},{"nombre":"2Pack Gansito 100g ME MTB MLA","item":"150582","custom":false},{"nombre":"Tira rocko colores 10p 44g tira mta mla","item":"150644","custom":false},{"nombre":"Cajilla mobi 10p 450g cu mla","item":"200358","custom":false},{"nombre":"Dalmata nvo 1p 55g mtb mla","item":"200426","custom":false},{"nombre":"Duo napolitano 140g mtb mla","item":"200852","custom":false},{"nombre":"Pinguinos cp 3p 120g prom mta mla","item":"200940","custom":false},{"nombre":"Duo napolitano sp 140g mtb mla","item":"201373","custom":false},{"nombre":"Duo mini pay nuez 96g mtb mla","item":"201528","custom":false},{"nombre":"Duo mini pay pina 110g mtb mla","item":"201529","custom":false},{"nombre":"Duo Mini Pay Nuez SP 96g MTB MLA","item":"201665","custom":false},{"nombre":"Duo Mini Pay Pina SP 110g MTB MLA","item":"201666","custom":false},{"nombre":"Mini Choco Roles NE 28g MTB MLA","item":"202041","custom":false},{"nombre":"Mini Gansito NE 24g MTB MLA","item":"202042","custom":false},{"nombre":"Mini Pinguino NE 25g MTA MLA","item":"202043","custom":false},{"nombre":"Snowballs 2p 80g Blister MTA MLA","item":"202138","custom":false},{"nombre":"Mini Latte Creme Chocolate 24g MTA MLA","item":"202147","custom":false},{"nombre":"Maxitubo Principe NE 210g MTB MLA","item":"202175","custom":false},{"nombre":"Maxitubo Triki Trakes NE 215g MTB MLA","item":"202176","custom":false},{"nombre":"Maxitubo Canelitas NE 224g MTB MLA","item":"202177","custom":false},{"nombre":"Maxitubo Polvorones NE 310g MTB MLA","item":"202178","custom":false},{"nombre":"Pinguinos Fresa 2p 80g Flowpack MLA","item":"202425","custom":false},{"nombre":"Maxitubo Sponch 180g ME MTB MLA","item":"202596","custom":false},{"nombre":"MiniSubmarinos Fresa 1p 25g Flow MTB MLA","item":"202746","custom":false},{"nombre":"Maxitubo Princi Avell 1p 210g ME MTB MLA","item":"202822","custom":false},{"nombre":"Pastelito Principe CF 1p 38g Cj MLA","item":"203183","custom":false},{"nombre":"Pinguinos Halloween 2p 80g FLOW MLA","item":"203602","custom":false},{"nombre":"Pinguinos Navidad 2p 80g FLOW MLA","item":"203758","custom":false},{"nombre":"Mini Pay Manzana Canela CP 1p 55g FLOW MLA","item":"203723","custom":false},{"nombre":"Choco Roles Frutos Rojos 2p 80g FLOW MLA","item":"203821","custom":false},{"nombre":"Bon O Bon Leche 15p 225g DPY NP","item":"203908","custom":false},{"nombre":"Brownies Tentacion 1p 30g FLOW MLA","item":"203819","custom":false},{"nombre":"Bon o Bon Chocofresa 15p 225g DPY NP","item":"203977","custom":false},{"nombre":"Pinguinos Triple Chocola 2p 80g FLOW MLA","item":"204052","custom":false},{"nombre":"Pastelito Bocadin 10p 250g CJ MLA","item":"203739","custom":false},{"nombre":"PinguinosBiriween Fru Rojos 2p80g FLOW MLA","item":"204084","custom":false},{"nombre":"Mobi 1p 30g FLOW MLA","item":"203944","custom":false},{"nombre":"Brownie Tentacion CF 1p 30g GRNL MLA","item":"204158","custom":false},{"nombre":"Pinguinos Navidad ToffeeNut 2p 80g FLOW MLA","item":"204180","custom":false},{"nombre":"Gansito Black Chocolate 1p 50g GRNL MLA","item":"204234","custom":false},{"nombre":"Snowballs CP 1p 40g MTA MLA","item":"202290","custom":false},{"nombre":"Mr Brown 1p 30g GRNL MLA","item":"204289","custom":false},{"nombre":"Choco Roles 1p 50g GRNL MLA","item":"204356","custom":false},{"nombre":"Napolitano Chispas Chocolate 1p 70g GRNL MLA","item":"204287","custom":false},{"nombre":"Gansito Black Chocolate 1p 50g Cap GRNL MLA","item":"204247","custom":false},{"nombre":"Choco Roles Black 2p 80g CC FLOW MLA","item":"204433","custom":false},{"nombre":"Tartaletas Cuadradas Fresa 7p 116.6g FLOW SUA","item":"203885","custom":false},{"nombre":"Rollo 1p 37.5g GRNL MLA","item":"204294","custom":false},{"nombre":"MrBrown Minis 4p 55g FLOW MLA","item":"204535","custom":false},{"nombre":"Mini Gansito Two Pack 48g FLOW MLA","item":"204677","custom":false},{"nombre":"Pay Manzana Canela 1p 55g FLOW MLA","item":"204553","custom":false},{"nombre":"Pinguinos Enigma 2p 80g FLOW MLA","item":"204565","custom":false},{"nombre":"Pinguino mas GalletaPinguino 2p 60g FLOW MLA","item":"204566","custom":false},{"nombre":"Choco Roles Party 2p 85g Cap FLOW MLA","item":"204607","custom":false},{"nombre":"Gansito 1p 50g CP Cap FLOW MLA","item":"204732","custom":false},{"nombre":"Submarinos Choco Avellana 1p 50g FLOW MLA","item":"204639","custom":false},{"nombre":"Swiss Roll 1p 40g FLOW WON","item":"204616","custom":false},{"nombre":"Bon o Bon Pumkin 15p 225g DPY NP","item":"204826","custom":false},{"nombre":"Pinguinos Dulce Leche 2p 80g FLOW MLA","item":"204755","custom":false},{"nombre":"Volkano 1p 22g FLOW MLA","item":"204780","custom":false},{"nombre":"Roly Chocolate 1p 28g FLOW MLA","item":"204779","custom":false},{"nombre":"Roly Dulce de Leche 1p 27g FLOW MLA","item":"204772","custom":false},{"nombre":"Gansito Cherry 1p 50g Cap FLOW MLA","item":"204777","custom":false},{"nombre":"Gansito Cherry 1p 50g SP Cap FLOW MLA","item":"204828","custom":false},{"nombre":"ChocoRoles Fresa Frutos Rojos 1p 80g FLOW MLA","item":"204861","custom":false},{"nombre":"Pastel Choc BrownieChoc 1p35g FLOW MLA","item":"204845","custom":false},{"nombre":"Pastelito Hersheys 1p 40g FLOW MLA","item":"204922","custom":false},{"nombre":"Gansi Premio 1p 50g Cap CP FLOW MLA","item":"204847","custom":false},{"nombre":"Gansi Premio 1p 50g SP FLOW MLA","item":"204987","custom":false},{"nombre":"Pan Blanco 1p 567g BOLSA BIM","item":"205018","custom":false},{"nombre":"Pan Integral 1p 610 BOLSA BIM","item":"205023","custom":false},{"nombre":"Pastelito Canelitas 1p 58g FLOW MLA","item":"204930","custom":false},{"nombre":"Pinguinos Hersheys 2p 80g FLOW MLA","item":"205065","custom":false},{"nombre":"Choco Roles 1p 50g NC GRNL MLA","item":"205268","custom":false},{"nombre":"Pinguinos Calaverita Fresa 2p 80g FLOW MLA","item":"205163","custom":false},{"nombre":"Pay Fresa 2p 110g FLOW MLA","item":"205106","custom":false},{"nombre":"Gansi Premio Cars 1p 50g Cap CP FLOW MLA","item":"205284","custom":false},{"nombre":"Pastel Choc BrownieChoc 1p35gSP FLOW MLA","item":"204897","custom":false},{"nombre":"Submarinos Choco Avellana 1p 50g NE FLOW MLA","item":"205279","custom":false},{"nombre":"Submarinos Fresa Sp 3p 105g Nvo FLOW MLA","item":"205256","custom":false},{"nombre":"Submarinos Vainilla Sp 3p 105g Nvo FLOW MLA","item":"205257","custom":false},{"nombre":"Submarinos Chocolate Sp 3p 105g Nvo FLOW MLA","item":"205258","custom":false},{"nombre":"Gansi Premio Cars 1p 50g SP FLOW MLA","item":"205285","custom":false},{"nombre":"ChocoRoles Frutos Rojos ST 2p 80g CC FLOW MLA","item":"205278","custom":false},{"nombre":"Choco Roles Cereza 2p 80g CC FLOW MLA","item":"205384","custom":false},{"nombre":"Mini Gansito 12p 288g CJ MLA","item":"205291","custom":false},{"nombre":"Mini Pinguino 12p 300g CJ MLA","item":"205292","custom":false},{"nombre":"Mini Choco Roles 12p 336g CJ MLA","item":"205294","custom":false},{"nombre":"GansiPremio DC Cap 1p 50g CP FLOW MLA","item":"205454","custom":false},{"nombre":"Rocko 10p 440g TIRA MLA","item":"205437","custom":false},{"nombre":"Mobi 12p 360g CJ MLA","item":"205448","custom":false},{"nombre":"GansiPremio DC 1p 50g SP FLOW MLA","item":"205455","custom":false}]},{"cat":"GALLETA","items":[{"nombre":"Triki Trakes Nvo 6p 51g MTB MLA","item":"935","custom":false},{"nombre":"Principe 10p 106g prom mtb mla","item":"30532","custom":false},{"nombre":"Canelitas 90g mtb mla","item":"31310","custom":false},{"nombre":"Polvoron 6p 111g mtb mla","item":"31507","custom":false},{"nombre":"Principe Choc Bco 10p 110g Prom MTB MLA","item":"32940","custom":false},{"nombre":"Surtido Fina Variedad 200g CU GBI","item":"33853","custom":false},{"nombre":"Mini barritas fresa 15p 185g mtb mla","item":"37268","custom":false},{"nombre":"Bombonete 55g mtb mla","item":"37358","custom":false},{"nombre":"Principe limon 10p 106g mtb mla","item":"38492","custom":false},{"nombre":"Mini barritas pina 15p 185g mtb mla","item":"39244","custom":false},{"nombre":"Sponch 8p 120g mtb mla","item":"43058","custom":false},{"nombre":"Canelitas 6p 60g MTB MLA","item":"43070","custom":false},{"nombre":"Polvorones 4p 74g MTB MLA","item":"43075","custom":false},{"nombre":"Principe 6p 63g MTB MLA","item":"43230","custom":false},{"nombre":"Principe ave 10p 105g individual mtb mla","item":"150633","custom":false},{"nombre":"Triki 10p 86g prom mtb mla","item":"200277","custom":false},{"nombre":"Mini barrita fresa 222g mtb mla","item":"200333","custom":false},{"nombre":"Mini barrita pina 222g mtb mla","item":"200334","custom":false},{"nombre":"Canelitas Pc 4p 240g Cj CU MLA","item":"201048","custom":false},{"nombre":"Polvorones Pc 4p 296g Cj CU MLA","item":"201052","custom":false},{"nombre":"Suavicremas chocolate 102g mta mla","item":"201091","custom":false},{"nombre":"Suavicremas fresa 102g mta mla","item":"201092","custom":false},{"nombre":"Suavicremas vainilla 102g mta mla","item":"201093","custom":false},{"nombre":"Galleta gansito 2p 43g tira mtb mla","item":"201299","custom":false},{"nombre":"Canelitas rrp 33p 180g tubo cu mla","item":"201420","custom":false},{"nombre":"Polvorones rrp 18p 250g tubo cu mla","item":"201421","custom":false},{"nombre":"Principe rrp 14p 147g tubo cu mla","item":"201422","custom":false},{"nombre":"Triki trakes rrp 20p 170g tubo cu mla","item":"201423","custom":false},{"nombre":"Weikis 1p 40g CU BIM","item":"201450","custom":false},{"nombre":"Mini barritas fresa 8p 98g mtb mla","item":"201469","custom":false},{"nombre":"Suavicremas Chocolate SP 102g MTA MLA","item":"201584","custom":false},{"nombre":"Suavicremas Fresa 102g SP MTA MLA","item":"201585","custom":false},{"nombre":"Suavicremas Vainilla SP 102g MTA MLA","item":"201586","custom":false},{"nombre":"Galleta Pinguino 2p 40g Tira MTB MLA","item":"201619","custom":false},{"nombre":"Barritas fresa 48g mtb mla","item":"201823","custom":false},{"nombre":"Barritas Pina CP 67g MTB MLA","item":"201849","custom":false},{"nombre":"Barritas Fresa CP 67g MTB MLA","item":"201850","custom":false},{"nombre":"Triki Trakes SP 85g MTB MLA","item":"201929","custom":false},{"nombre":"Lors CP 10p 98g MTB MLA","item":"202378","custom":false},{"nombre":"Plativolos CP 10p 90g CU MLA","item":"202379","custom":false},{"nombre":"Barritas Fresa 67g SP MTB MLA","item":"202589","custom":false},{"nombre":"Barritas Pina 67g SP MTB MLA","item":"202591","custom":false},{"nombre":"PrincipeFresa SublimeSP 10p105g Flow MLA","item":"202862","custom":false},{"nombre":"Canelitas Bites SP 1p 80g Bolsa MLA","item":"202999","custom":false},{"nombre":"Canelitas Bites SP 5p 80g Tira MLA","item":"203000","custom":false},{"nombre":"Triki Trakes Bites SP 1p 80g Bolsa MLA","item":"203001","custom":false},{"nombre":"Triki Trakes Bites SP 5p 80g Tira MLA","item":"203002","custom":false},{"nombre":"Maxitubo Lors 1p 215g Tubo MLA","item":"203112","custom":false},{"nombre":"PrincipeAvellana MedKC PC 4p 252g Cj MLA","item":"203202","custom":false},{"nombre":"Principe Choc MedKC PC 4p 252g Cj MLA","item":"203210","custom":false},{"nombre":"Principe Limon MedKC PC 4p 252g Cj MLA","item":"203214","custom":false},{"nombre":"Triki Trakes MedKC PC 4p 204g Cj MLA","item":"203219","custom":false},{"nombre":"Barritas Pina KC PC 4p 268g Cj MLA","item":"203291","custom":false},{"nombre":"Barritas Fresa KC PC 4p 268g Cj MLA","item":"203292","custom":false},{"nombre":"Galleta Pinguinos SP 8p 160g Tubo MLA","item":"203466","custom":false},{"nombre":"PromPrincipe 10p 106g Prom MTB MLA","item":"9930532","custom":false},{"nombre":"Galleta Pinguinos 8p 160g DPY MLA","item":"202824","custom":false},{"nombre":"Canelitas KC PC 4p 240g CJ MLA","item":"203528","custom":false},{"nombre":"Sponch Pina Cool CP 8p 120g FLOW MLA","item":"203798","custom":false},{"nombre":"Principe Chocolate 12p 126g FLOW MLA","item":"203657","custom":false},{"nombre":"Sponch Pina Cool 8p 120g FLOW MLA","item":"203773","custom":false},{"nombre":"Polvorones Chocolate Abuelita 6p 111g FLOW MLA","item":"203772","custom":false},{"nombre":"Principe Avellana 12p 126g FLOW MLA","item":"203658","custom":false},{"nombre":"Principe Limon 12p 126g FLOW MLA","item":"203660","custom":false},{"nombre":"Principe ChocoBlanco EmpBco 12p 126g FLOW MLA","item":"203909","custom":false},{"nombre":"PromBarritas Pina Cp 1p 67g FLOW MLA","item":"99201849","custom":false},{"nombre":"Barritas Fresa 2p 75g FLOW MLA","item":"203787","custom":false},{"nombre":"Barritas Pina 2p 75g FLOW MLA","item":"203788","custom":false},{"nombre":"PromGalleta Pinguino 2p 40g Tira MTB MLA","item":"99201619","custom":false},{"nombre":"PromGalleta Gansito 2p 43g Tira MTB MLA","item":"99201299","custom":false},{"nombre":"Barritas Moras 2p 75g FLOW MLA","item":"203789","custom":false},{"nombre":"Mini Barritas Fresa 4p 49.3g FLOW MLA","item":"204057","custom":false},{"nombre":"Canelitas 12p 120g FLOW MLA","item":"204089","custom":false},{"nombre":"Triki Trakes 1p 85g Prm FLOW MLA","item":"204246","custom":false},{"nombre":"Galleta Pinguinos E limitada 8p 160g TUBO MLA","item":"204198","custom":false},{"nombre":"Galleta Pinguinos Navidad 2p 40g TIRA MLA","item":"204199","custom":false},{"nombre":"Principe Doble Chocolate 1p 126g FLOW MLA","item":"204263","custom":false},{"nombre":"Polvorones 8p 148g FLOW MLA","item":"204288","custom":false},{"nombre":"Suavicremas Vainilla 12p 100g FLOW MLA","item":"204172","custom":false},{"nombre":"Suavicremas Chocolate 12p 100g FLOW MLA","item":"204171","custom":false},{"nombre":"Suavicremas Fresa 12p 100g FLOW MLA","item":"204173","custom":false},{"nombre":"Canelitas NC 12p 120g FLOW MLA","item":"204138","custom":false},{"nombre":"Lors 10p 98g CA FLOW MLA","item":"204011","custom":false},{"nombre":"Canelitas Tentacion 9p 73g FLOW MLA","item":"204368","custom":false},{"nombre":"Barritas Fresa Two Pack 2p 110g CP FLOW MLA","item":"204344","custom":false},{"nombre":"Macarenas 12p 108g FLOW MLA","item":"203854","custom":false},{"nombre":"Polvorones Chocolate Abuelita 4p 74g FLOW MLA","item":"203992","custom":false},{"nombre":"Sponch 8p 120g SP FLOW MLA","item":"204585","custom":false},{"nombre":"Kremas 4p 45g FLOW QE","item":"204340","custom":false},{"nombre":"Sponch Fresa 7p 45g TIRA MLA","item":"204521","custom":false},{"nombre":"Triki Trakes Bombon 10p 85g SP FLOW MLA","item":"204537","custom":false},{"nombre":"Choxs 6p 81g FLOW QE","item":"204008","custom":false},{"nombre":"Hit MoraCoco 6p 52g FLOW QE","item":"204342","custom":false},{"nombre":"Principe Choc Medkc Ca 4p 252g CJ MLA","item":"203209","custom":false},{"nombre":"Qe Bolitas 1p 44g CP FLOW QE","item":"204227","custom":false},{"nombre":"Fruti Sponch 8p 124g FLOW MLA","item":"205010","custom":false},{"nombre":"Principe Reeses 12p 126g FLOW MLA","item":"205214","custom":false},{"nombre":"Choxs 100p 2700g CJA QE","item":"204860","custom":false},{"nombre":"Triki Trakes Bites 5p 285g TIRA MLA","item":"205407","custom":false},{"nombre":"Canelitas Bites 5p 285g TIRA MLA","item":"205408","custom":false},{"nombre":"Canelitas Bites 1p 57g FLOW MLA","item":"205427","custom":false},{"nombre":"Sponch Fresa 7p 315g TIRA MLA","item":"205449","custom":false}]},{"cat":"DULCE","items":[{"nombre":"Little Bites Chips Choco SP 69g MTA BIM","item":"1390","custom":false},{"nombre":"Little bites chisp chocolate 69g mta bim","item":"6000","custom":false},{"nombre":"Duo nito 124g sp mtb bim","item":"30007","custom":false},{"nombre":"Bimbunuelos 6p 99g Prom MTA BIM","item":"31284","custom":false},{"nombre":"Rebanada 2p 55g sp mta bim","item":"32394","custom":false},{"nombre":"Nito 1p 62g sp mtb bim","item":"34054","custom":false},{"nombre":"Madalenas 3p 93g mta bim","item":"36711","custom":false},{"nombre":"Madalenas 3p 93g SP MTA BIM","item":"37006","custom":false},{"nombre":"Conchas Vainilla 2p 120g MTB BIM","item":"39140","custom":false},{"nombre":"Leche nito 236ml bim","item":"41843","custom":false},{"nombre":"Mantecadas nuez 123g mta bim","item":"43118","custom":false},{"nombre":"Roles Canela 6p 365g MTB BIM","item":"43169","custom":false},{"nombre":"Panque marmol 255g mta bim","item":"43174","custom":false},{"nombre":"Roles canela 2p 120g mtb bim","item":"43196","custom":false},{"nombre":"Roles glass 2p 135g mtb bim","item":"43197","custom":false},{"nombre":"Colchones 6p 130g MTA BIM","item":"43198","custom":false},{"nombre":"Panque pasas 255g mta bim","item":"43199","custom":false},{"nombre":"Panque nuez 255g mta bim","item":"43200","custom":false},{"nombre":"Panquecito Gota Choc 2p 140g MTB BIM","item":"43201","custom":false},{"nombre":"Mantecadas vainilla 4p 125g mta bim","item":"43202","custom":false},{"nombre":"Donitas espolvoreadas 6p 105g mtb bim","item":"43203","custom":false},{"nombre":"Donas azucar 4p 105g mta bim","item":"43204","custom":false},{"nombre":"Nito 1p 62g mtb bim","item":"43206","custom":false},{"nombre":"Rebanada 2p 55g mta bim","item":"43207","custom":false},{"nombre":"Bimbunuelos 4p 66g mta bim","item":"43209","custom":false},{"nombre":"Mantecadas vain 6p 188g det prom mta bim","item":"44950","custom":false},{"nombre":"Donas 6p prom mta bim","item":"44951","custom":false},{"nombre":"Mantecadas nuez 6p 184g det prom mta bim","item":"48598","custom":false},{"nombre":"Mantecadas vainilla 2p 62.5g mta bim","item":"200642","custom":false},{"nombre":"Panquecito gota chocolat 3p 210g mta bim","item":"201317","custom":false},{"nombre":"Mantecadas Chisp Choc SP 4p 127g MTA BIM","item":"202066","custom":false},{"nombre":"Mantecadas Chispas Choc 6p 190g MTA BIM","item":"202067","custom":false},{"nombre":"Doners 5p 120g MTB BIM","item":"202097","custom":false},{"nombre":"Little Bites 345g Tira MTA BIM","item":"202179","custom":false},{"nombre":"Donita Espolvorea Prm6Mas2p 140g MTB BIM","item":"202183","custom":false},{"nombre":"Roles Canela 3p 180g MTB BIM","item":"202575","custom":false},{"nombre":"Roles Glass 3p 205g MTB BIM","item":"202576","custom":false},{"nombre":"Crossantines Chocolate CP 32g MTB BIM","item":"202577","custom":false},{"nombre":"Mantechox 4p 161g MTA BIM","item":"202617","custom":false},{"nombre":"DonitaEspolvoreaSP Prm6Mas2p140g MTB BIM","item":"202753","custom":false},{"nombre":"Crossantines Choco 3p 96g Bolsa MTB BIM","item":"202759","custom":false},{"nombre":"Crossantines Choco 7p 224g Tira BIM","item":"203025","custom":false},{"nombre":"Mantechox La Lechera 4p 152g ME BIM","item":"203053","custom":false},{"nombre":"Natura Fresa 5pz 45g Tira BIM","item":"203102","custom":false},{"nombre":"Roles Canela SP 3p 180g Flowpack BIM","item":"203294","custom":false},{"nombre":"Crossantines Cho CP 3p 96g Bolsa MTB BIM","item":"203300","custom":false},{"nombre":"Mantechox SP 4p 161g Flowpack BIM","item":"203408","custom":false},{"nombre":"Mantechox La lechera SP 4p 152g Flowpack BIM","item":"203409","custom":false},{"nombre":"Hotkis 8p 400g Tira BIM","item":"203460","custom":false},{"nombre":"Mantecadas Fiesta 6p 187.5g Bolsa BIM","item":"203444","custom":false},{"nombre":"Donitas Canela 8p 140g FLOW BIM","item":"203675","custom":false},{"nombre":"Mantecadas 2p 62.5g FLOW BIM","item":"203724","custom":false},{"nombre":"Mantecadas Bicolor 6p 187.5g FLOW BIM","item":"203790","custom":false},{"nombre":"Promocaj Mantecada Vaini 8p 264g CJ BIM","item":"203889","custom":false},{"nombre":"Panque Marmol 1p 280g FLOW BIM","item":"203823","custom":false},{"nombre":"Panque Nuez 1p 280g FLOW BIM","item":"203825","custom":false},{"nombre":"Panque Pasas 1p 280g FLOW BIM","item":"203824","custom":false},{"nombre":"FruitGrain Strudel Manzana 1p 65g FLOW BIM","item":"203614","custom":false},{"nombre":"Hotkis Chocolate 1p 50g FLOW BIM","item":"204023","custom":false},{"nombre":"Mantecadas Vainilla 2p 62.5g TIRA BIM","item":"203986","custom":false},{"nombre":"Mantecadas Bites 1p 70g FLOW BIM","item":"203647","custom":false},{"nombre":"Crossantines Chocolate 1p 32g NC FLOW BIM","item":"204165","custom":false},{"nombre":"Donas Azucaradas 7p 52.5g TIRA BIM","item":"204120","custom":false},{"nombre":"Conchas Vainilla NF 2p 130g FLOW BIM","item":"203967","custom":false},{"nombre":"Hotkis Chocolate 1p 50g SP FLOW BIM","item":"204160","custom":false},{"nombre":"Donitas Espolvoreadas 7p 52.5g TIRA BIM","item":"204156","custom":false},{"nombre":"Nito Funk Olocoons 1p 62g FLOW BIM","item":"204148","custom":false},{"nombre":"Concha Chocolate 2p 120g FLOW BIM","item":"203907","custom":false},{"nombre":"Rebanadas Chocolate 1p 55g FLOW BIM","item":"204024","custom":false},{"nombre":"Bimbocao 1p 52g FLOW BIM","item":"204184","custom":false},{"nombre":"Mantecadas Vainilla EE 4p 125g FLOW BIM","item":"204233","custom":false},{"nombre":"Pastelito Bocadin 1p 40g GRNL BOC","item":"204228","custom":false},{"nombre":"Concha Chocolate 2p 120g SP FLOW BIM","item":"204311","custom":false},{"nombre":"Mini Panque Nuez 6p 70g TIRA BIM","item":"204241","custom":false},{"nombre":"Mantecadas Bites 1p 70g SP FLOW BIM","item":"204290","custom":false},{"nombre":"Little Bites Chispas Chocolate 8p 69g CJ BIM","item":"204533","custom":false},{"nombre":"Mantechox 2p 80.6g FLOW BIM","item":"204560","custom":false},{"nombre":"LittleBites ChispasChocolate 6p69gNC FLOW BIM","item":"204756","custom":false},{"nombre":"Concha Vainilla 1p 60g FLOW BIM","item":"204029","custom":false},{"nombre":"Donas 6p 158g NC FLOW BIM","item":"204757","custom":false},{"nombre":"Little Bites Party Cake 6p 69g DYP BIM","item":"204379","custom":false},{"nombre":"Bimbunuelos Canela 6p 99g FLOW BIM","item":"204584","custom":false},{"nombre":"Rebanadas Carlos V 1p 55g FLOW BIM","item":"204944","custom":false},{"nombre":"PanqueChox Choco Avellana 1p 315g SP FLOW BIM","item":"204875","custom":false},{"nombre":"Hotkis Cajeta 8p 38g TIRA BIM","item":"204699","custom":false},{"nombre":"Mantechox Hersheys 2p 80g FLOW BIM","item":"204904","custom":false},{"nombre":"Mantechox Hersheys 4p 160g FLOW BIM","item":"204903","custom":false},{"nombre":"Little Bites Hersheys 6p 69g FLOW BIM","item":"205123","custom":false},{"nombre":"Crossantines Minis Hersheys 4p 240g TIRA BIM","item":"205338","custom":false},{"nombre":"Little Bites Sorpresa 5p 290g TIRA BIM","item":"205344","custom":false},{"nombre":"Rebanada 2p 55g CP FLOW BIM","item":"205322","custom":false},{"nombre":"Little Bites Sorpresa 1p 58g FLOW BIM","item":"205345","custom":false},{"nombre":"Crossantines Minis Hersheys 5p 60g GRNL BIM","item":"205321","custom":false},{"nombre":"Panque Relleno Hersheys 1p 280g FLOW BIM","item":"205013","custom":false},{"nombre":"Hotkis Cajeta 8p 304g TIRA BIM","item":"205359","custom":false},{"nombre":"Hotkis Cajeta 1p 38g GRNL BIM","item":"204698","custom":false},{"nombre":"Mantecadas Vainilla 7p 437.5g TIRA BIM","item":"205340","custom":false},{"nombre":"Mini Panque Nuez 6p 420g TIRA BIM","item":"205341","custom":false},{"nombre":"Donitas Espolvoreadas 7p 367.5g TIRA BIM","item":"205424","custom":false}]},{"cat":"4T","items":[{"nombre":"Tortilla Consumos 24p 612g MTA TR","item":"36524","custom":false},{"nombre":"Tortillas Harina Burreras 6p 300g MTA DH","item":"37932","custom":false},{"nombre":"Tortilla Harina 20p 520g MTA DH","item":"38650","custom":false},{"nombre":"Salmas 5p 90g cjm san","item":"39161","custom":false},{"nombre":"Bollos Carls Jr 5in 1350g TIR BRE","item":"40430","custom":false},{"nombre":"Barra Multigrano Linaza 32g MTA BIM","item":"43023","custom":false},{"nombre":"Tostada Plana 15p 175g MTB MR","item":"43159","custom":false},{"nombre":"Molido 5kg mta bim","item":"43195","custom":false},{"nombre":"Barra Multigrano Nuez 34g MTA BIM","item":"43305","custom":false},{"nombre":"Bollos super ajn 12p 960g mta bim","item":"43350","custom":false},{"nombre":"Totopos 280g mta dh","item":"44829","custom":false},{"nombre":"Bimbollos Super FS 6p 480g MTA BIM","item":"48136","custom":false},{"nombre":"Totopo Chilaquiles 280g MTA MR","item":"48373","custom":false},{"nombre":"Tortillinas 22p 561g mta tr","item":"48996","custom":false},{"nombre":"Tortillinas 12p 306g mta tr","item":"49028","custom":false},{"nombre":"Bran Frut Pina 58g MTB BIM","item":"200384","custom":false},{"nombre":"Bran Frut Fresa 58g MTB BIM","item":"200385","custom":false},{"nombre":"Salmas 8P 144g FP CJM SAN","item":"200784","custom":false},{"nombre":"Tostadas fp 10p 120g cjm san","item":"200992","custom":false},{"nombre":"Tortilla Mazatlan 7p 179g Bolsa MTA DH","item":"201142","custom":false},{"nombre":"Pan molido clasico 210g mtb bim","item":"201617","custom":false},{"nombre":"Empanizador Crujiente RRP 175g CU BIM","item":"201940","custom":false},{"nombre":"Salsa Mora 240g CU DH","item":"202159","custom":false},{"nombre":"Salsa Chile Arbol 240g CU DH","item":"202160","custom":false},{"nombre":"Salsa Verde Asada 240g CU DH","item":"202161","custom":false},{"nombre":"Salsa Chile Arbol SP 240g CU DH","item":"202225","custom":false},{"nombre":"Pan Molido 20pct mas 252g MTB BIM","item":"202344","custom":false},{"nombre":"Totopos Clasicos CP 200g CJM SAN","item":"202422","custom":false},{"nombre":"Totopos Ancestrales CP 200g CJM SAN","item":"202445","custom":false},{"nombre":"Totopos Nopal CP 200g CJM SAN","item":"202446","custom":false},{"nombre":"Tostada Ondulada Tubo NC 30p 360g CU MR","item":"202517","custom":false},{"nombre":"Tortilla 10p 220g Flowpack MTA DH","item":"202754","custom":false},{"nombre":"FruitGrain SalvFresa 5pz 67g Tira MTA BIM","item":"202838","custom":false},{"nombre":"Tostada Marisque Ond 27p324g Bolsa CU MR","item":"202869","custom":false},{"nombre":"Tostada Ondulada Mayoreo NE 27p 324g Bolsa CU MR","item":"202926","custom":false},{"nombre":"Barra Natura Mora 10p 45g DPY BIM","item":"203350","custom":false},{"nombre":"Barra Natura Fresa 10p 45g DPY BIM","item":"203351","custom":false},{"nombre":"Medias Noches Esp BK 7in 1775g TIR SL","item":"8863","custom":false},{"nombre":"Totopo 1Kg MTA DH","item":"6133","custom":false},{"nombre":"Bollos BK 4in 30p 1635g Tn SL","item":"8865","custom":false},{"nombre":"Salsa Tatemada Habanero 1p 240g VASO DH","item":"203440","custom":false},{"nombre":"Harina para Hot Cakes 1p 350g Cj TR","item":"202968","custom":false},{"nombre":"Salsa Verde Asada NC 1p 240g Vaso DH","item":"203571","custom":false},{"nombre":"Salsa Mora NC 1p 240g VASO DH","item":"203572","custom":false},{"nombre":"Salsa Chile Arbol NC 1p 240g Vaso DH","item":"203573","custom":false},{"nombre":"Bollos Bk 5in 20p 1730g BOLSA SL","item":"8864","custom":false},{"nombre":"Barra Multigr Chocolate 1p 34g FLOW BIM","item":"203611","custom":false},{"nombre":"Rosca Reyes 1p 1150g CJA BIM","item":"203856","custom":false},{"nombre":"Prom Tostadas Deshidratadas 20p 180g BOLSA DH","item":"99203562","custom":false},{"nombre":"Tostadas Deshidratadas 20p 180g BOLSA DH","item":"203562","custom":false},{"nombre":"Salmas NC 5p 90g CJ SAN","item":"203794","custom":false},{"nombre":"PMolido PescadoMariscos CP 1p 210g FLOW BIM","item":"203969","custom":false},{"nombre":"PromFp Salmas 8p 144g CJ SAN","item":"99200784","custom":false},{"nombre":"Tostada Occidente 20p 230g BOLSA DH","item":"203895","custom":false},{"nombre":"Galleta Arroz Quinoa 8p 12g Dpy SAN","item":"202994","custom":false},{"nombre":"Tost Maiz Azul Chia Linaza Arr 1p 216g CJ SAN","item":"202948","custom":false},{"nombre":"Tostado Brioche 14p 210g FLOW BIM","item":"204055","custom":false},{"nombre":"Tortillinas Parrilleras 12p 228g BOLSA TR","item":"204099","custom":false},{"nombre":"Bimbollos Parrilleros FS 12p 1032g BOLSA BIM","item":"204127","custom":false},{"nombre":"Tostada Nopal Ajonjoli 8p 216g CJA SAN","item":"203655","custom":false},{"nombre":"Mix Salsas La Tatemada 20p 4.8kg CJA DH","item":"204275","custom":false},{"nombre":"Empanizador sin Gluten 200g CJM SAN","item":"150275","custom":false},{"nombre":"Salsa La Tatemada Taquera 1p 240g VASO DH","item":"204014","custom":false},{"nombre":"Totopos Guakamolero 1p 280g BOLSA DH","item":"204202","custom":false},{"nombre":"Totopo Nacho 1p 280g FLOW DH","item":"204179","custom":false},{"nombre":"Bran Frut Granos Ancestrales 1p 60g FLOW BIM","item":"204285","custom":false},{"nombre":"Tortillinas 10p 200g BOLSA TR","item":"204317","custom":false},{"nombre":"Tostadas Botaneros Ajonjoli 20p 180g BOLSA MR","item":"204143","custom":false},{"nombre":"Salsa Mora LaTatemada 1p 110g VASO DH","item":"204412","custom":false},{"nombre":"Salsa Chile Arbol LaTatemada 1p 110g VASO DH","item":"204413","custom":false},{"nombre":"Totopos Saladitos 1p 320g BOLSA DH","item":"203649","custom":false},{"nombre":"Tostada 18p 220g BOLSA DH","item":"204465","custom":false},{"nombre":"Rosquitas Horneadas 1p 20g TIRA SAN","item":"506069","custom":false},{"nombre":"Tortillas 15p 300g FLOW DH","item":"204209","custom":false},{"nombre":"Tortillas 15p 300g FLOW DH","item":"204209","custom":false},{"nombre":"Bran Frut Mango 1p 58g FLOW BIM","item":"204645","custom":false},{"nombre":"Tostado Clasico 6p 90g Metal FLOW BIM","item":"204386","custom":false},{"nombre":"Bimbollos Brioche FS 12p 930g BOLSA BIM","item":"204051","custom":false},{"nombre":"Rosquitas Horneadas 1p 20g FLOW SAN","item":"506068","custom":false},{"nombre":"Tortillinas 15p 382.5g BOLSA TR","item":"204775","custom":false},{"nombre":"Tortillas 15p 300g CP FLOW DH","item":"204446","custom":false},{"nombre":"Tortillinas 15p 382.5g NC BOLSA TR","item":"204993","custom":false},{"nombre":"Totopo 1p 320g BOLSA TR","item":"204629","custom":false},{"nombre":"Tostada 18p 220g Mty BOLSA DH","item":"204960","custom":false},{"nombre":"Bran Frut Cheesecake 1p 58g FLOW BIM","item":"204798","custom":false},{"nombre":"Medias Noches 7in 24p 1800g Esp Bk BOLSA SL","item":"204725","custom":false},{"nombre":"Salmas NC 5p 90g CJ SAN","item":"203794","custom":false},{"nombre":"Tostada Chicharronera 18p 220g BOLSA DH","item":"205174","custom":false},{"nombre":"Tortillinas Burreras 10p 580g BOLSA TR","item":"205105","custom":false},{"nombre":"Totopos 1p 320g N FLOW DH","item":"205089","custom":false},{"nombre":"Tortillinas 22p 561g NC BOLSA TR","item":"205264","custom":false},{"nombre":"Tortillas 15p 300g Prom2 BOLSA DH","item":"205021","custom":false},{"nombre":"Multigrano Nuez 1p 44.2g 30pct FLOW BIM","item":"204854","custom":false},{"nombre":"Pan Molido 20pct Mas 1p 252g NC FLOW BIM_205371","item":"205371","custom":false},{"nombre":"Galleta Arroz Quinoa 1p 14g FLOW SAN","item":"204151","custom":false},{"nombre":"Tostada Clasica 18p 216g BOLSA SAN","item":"205274","custom":false},{"nombre":"Tortillas Harina Burreras 10p 500g BOLSA DH","item":"205342","custom":false},{"nombre":"Tostada Marisque Ond 30p 360g BOLSA MR","item":"205376","custom":false},{"nombre":"Galleta Arroz Quinoa 8p 112g DPY SAN","item":"204890","custom":false},{"nombre":"Tostada 18p 220g NC BOLSA DH","item":"205375","custom":false}]}];
+/* Maestro precargado */
+const MAESTRO_DEFAULT = [{"cat":"TRL","items":[{"nombre":"Saladas 200p 2.4kg lar","item":"739","custom":false},{"nombre":"Mantecada vainilla 3p 157g mb tr","item":"4645","custom":false},{"nombre":"Divididas en Tiras Doraditas 127g MTA TR","item":"5097","custom":false},{"nombre":"Deliciosas vainilla 130g mtb lar","item":"6206","custom":false},{"nombre":"Deliciosas vainilla 230g mtb lar","item":"6219","custom":false},{"nombre":"Bigotes chocolate 60g mta tr","item":"32303","custom":false},{"nombre":"Magnas 200g SP MTB LAR","item":"34226","custom":false},{"nombre":"Animalitos Karamelo Hierro 200g MTA LAR","item":"36598","custom":false},{"nombre":"Bigotes Cajeta 60g MTA TR","item":"37538","custom":false},{"nombre":"Deliciosas betunadas 216g prom cu lar","item":"37577","custom":false},{"nombre":"Pachoncitos 2p 140g SP MTB TR","item":"37625","custom":false},{"nombre":"Conchas 2p 120g mtb tr","item":"43038","custom":false},{"nombre":"Doraditas 110g mta tr","item":"43040","custom":false},{"nombre":"Galleta Molida Salada 5Kg MTA LAR","item":"43222","custom":false},{"nombre":"Canapinas 95g CU LAR","item":"150284","custom":false},{"nombre":"Variedad Polvorones Nvo 700g CU GBI","item":"150543","custom":false},{"nombre":"Polvoroncitos 6p 90g MTB TR","item":"200106","custom":false},{"nombre":"Polvoroncitos caseros panera 300g mtb tr","item":"200119","custom":false},{"nombre":"Tiras doraditas 58g mtb tr","item":"200352","custom":false},{"nombre":"Galleta Avena 2p 66g MTA TR","item":"200356","custom":false},{"nombre":"Mantecada Vainilla SP 3p 157g MB TR","item":"200405","custom":false},{"nombre":"Mantecadas Chocolate 3p 142.5g MTB TR","item":"200414","custom":false},{"nombre":"Deliciosas chocochispas nvo 130g cu lar","item":"200657","custom":false},{"nombre":"Deliciosas ChocoChispas 80g CU LAR","item":"200898","custom":false},{"nombre":"Deliciosas chocochispas 230g cu lar","item":"200956","custom":false},{"nombre":"Deliciosas chochitos 216g cu lar","item":"201259","custom":false},{"nombre":"Coloretes 52g CU LAR","item":"201499","custom":false},{"nombre":"Div tiras doradita cajeta 3p 110g mta tr","item":"201593","custom":false},{"nombre":"Semitas Ref 2p 184g MTA TR","item":"201677","custom":false},{"nombre":"Tartas Fresa 100p 3660g Granel CU GBI","item":"201767","custom":false},{"nombre":"Favoritas Nuez 155g CU LAR","item":"202029","custom":false},{"nombre":"Favoritas Vainilla 155g CU LAR","item":"202030","custom":false},{"nombre":"Muffin Casero CP 130g MTB TR","item":"202068","custom":false},{"nombre":"Tartinas Fresa CP 6p 100g MTB TR","item":"202258","custom":false},{"nombre":"Tartinas Pina CP 6p 100g MTB TR","item":"202259","custom":false},{"nombre":"Tartinas Zarzamora CP 6p 100g MTB TR","item":"202260","custom":false},{"nombre":"Wafer Nata 50g CU GBI","item":"202275","custom":false},{"nombre":"Cuernitos NF CP 2p 100g MTA TR","item":"202322","custom":false},{"nombre":"Cuernitos NF SP 2p 100g MTA TR","item":"202362","custom":false},{"nombre":"Panque Casero CP 235g MTA TR","item":"202373","custom":false},{"nombre":"Tartas Mix Mora/Chabacano 110g CU GBI","item":"202399","custom":false},{"nombre":"Tartinas Fresa SP 6p 100g MTB TR","item":"202401","custom":false},{"nombre":"Tartinas Pina SP 6p 100g MTB TR","item":"202402","custom":false},{"nombre":"Tartinas Zarzamora SP 6p 100g MTB TR","item":"202403","custom":false},{"nombre":"Favoritas Nuez SP 155g CU LAR","item":"202458","custom":false},{"nombre":"Favoritas Vainilla SP 155g CU LAR","item":"202459","custom":false},{"nombre":"Empanada Cajeta 2p 80g MTA JUL","item":"202477","custom":false},{"nombre":"Canapinas SP 95g Bolsa CU LAR","item":"202646","custom":false},{"nombre":"Saladas NE CP 175g CU LAR","item":"202660","custom":false},{"nombre":"Empanadita Fresa 2p 54g Bolsa MTB TR","item":"202667","custom":false},{"nombre":"Muffin Chocolate CP 130g Bolsa MTB TR","item":"202671","custom":false},{"nombre":"Muffin Casero SP 130g MTB TR","item":"202695","custom":false},{"nombre":"Deliciosas VainillaNE 1p90g Bolsa MTA LAR","item":"202728","custom":false},{"nombre":"Panera Oreja 20p 180g Blister GBI","item":"202972","custom":false},{"nombre":"Mantecadas NaranjaChoco 3p 165g Bolsa TR","item":"203003","custom":false},{"nombre":"Mini Chocotorro 1p 24g Bolsa WON","item":"203033","custom":false},{"nombre":"Mini Twinkies Vainilla 1p 27g Bolsa WON","item":"203034","custom":false},{"nombre":"Decanelas Rosquillas 1p 185g Tubo LAR","item":"203035","custom":false},{"nombre":"Empanada Cajeta CP 6p 240g Tira JUL","item":"203070","custom":false},{"nombre":"Polvoron Arandano 1p 84g Flowpack GBI","item":"203079","custom":false},{"nombre":"Tarta Luxury 6p 110.1g Flowpack GBI","item":"203148","custom":false},{"nombre":"Empanada Cajeta CP 2p 80g Flowpack JUL","item":"203184","custom":false},{"nombre":"Marias SP 1p 170g Tubo LAR","item":"203301","custom":false},{"nombre":"Polvoron Chocoamaranto 1p 84g Flowpack GBI","item":"203430","custom":false},{"nombre":"Empanada Cajeta 10p 40g TIRA JUL","item":"203631","custom":false},{"nombre":"Tartas Fresa 10p 183.50g Tubo GBI","item":"203185","custom":false},{"nombre":"Lors 18Kg CU MLA","item":"44833","custom":false},{"nombre":"Doraditas Nuez 1p 127g FLOW TR","item":"203082","custom":false},{"nombre":"Tartas Mix 110g CU GBI","item":"201497","custom":false},{"nombre":"Always Besos Naranja 1p 100g LATA GBI","item":"203600","custom":false},{"nombre":"Galleta Avena Arandano 2p 66g FLOW TR","item":"203630","custom":false},{"nombre":"Galleta Avena Chocolate Linaza 2p 66g FLOW TR","item":"203632","custom":false},{"nombre":"Always Besos Choco NC 1p 100g Lata GBI","item":"203246","custom":false},{"nombre":"Panque Marmol CafeLeche 1p 255g FLOW TR","item":"203055","custom":false},{"nombre":"Mantecada Zero 2p 105g FLOW TR","item":"203639","custom":false},{"nombre":"Tartas Guayaba 6p 110.1g FLOW GBI","item":"203888","custom":false},{"nombre":"Tartas Mix 1p 110.1g Temp Sum Flow GBI","item":"203973","custom":false},{"nombre":"Tartinas Fresa 8p 133.3g FLOW TR","item":"203799","custom":false},{"nombre":"Tartinas Pina 8p 133.3g FLOW TR","item":"203857","custom":false},{"nombre":"Tartinas Zarzamora 8p 133.3g FLOW TR","item":"203858","custom":false},{"nombre":"Empanada Cajeta NC 11p 40g TIRA JUL","item":"204058","custom":false},{"nombre":"Orejitas Mantequilla 71g CU GBI","item":"201107","custom":false},{"nombre":"Tartas Cajetas 6p 110.1g FLOW GBI","item":"203782","custom":false},{"nombre":"Besos Nuez 1p 60g FLOW GBI","item":"203880","custom":false},{"nombre":"Besos Coco 1p 90g Cj CU GBI","item":"202624","custom":false},{"nombre":"Orejitas 1p 55g Cj CU GBI","item":"202897","custom":false},{"nombre":"Deliciosas Chochitos 1p 230g FLOW LAR","item":"203845","custom":false},{"nombre":"Deliciosas Vainilla PC 1p 230g FLOW LAR","item":"204032","custom":false},{"nombre":"Tartinas Durazno 6p 100g FLOW TR","item":"203976","custom":false},{"nombre":"Deliciosas Betunadas 1p 230g FLOW LAR","item":"203841","custom":false},{"nombre":"Deliciosas Bombon 1p 170g FLOW LAR","item":"203843","custom":false},{"nombre":"Deliciosas Vainilla 6p 60g TIRA LAR","item":"204163","custom":false},{"nombre":"Deliciosas Chocochispas 6p 60g TIRA LAR","item":"204185","custom":false},{"nombre":"Pastitas Cuadradas 7p 54g TIRA TR","item":"204203","custom":false},{"nombre":"Besos Manzana Canela 1p 60g FLOW GBI","item":"204168","custom":false},{"nombre":"Mias Arandano 12p 96g FLOW GBI","item":"204181","custom":false},{"nombre":"Magnas CP 1p 200g Tubo LAR","item":"203084","custom":false},{"nombre":"Animalitos Karamelo 1p 200g FLOW LAR","item":"203835","custom":false},{"nombre":"Bigotes Chocolate 1p 80g FLOW TR","item":"204367","custom":false},{"nombre":"Bigotes Cajeta 1p 80g FLOW TR","item":"204376","custom":false},{"nombre":"Tartas Cajeta 20p 2202g CJ GBI","item":"204265","custom":false},{"nombre":"Canapinas 1p 140g TUBO LAR","item":"32873","custom":false},{"nombre":"Mantecadas Vainilla 4p 210g ME TR","item":"204314","custom":false},{"nombre":"Horneadita Crema Pastelera 6p 60g TIRA TR","item":"204435","custom":false},{"nombre":"Tartas Cajeta 8p 146.8g FLOW GBI","item":"204461","custom":false},{"nombre":"Tartas Chabacano 8p 146.8g FLOW GBI","item":"204463","custom":false},{"nombre":"Mini Twinkies Chocolate 2p 54g FLOW WON","item":"204385","custom":false},{"nombre":"Tartas Chocolate 8p 146.8g FLOW GBI","item":"204460","custom":false},{"nombre":"Mantecadas Arroz Leche 2p 105g FLOW TR","item":"204678","custom":false},{"nombre":"Magnas SP 200g Bolsa MTB LAR","item":"202658","custom":false},{"nombre":"Mantecada Vainilla 3p 157.5g CP FLOW TR","item":"204808","custom":false},{"nombre":"Tartas Guayaba 8p 146.8g FLOW GBI","item":"204462","custom":false},{"nombre":"Mantecadas Manzana Canela 2p 105g FLOW TR","item":"204692","custom":false},{"nombre":"Mini Polvoroncitos 5p 50g TIRA TR","item":"204212","custom":false},{"nombre":"Favoritas Nuez 1p 100g FLOW LAR","item":"203849","custom":false},{"nombre":"Favoritas Vainilla 1p 100g FLOW LAR","item":"203851","custom":false},{"nombre":"Bigotes Duo Chocolate 2p 160g FLOW TR","item":"204937","custom":false},{"nombre":"Madalenas Cuadradas 1p 44g FLOW TR","item":"204963","custom":false},{"nombre":"Mantecada Vainilla 6p 52.5g TIRA TR","item":"204483","custom":false},{"nombre":"Deliciosas Chocochispas 1p 60g FLOW LAR","item":"203847","custom":false},{"nombre":"Deliciosas Vainilla 1p 60g FLOW LAR","item":"203848","custom":false},{"nombre":"Empanizador Panko 1p 4.5kg BOLSA BIM","item":"204697","custom":false},{"nombre":"Muffin Vainilla 1p 110g FLOW TR","item":"204850","custom":false},{"nombre":"Semitas Piloncillo 1p 92g FLOW TR","item":"205007","custom":false},{"nombre":"Tartaletas Fresa 8p 148g FLOW SUA","item":"205015","custom":false},{"nombre":"Tropical Cookies 9p 80g FLOW GBI","item":"204377","custom":false},{"nombre":"Surtido Fino Sp 1p 375g ME GBI","item":"48002","custom":false},{"nombre":"Canapinas May 80g CU LAR","item":"9098","custom":false},{"nombre":"Besos Chocolate 1p 60g FLOW GBI","item":"203879","custom":false},{"nombre":"Cremositas 1p 200g FLOW LAR","item":"205124","custom":false},{"nombre":"Butter Danesas 1p 300g LATA GBI","item":"204771","custom":false},{"nombre":"Tartas Fresa 4p 73.4g FLOW GBI","item":"205102","custom":false},{"nombre":"Costal Explosion Tartas 400g CU GBI","item":"200296","custom":false},{"nombre":"Mantecada Vainilla 1p 52.5g FLOW TR","item":"205083","custom":false},{"nombre":"Camioncito 40s 1p 20g BOLSA BIM","item":"205486","custom":false},{"nombre":"Pastitas Cuadradas 7p 378g TIRA TR","item":"205356","custom":false},{"nombre":"Mini Polvoroncitos 5p 250g TIRA TR","item":"205357","custom":false}]},{"cat":"PANES","items":[{"nombre":"Pan Multigrano 610g MTA BIM","item":"37131","custom":false},{"nombre":"Pan multigrano linaza 610g mta bim","item":"37135","custom":false},{"nombre":"Bimbollos super 6p 480g mta bim","item":"43005","custom":false},{"nombre":"Pan integral 370g mta bim","item":"43006","custom":false},{"nombre":"Pan blanco chico 360g mta bim","item":"43175","custom":false},{"nombre":"Pan integral 675g mta bim","item":"43187","custom":false},{"nombre":"Medias noches 8p 340g mta bim","item":"43188","custom":false},{"nombre":"Pastisetas 75g mtb sua","item":"43215","custom":false},{"nombre":"Pan blanco 640g mta bim","item":"43231","custom":false},{"nombre":"Pastisetas sin Azucar 10p 70g MTB SUA","item":"45496","custom":false},{"nombre":"Pastisetas Chocolate 9p 94g MTB SUA","item":"201281","custom":false},{"nombre":"Danesas CP 85g SUA","item":"201948","custom":false},{"nombre":"Pan Integral CP 370g MTA BIM","item":"202557","custom":false},{"nombre":"Super Hot Dogs 8p 526g MTA WON","item":"202636","custom":false},{"nombre":"Pastisetas PC 20p 150g Cj CU SUA","item":"202892","custom":false},{"nombre":"Pastisetas snAzucar PC 2p 140g Cj CU SUA","item":"202893","custom":false},{"nombre":"Panditas 1p 60g FLOW RIC","item":"127842","custom":false},{"nombre":"Diamantes 1p 110g FLOW SUA","item":"203920","custom":false},{"nombre":"Bimbollos Parrilleros 6p 516g BOLSA BIM","item":"204069","custom":false},{"nombre":"Pan Integral 1p 615g BOLSA BIM","item":"204080","custom":false},{"nombre":"Pan Artesano 1p 567g CP BOLSA BIM","item":"204205","custom":false},{"nombre":"PanMultigrano CeroCero 1p 610g NC BOLSA BIM","item":"200927","custom":false},{"nombre":"Pan Linaza 1p 610g NC BOLSA BIM","item":"200929","custom":false},{"nombre":"Pan Cero Cero 1p 610g NC BOLSA BIM","item":"200933","custom":false},{"nombre":"Pan Artesano 1p 567g PC BOLSA BIM","item":"204027","custom":false},{"nombre":"Pan blanco 640g mta bim","item":"9943231","custom":false},{"nombre":"Pan Blanco 1p 620g BOLSA BIM","item":"204375","custom":false},{"nombre":"Pastisetas Originales 12p 90g FLOW SUA","item":"204477","custom":false},{"nombre":"Pastisetas Base Chocolate 12p 125g FLOW SUA","item":"204538","custom":false},{"nombre":"Pastisetas sin Azucar 12p 84g FLOW SUA","item":"204539","custom":false},{"nombre":"Pan Integral 1p 300g BOLSA BIM","item":"204576","custom":false},{"nombre":"Pan Blanco 1p 300g BOLSA BIM","item":"204577","custom":false},{"nombre":"Bollos Super 12p 960g BOLSA BIM","item":"204682","custom":false},{"nombre":"Pan Blanco 1p 620g 5 BOLSA BIM","item":"204961","custom":false},{"nombre":"Pan Artesano 1p 567g 5 BOLSA BIM","item":"204968","custom":false},{"nombre":"Pan Cero Cero 1p 610g 5 BOLSA BIM","item":"204969","custom":false},{"nombre":"PanMultigrano CeroCero 1p 610g 5 BOLSA BIM","item":"204973","custom":false},{"nombre":"Pan Linaza 1p 610g 5 BOLSA BIM","item":"204974","custom":false}]},{"cat":"AS","items":[{"nombre":"Mantecadas chocolate 3p mtb tr","item":"835","custom":false},{"nombre":"Mini Pastelitos Club 12p 330g Cj MTA MLA","item":"1132","custom":false},{"nombre":"Tostado 210g cu bim","item":"1182","custom":false},{"nombre":"Tostado doble fibra 250g cu bim","item":"4767","custom":false},{"nombre":"Canelitas kc 360g mla","item":"30314","custom":false},{"nombre":"Tostada clasica 216g cjm san","item":"31184","custom":false},{"nombre":"Tostada Clasica 240g CJM SAN","item":"31187","custom":false},{"nombre":"Salmas 8p 144g CJM SAN","item":"31198","custom":false},{"nombre":"Salmas 20p 360g CJM SAN","item":"31473","custom":false},{"nombre":"Tostado integral 250g cu bim","item":"31690","custom":false},{"nombre":"Tostadas Nopal 216g CJM SAN","item":"32334","custom":false},{"nombre":"Tubo galleta gansito 10p 215g mtb mla","item":"32640","custom":false},{"nombre":"Panera Donas Azucar 12p 630g MTA BIM","item":"33260","custom":false},{"nombre":"Charola mantecadas 10p 625g mta bim","item":"33262","custom":false},{"nombre":"Charola Nito 15p 930g MTA BIM","item":"33265","custom":false},{"nombre":"Bran Frut Fresa 6p 240g Cj CU BIM","item":"33440","custom":false},{"nombre":"Bran frut pina 6p 240g cj cu bim","item":"33441","custom":false},{"nombre":"Totopo chilaquiles 500g tnb mr","item":"34258","custom":false},{"nombre":"Super Bollos 5in 8p 540g TNB WON","item":"34794","custom":false},{"nombre":"Super pan blanco ajonjoli 567g mta won","item":"35142","custom":false},{"nombre":"Wonder 100pct con Ajonjoli 567g MTA WON","item":"35145","custom":false},{"nombre":"Mi Pinguino 20p 600g Cj MTA MLA","item":"35241","custom":false},{"nombre":"Mi Gansito 20p 500g Cj MTA MLA","item":"35244","custom":false},{"nombre":"Tortillina 50pct menos grasa 306g mtb tr","item":"35728","custom":false},{"nombre":"Cuernitos Rebanados ME 200g MTA TR","item":"36641","custom":false},{"nombre":"Pan Molido 1.5Kg MTA BIM","item":"36894","custom":false},{"nombre":"Bolsa Bocadin 158g RIC","item":"37226","custom":false},{"nombre":"Pan Doble Fibra 567g MTA BIM","item":"38172","custom":false},{"nombre":"Tortillinas mantequilla 12p 306g mta tr","item":"38599","custom":false},{"nombre":"Bigotes 3p 180g me mtb tr","item":"38724","custom":false},{"nombre":"Polvorones KC 375g Cj CU MLA","item":"39324","custom":false},{"nombre":"Sponch KC 270g Cj CU MLA","item":"39325","custom":false},{"nombre":"Pan cero cero 0pct azucar 567g mta bim","item":"39374","custom":false},{"nombre":"Barra Multigrano Nuez 6p 204g Cj CU BIM","item":"42437","custom":false},{"nombre":"Bimbolunch 354g me mta bim","item":"43060","custom":false},{"nombre":"Super Bollos 5in 8p 540g MTA WON","item":"43134","custom":false},{"nombre":"Hot Dogs 8p 290g MTA WON","item":"43136","custom":false},{"nombre":"Mantecadas me 8p 250g mta bim","item":"43156","custom":false},{"nombre":"7 granos 680g mta oro","item":"43160","custom":false},{"nombre":"Pan 100pct integral 680g mta oro","item":"43161","custom":false},{"nombre":"Pan 12 granos 680g mta oro","item":"43173","custom":false},{"nombre":"Pan Integral 480g MTA BIM","item":"43185","custom":false},{"nombre":"Pan integral 680g mta bim","item":"43186","custom":false},{"nombre":"Medias Noches 16p 680g MTA BIM","item":"43189","custom":false},{"nombre":"Bimbollos 8p 450g MTA BIM","item":"43190","custom":false},{"nombre":"Bimbollos 12p 675g mta bim","item":"43192","custom":false},{"nombre":"Bimbollos con Ajn 18p 1440g MTA BIM","item":"43212","custom":false},{"nombre":"Pan Blanco 460g MTA BIM","item":"43223","custom":false},{"nombre":"Pastisetas 20p 150g MTA SUA","item":"43255","custom":false},{"nombre":"Pastiseta 40p 300g mta sua","item":"43256","custom":false},{"nombre":"Super Hot Dogs 8p 435g MTA WON","item":"43335","custom":false},{"nombre":"Pan blanco 680g mta bim","item":"43338","custom":false},{"nombre":"Nito ME 4p 248g MTB BIM","item":"43342","custom":false},{"nombre":"Donas azucar me 8p 210g mta bim","item":"43344","custom":false},{"nombre":"Pan Multigrano 680g MTA ORO","item":"43345","custom":false},{"nombre":"Tortillinas 50p 1275Kg MTA TR","item":"43348","custom":false},{"nombre":"Super Hot Dogs 12p 650g MTA WON","item":"43361","custom":false},{"nombre":"Mantecadas 2p 105g mtb tr","item":"44371","custom":false},{"nombre":"Mantecadas Nuez 8p 246g ME MTA BIM","item":"45527","custom":false},{"nombre":"Salmas azul 7p 126g cjm san","item":"47104","custom":false},{"nombre":"Salmas nopal 7p 126g cjm san","item":"47105","custom":false},{"nombre":"Bimbollos parrilleros 780g 8p mta bim","item":"47332","custom":false},{"nombre":"Pan mantequilla buttermilk 680g mta oro","item":"48345","custom":false},{"nombre":"Totopo Chilaquiles 500g MTA MR","item":"48374","custom":false},{"nombre":"Bimbollos Parrilleros 12p 1170g MTA BIM","item":"48557","custom":false},{"nombre":"Barra Multigran Linaza 6p 192g Cj CU BIM","item":"48965","custom":false},{"nombre":"Pan Tostado Cero Cero 12p 250g CU BIM","item":"49950","custom":false},{"nombre":"Flow pack pinguinos 4p 160g mta mla","item":"150233","custom":false},{"nombre":"Tortillinas 100pctint sp 10p 275g mta tr","item":"150244","custom":false},{"nombre":"Flow pack choco roles 4p 160g mtb mla","item":"150379","custom":false},{"nombre":"Flow pack latte crem choc 200g mtb mla","item":"150475","custom":false},{"nombre":"Pan 0 Gluten Nvo Empaque 423g MTA SAN","item":"150500","custom":false},{"nombre":"Twin Pack Sup Pan Bco Ajon 1134g MTA WON","item":"200172","custom":false},{"nombre":"Twin pack 100pct/ajonj 2p 1134g mta won","item":"200206","custom":false},{"nombre":"Tostaditas Onduladas 20p 200g TNB MR","item":"200244","custom":false},{"nombre":"Tortilla hna rc gdl sp 10p 260g mta dh","item":"200383","custom":false},{"nombre":"Mantecadas choc vain 4p 200g me mtb tr","item":"200416","custom":false},{"nombre":"Mini Doraditas 20p 900g Cj MTA TR","item":"200504","custom":false},{"nombre":"Galleta Arroz y Maiz 9p 108g Cj CU SAN","item":"200512","custom":false},{"nombre":"Galleta Arroz y Quinoa 9p 108g Cj CU SAN","item":"200513","custom":false},{"nombre":"Tostado 270g CU BIM","item":"200676","custom":false},{"nombre":"Pan artesano 567g mta bim","item":"200699","custom":false},{"nombre":"Tortilla Harina Nal 45p 1170g ME MTA DH","item":"200733","custom":false},{"nombre":"Tortilla harina int 45p 1125g me mta dh","item":"200734","custom":false},{"nombre":"Thins multigrano 6p 255g mta oro","item":"200772","custom":false},{"nombre":"Thins integral 6p 255g mta oro","item":"200774","custom":false},{"nombre":"Bollo Brioche Bim 6p 465g MTA BIM","item":"200807","custom":false},{"nombre":"Totopos 320g bolsa tnb dh","item":"200841","custom":false},{"nombre":"Totopos 320g Bolsa CU DH","item":"200842","custom":false},{"nombre":"Thins integral 18p 765g tnb oro","item":"200937","custom":false},{"nombre":"Thins multigrano 18p 765g tnb oro","item":"200938","custom":false},{"nombre":"Polvorones Bites PC 5p 275g Bolsa CU MLA","item":"200990","custom":false},{"nombre":"Pan avena 680g mta oro","item":"201060","custom":false},{"nombre":"Bollos artesano 8p 640g bolsa mta bim","item":"201188","custom":false},{"nombre":"MM Bollos Hamburguesa 675g MTA NP","item":"201212","custom":false},{"nombre":"Mm pan hot dogs 600g mta np","item":"201214","custom":false},{"nombre":"MM Pan Caja Blanco 567g MTA NP","item":"201216","custom":false},{"nombre":"MM Pan Caja Integral 610g MTA NP","item":"201218","custom":false},{"nombre":"Tortilla Hna Precocida 12p 348g MTA TR","item":"201253","custom":false},{"nombre":"Mini Pinguinos Hall 20p 600g Cj MTA MLA","item":"201315","custom":false},{"nombre":"Pinguinos Navidad 8p 240g Cj MTA MLA","item":"201403","custom":false},{"nombre":"Pinguinos Navidad 20p 600g Cj MTA MLA","item":"201404","custom":false},{"nombre":"Bimbunuelos SP 6p 99g Flowpack BIM","item":"201437","custom":false},{"nombre":"Mantecadas Vaini SP 6p 188g Flowpack BIM","item":"201439","custom":false},{"nombre":"Medias Noches Brioche 384g MTA BIM","item":"201540","custom":false},{"nombre":"Pastisetas Sin Azucar PC 280g Cj CU SUA","item":"201554","custom":false},{"nombre":"100pct c/ajonjoli 567g tnb won","item":"201568","custom":false},{"nombre":"Super Pan Blanco Ajonjoli 567gTNB WON","item":"201569","custom":false},{"nombre":"Vital Arandano 680g MTA BIM","item":"201587","custom":false},{"nombre":"Tortillinas Burreras 10p 500g MTA TR","item":"201628","custom":false},{"nombre":"Pan Centeno 567g MTA BIM","item":"201674","custom":false},{"nombre":"Tortilla sp 10p 220g bolsa mta dh","item":"201686","custom":false},{"nombre":"Polvoroncitos 300g flowpack mta tr","item":"201694","custom":false},{"nombre":"Mini Pay Pina 330 Cj CU MLA","item":"201842","custom":false},{"nombre":"Pan Quinoa Granos 360g MTA WON","item":"201881","custom":false},{"nombre":"Submarinos Fresa 280 Cj CU MLA","item":"201902","custom":false},{"nombre":"Little bites chocolate chip 234g cu bim","item":"201991","custom":false},{"nombre":"Tostado Doble Fibra 18p 321g CU BIM","item":"201997","custom":false},{"nombre":"Pastisetas 40p 300g CU SUA","item":"202113","custom":false},{"nombre":"Empanizador Crujiente RRP 400g CU BIM","item":"202148","custom":false},{"nombre":"Canelitas 3p 270g ME CU MLA","item":"202216","custom":false},{"nombre":"Polvorones 3p 330g ME CU MLA","item":"202218","custom":false},{"nombre":"Mantecadas Vainilla 6p 315g ME MTA TR","item":"202229","custom":false},{"nombre":"Totopos Ancestrales 280g CJM SAN","item":"202296","custom":false},{"nombre":"Totopos Clasicos 280g CJM SAN","item":"202300","custom":false},{"nombre":"Pan Masa Madre 680g MTA ORO","item":"202334","custom":false},{"nombre":"Mini Pinguino 8p 200g Cj CU MLA","item":"202392","custom":false},{"nombre":"Mini Choco Rol 8p 224g Cj CU MLA","item":"202393","custom":false},{"nombre":"Mini Gansito 8p 192g Cj CU MLA","item":"202394","custom":false},{"nombre":"Cuernitos Reb NF SP 4p 200g MTA TR","item":"202433","custom":false},{"nombre":"Mini Choco Rol 24p 672g Cj MTB MLA","item":"202619","custom":false},{"nombre":"Mini Gansito 24p 576g Cj MTB MLA","item":"202620","custom":false},{"nombre":"Mini Pinguino 24p 600g Cj MTA MLA","item":"202621","custom":false},{"nombre":"Super Hot Dogs 12p 789g MTA WON","item":"202637","custom":false},{"nombre":"Panque Casero SP 235g MTA TR","item":"202696","custom":false},{"nombre":"Favoritas Vainill Tripack PC 465g CU LAR","item":"202717","custom":false},{"nombre":"Cuernitos 200g Bolsa MTA BIM","item":"202718","custom":false},{"nombre":"Pan con Quinoa 1p 610g Bolsa MTA WON","item":"202818","custom":false},{"nombre":"Canelitas Bites 5p 225g Cj MLA","item":"202963","custom":false},{"nombre":"Polvorones Bites 5p 225g Cj MLA","item":"202964","custom":false},{"nombre":"Triki Trakes Bites 5p 225g Cj MLA","item":"202965","custom":false},{"nombre":"Galleta ArrozChocArandan 8p208g Caja WON","item":"203013","custom":false},{"nombre":"Tripack Napolitano SP 3p 210g Flowpack MLA","item":"203124","custom":false},{"nombre":"Pan Molido Cero Cero RRP 1p 210g FP BIM","item":"203149","custom":false},{"nombre":"Pastelito Principe SF 1p 38g Cj MLA","item":"203169","custom":false},{"nombre":"Principe Avellana KC PC 5p 315g Cj MLA","item":"203200","custom":false},{"nombre":"Principe Choc KC PC 5p 315g Cj MLA","item":"203208","custom":false},{"nombre":"Principe Limon KC PC 5p 315g Cj MLA","item":"203212","custom":false},{"nombre":"Triki Trakes KC PC 5p 255g Cj MLA","item":"203217","custom":false},{"nombre":"Mini Pay Nuez 6p 288g Cj MLA","item":"203236","custom":false},{"nombre":"Mini Pay Pina 6p 330 Cj MLA","item":"203237","custom":false},{"nombre":"Pan para Paninis 6p 300g Flowpack ORO","item":"203240","custom":false},{"nombre":"Donas SP 6p 158g Flowpack BIM","item":"203265","custom":false},{"nombre":"Snowballs 6p 240g Cj MLA","item":"203281","custom":false},{"nombre":"Barritas Mora KC PC 4p 268g Cj MLA","item":"203293","custom":false},{"nombre":"Bimbollo Cero Cero 6p 528g Bolsa BIM","item":"203263","custom":false},{"nombre":"Medias Noches CeroCero 8p 384g Bolsa BIM","item":"203264","custom":false},{"nombre":"Mini Pinguinos Fresas 8p 200g Cj MLA","item":"202814","custom":false},{"nombre":"Natura Fresa 5p 225g Cj BIM","item":"203159","custom":false},{"nombre":"Pastelito Principe 5p 190g FLOW MLA","item":"203257","custom":false},{"nombre":"Principe Choc Bco KC PC 5p 315g Cj MLA","item":"203204","custom":false},{"nombre":"Polvorones CA 375g Cj CU MLA","item":"6451","custom":false},{"nombre":"Mini Submarinos 8p 200g Cj MLA","item":"203456","custom":false},{"nombre":"Bran Frut Fresa 5p 200g Cj BIM","item":"203165","custom":false},{"nombre":"Bran Frut Pina 5p 200g Cj BIM","item":"203166","custom":false},{"nombre":"Multigrano Nuez 5p 170g Cj BIM","item":"203168","custom":false},{"nombre":"Polvorones PC KC 4p 296g CJ MLA","item":"203532","custom":false},{"nombre":"Canelitas KC PC 5p 300g CJ MLA","item":"203416","custom":false},{"nombre":"Sponch KC PC 5p 225g CJ MLA","item":"203533","custom":false},{"nombre":"Pinguinos Halloween 4p 160g FLOW MLA","item":"203740","custom":false},{"nombre":"Pan Natural 1p 680g BOLSA BIM","item":"203648","custom":false},{"nombre":"Pan Masa Madre NE 1p 680g BOLSA ORO","item":"203674","custom":false},{"nombre":"Tostaditas Horneadas 20p 160g BOLSA SAN","item":"203633","custom":false},{"nombre":"PMolido PescadoMariscos 1p 210g FLOW BIM","item":"203713","custom":false},{"nombre":"PCeroCero sin Harina 1p 680g BOLSA BIM","item":"203590","custom":false},{"nombre":"PanBlancoGreatValue 1p 567g BOLSA NP","item":"203924","custom":false},{"nombre":"Pan Integral GreatValue 1p 610g BOLSA NP","item":"203925","custom":false},{"nombre":"Bollos Great Value 8p 450g BOLSA NP","item":"203926","custom":false},{"nombre":"Hot Dog Great Value 8p 300g BOLSA NP","item":"203927","custom":false},{"nombre":"Tortillinas Parrilleras 10p 290g BOLSA TR","item":"203729","custom":false},{"nombre":"Choco Roles Frutos Rojos 8p 224g CJ MLA","item":"203886","custom":false},{"nombre":"Mini Tostado Mantequilla 12p 115g BIM","item":"203808","custom":false},{"nombre":"Pan Natural 1p 610g BOLSA BIM","item":"204081","custom":false},{"nombre":"Bimbollos Parrilleros 12p 1032g BOLSA BIM","item":"204071","custom":false},{"nombre":"Bimbollos Parrilleros 8p 688g BOLSA BIM","item":"204087","custom":false},{"nombre":"Pan Integral 1p 620g BOLSA BIM","item":"204066","custom":false},{"nombre":"Donas Azucaradas 2p 52.5g FLOW BIM","item":"204018","custom":false},{"nombre":"Surtido Rico 1p 770g ME GBI","item":"48001","custom":false},{"nombre":"Pan para Paninis 9p 450g Prm FLOW ORO","item":"204239","custom":false},{"nombre":"Pan Natural 1p 612g MC BOLSA BIM","item":"204259","custom":false},{"nombre":"Pan Centeno 1p 600g BOLSA ORO","item":"204085","custom":false},{"nombre":"Pan Molido Clasico 1p 400g DYP BIM","item":"204031","custom":false},{"nombre":"Pan Molido 100g FLOW BIM","item":"204083","custom":false},{"nombre":"12 Granos 1p 600g BOLSA WON","item":"204086","custom":false},{"nombre":"Donitas Espolvoreadas 3p 52.5g FLOW BIM","item":"204036","custom":false},{"nombre":"Donitas Espolvoreadas 10p 525g CJ BIM","item":"204145","custom":false},{"nombre":"Pan Artesano Multigrano 1p 610g BOLSA BM","item":"204217","custom":false},{"nombre":"Pan Cero Cero CH 1p 340g BOLSA BIM","item":"204325","custom":false},{"nombre":"Pan Multigrano Cero Cero CH 1p 340g BOLSA BIM","item":"204326","custom":false},{"nombre":"Thins Cero Cero 6p 255g FLOW BIM","item":"204393","custom":false},{"nombre":"Bigotes 3p 240g ME TR","item":"204466","custom":false},{"nombre":"Wonder 100 con Ajonjoli 1p 567g MC BOLSA WON","item":"204257","custom":false},{"nombre":"Super PanBlanco Ajonjoli 1p 567g MC BOLSA WON","item":"204258","custom":false},{"nombre":"Galleta Arroz Integ 9p 108g Cj CU SAN","item":"200436","custom":false},{"nombre":"Multigrano Linaza 5p 160g Cj BIM","item":"203167","custom":false},{"nombre":"Mini Gansito 4p 96g FLOW MLA","item":"204513","custom":false},{"nombre":"Mini Choco Roles 4p 112g FLOW MLA","item":"204514","custom":false},{"nombre":"Little Bites Chispas Chocolate 5p 234g CJ BIM","item":"204532","custom":false},{"nombre":"MrBrown Minis 5p 275g CJ MLA","item":"204596","custom":false},{"nombre":"Dino Chispas 4p 68g CJ MLA","item":"204353","custom":false},{"nombre":"Dino Vainilla 4p 68g CJ MLA","item":"204354","custom":false},{"nombre":"Pan Integral 1p 350g BOLSA BIM","item":"204407","custom":false},{"nombre":"PanBlanco 1p 350g BOLSA BIM","item":"204408","custom":false},{"nombre":"Triki Trakes Bombon MedKC 4p 204g CA CJ MLA","item":"204610","custom":false},{"nombre":"Donitas Espolvoreadas 3p 52.5g NC FLOW BIM","item":"204594","custom":false},{"nombre":"Pan Integral 1p 620g 5 BOLSA BIM","item":"204962","custom":false},{"nombre":"Pan Natural 1p 612g 5 BOLSA BIM","item":"204982","custom":false},{"nombre":"Super PanBlanco Ajonjoli 1p 567g 5 BOLSA WON","item":"204983","custom":false},{"nombre":"Wonder 100 conAjonjoli 1p 567g 5 BOLSA WON","item":"204984","custom":false},{"nombre":"Pan Artesano Multigrano 1p 610g 5 BOLSA BM","item":"204970","custom":false},{"nombre":"Mantequilla 6p 300g FLOW ORO","item":"204472","custom":false},{"nombre":"Multigrano 6p 300g FLOW ORO","item":"204473","custom":false},{"nombre":"Mantecadas Naranja conChispas 2p 110g FLOW TR","item":"204580","custom":false},{"nombre":"GrisinesRomeroOliva 1p 120g FLOW BIM EXP","item":"506501","custom":false},{"nombre":"Pan Artesano Honey Wheat 1p 610g BOLSA BIM","item":"204800","custom":false},{"nombre":"Bimbolunch 12p 708g CJ BIM","item":"204146","custom":false},{"nombre":"Mix Bigotes 10p 800g CJ TR","item":"204458","custom":false},{"nombre":"Principe Chocolate CA 8p 84g CU MLA","item":"202316","custom":false},{"nombre":"Fruit Grain Fresa 222g Cj CU BM","item":"202098","custom":false},{"nombre":"Pan Rinde 1p 620g BOLSA BIM","item":"205109","custom":false},{"nombre":"Medias Noches Parrilleras 8p 526g BOLSA BIM","item":"203943","custom":false},{"nombre":"Pastisetas 40p 300g NC CJ SUA","item":"204938","custom":false},{"nombre":"Empanizador Pan ko 1p 300g DYP BIM","item":"204695","custom":false},{"nombre":"Mini Tostado Arandanos 12p 115g ME BIM","item":"205070","custom":false},{"nombre":"Sorpresa Bob Esponja 3p 106g CJ MLA","item":"205277","custom":false},{"nombre":"Fruit Grain Manzana 222g Cj CU BM","item":"202099","custom":false},{"nombre":"Grisines CebMorada 1p 120g FLOW BIM EXP","item":"506498","custom":false},{"nombre":"Pan S Gluten Semillas 1p 430g NC FLOW BIM","item":"205156","custom":false}]},{"cat":"PASTEL","items":[{"nombre":"Tri pack gansito 150g sp mtb mla","item":"35052","custom":false},{"nombre":"Chocotorro fresa 1p 50g sp mtb mla","item":"35453","custom":false},{"nombre":"Choco roles 2p 80g cc mta mla","item":"35484","custom":false},{"nombre":"Bolsa mini rocko 40p 10g cu mla","item":"36610","custom":false},{"nombre":"Leche gansito 236ml mla","item":"37427","custom":false},{"nombre":"Submarinos fresa 3p 105g sp mta mla","item":"43064","custom":false},{"nombre":"Rollo fresa 2p 75g mta mla","item":"43065","custom":false},{"nombre":"Rocko tira 10p 44g mta mla","item":"43068","custom":false},{"nombre":"Pinguinos 2p 80g mta mla","item":"43069","custom":false},{"nombre":"Submarinos chocolate 3p 105g sp mta mla","item":"43084","custom":false},{"nombre":"Gansito 1p 50g C/Charola MTA MLA","item":"43307","custom":false},{"nombre":"Submarinos vainilla 3p 105g sp mta mla","item":"43316","custom":false},{"nombre":"Pinguinos 3p 120g Prom MTA MLA","item":"47886","custom":false},{"nombre":"Bimbollos fs 8p 450g mta bim","item":"48135","custom":false},{"nombre":"Medias noches fs 16p 680g mta bim","item":"48137","custom":false},{"nombre":"Medias Noches FS Nvo 8p 340g MTA BIM","item":"150213","custom":false},{"nombre":"2Pack Gansito 100g ME MTB MLA","item":"150582","custom":false},{"nombre":"Tira rocko colores 10p 44g tira mta mla","item":"150644","custom":false},{"nombre":"Cajilla mobi 10p 450g cu mla","item":"200358","custom":false},{"nombre":"Dalmata nvo 1p 55g mtb mla","item":"200426","custom":false},{"nombre":"Duo napolitano 140g mtb mla","item":"200852","custom":false},{"nombre":"Pinguinos cp 3p 120g prom mta mla","item":"200940","custom":false},{"nombre":"Duo napolitano sp 140g mtb mla","item":"201373","custom":false},{"nombre":"Duo mini pay nuez 96g mtb mla","item":"201528","custom":false},{"nombre":"Duo mini pay pina 110g mtb mla","item":"201529","custom":false},{"nombre":"Duo Mini Pay Nuez SP 96g MTB MLA","item":"201665","custom":false},{"nombre":"Duo Mini Pay Pina SP 110g MTB MLA","item":"201666","custom":false},{"nombre":"Mini Choco Roles NE 28g MTB MLA","item":"202041","custom":false},{"nombre":"Mini Gansito NE 24g MTB MLA","item":"202042","custom":false},{"nombre":"Mini Pinguino NE 25g MTA MLA","item":"202043","custom":false},{"nombre":"Snowballs 2p 80g Blister MTA MLA","item":"202138","custom":false},{"nombre":"Mini Latte Creme Chocolate 24g MTA MLA","item":"202147","custom":false},{"nombre":"Maxitubo Principe NE 210g MTB MLA","item":"202175","custom":false},{"nombre":"Maxitubo Triki Trakes NE 215g MTB MLA","item":"202176","custom":false},{"nombre":"Maxitubo Canelitas NE 224g MTB MLA","item":"202177","custom":false},{"nombre":"Maxitubo Polvorones NE 310g MTB MLA","item":"202178","custom":false},{"nombre":"Pinguinos Fresa 2p 80g Flowpack MLA","item":"202425","custom":false},{"nombre":"Maxitubo Sponch 180g ME MTB MLA","item":"202596","custom":false},{"nombre":"MiniSubmarinos Fresa 1p 25g Flow MTB MLA","item":"202746","custom":false},{"nombre":"Maxitubo Princi Avell 1p 210g ME MTB MLA","item":"202822","custom":false},{"nombre":"Pastelito Principe CF 1p 38g Cj MLA","item":"203183","custom":false},{"nombre":"Pinguinos Halloween 2p 80g FLOW MLA","item":"203602","custom":false},{"nombre":"Pinguinos Navidad 2p 80g FLOW MLA","item":"203758","custom":false},{"nombre":"Mini Pay Manzana Canela CP 1p 55g FLOW MLA","item":"203723","custom":false},{"nombre":"Choco Roles Frutos Rojos 2p 80g FLOW MLA","item":"203821","custom":false},{"nombre":"Bon O Bon Leche 15p 225g DPY NP","item":"203908","custom":false},{"nombre":"Brownies Tentacion 1p 30g FLOW MLA","item":"203819","custom":false},{"nombre":"Bon o Bon Chocofresa 15p 225g DPY NP","item":"203977","custom":false},{"nombre":"Pinguinos Triple Chocola 2p 80g FLOW MLA","item":"204052","custom":false},{"nombre":"Pastelito Bocadin 10p 250g CJ MLA","item":"203739","custom":false},{"nombre":"PinguinosBiriween Fru Rojos 2p80g FLOW MLA","item":"204084","custom":false},{"nombre":"Mobi 1p 30g FLOW MLA","item":"203944","custom":false},{"nombre":"Brownie Tentacion CF 1p 30g GRNL MLA","item":"204158","custom":false},{"nombre":"Pinguinos Navidad ToffeeNut 2p 80g FLOW MLA","item":"204180","custom":false},{"nombre":"Gansito Black Chocolate 1p 50g GRNL MLA","item":"204234","custom":false},{"nombre":"Snowballs CP 1p 40g MTA MLA","item":"202290","custom":false},{"nombre":"Mr Brown 1p 30g GRNL MLA","item":"204289","custom":false},{"nombre":"Choco Roles 1p 50g GRNL MLA","item":"204356","custom":false},{"nombre":"Napolitano Chispas Chocolate 1p 70g GRNL MLA","item":"204287","custom":false},{"nombre":"Gansito Black Chocolate 1p 50g Cap GRNL MLA","item":"204247","custom":false},{"nombre":"Choco Roles Black 2p 80g CC FLOW MLA","item":"204433","custom":false},{"nombre":"Tartaletas Cuadradas Fresa 7p 116.6g FLOW SUA","item":"203885","custom":false},{"nombre":"Rollo 1p 37.5g GRNL MLA","item":"204294","custom":false},{"nombre":"MrBrown Minis 4p 55g FLOW MLA","item":"204535","custom":false},{"nombre":"Mini Gansito Two Pack 48g FLOW MLA","item":"204677","custom":false},{"nombre":"Pay Manzana Canela 1p 55g FLOW MLA","item":"204553","custom":false},{"nombre":"Pinguinos Enigma 2p 80g FLOW MLA","item":"204565","custom":false},{"nombre":"Pinguino mas GalletaPinguino 2p 60g FLOW MLA","item":"204566","custom":false},{"nombre":"Choco Roles Party 2p 85g Cap FLOW MLA","item":"204607","custom":false},{"nombre":"Gansito 1p 50g CP Cap FLOW MLA","item":"204732","custom":false},{"nombre":"Submarinos Choco Avellana 1p 50g FLOW MLA","item":"204639","custom":false},{"nombre":"Swiss Roll 1p 40g FLOW WON","item":"204616","custom":false},{"nombre":"Bon o Bon Pumkin 15p 225g DPY NP","item":"204826","custom":false},{"nombre":"Pinguinos Dulce Leche 2p 80g FLOW MLA","item":"204755","custom":false},{"nombre":"Volkano 1p 22g FLOW MLA","item":"204780","custom":false},{"nombre":"Roly Chocolate 1p 28g FLOW MLA","item":"204779","custom":false},{"nombre":"Roly Dulce de Leche 1p 27g FLOW MLA","item":"204772","custom":false},{"nombre":"Gansito Cherry 1p 50g Cap FLOW MLA","item":"204777","custom":false},{"nombre":"Gansito Cherry 1p 50g SP Cap FLOW MLA","item":"204828","custom":false},{"nombre":"ChocoRoles Fresa Frutos Rojos 1p 80g FLOW MLA","item":"204861","custom":false},{"nombre":"Pastel Choc BrownieChoc 1p35g FLOW MLA","item":"204845","custom":false},{"nombre":"Pastelito Hersheys 1p 40g FLOW MLA","item":"204922","custom":false},{"nombre":"Gansi Premio 1p 50g Cap CP FLOW MLA","item":"204847","custom":false},{"nombre":"Gansi Premio 1p 50g SP FLOW MLA","item":"204987","custom":false},{"nombre":"Pan Blanco 1p 567g BOLSA BIM","item":"205018","custom":false},{"nombre":"Pan Integral 1p 610 BOLSA BIM","item":"205023","custom":false},{"nombre":"Pastelito Canelitas 1p 58g FLOW MLA","item":"204930","custom":false},{"nombre":"Pinguinos Hersheys 2p 80g FLOW MLA","item":"205065","custom":false},{"nombre":"Choco Roles 1p 50g NC GRNL MLA","item":"205268","custom":false},{"nombre":"Pinguinos Calaverita Fresa 2p 80g FLOW MLA","item":"205163","custom":false},{"nombre":"Pay Fresa 2p 110g FLOW MLA","item":"205106","custom":false},{"nombre":"Gansi Premio Cars 1p 50g Cap CP FLOW MLA","item":"205284","custom":false},{"nombre":"Pastel Choc BrownieChoc 1p35gSP FLOW MLA","item":"204897","custom":false},{"nombre":"Submarinos Choco Avellana 1p 50g NE FLOW MLA","item":"205279","custom":false},{"nombre":"Submarinos Fresa Sp 3p 105g Nvo FLOW MLA","item":"205256","custom":false},{"nombre":"Submarinos Vainilla Sp 3p 105g Nvo FLOW MLA","item":"205257","custom":false},{"nombre":"Submarinos Chocolate Sp 3p 105g Nvo FLOW MLA","item":"205258","custom":false},{"nombre":"Gansi Premio Cars 1p 50g SP FLOW MLA","item":"205285","custom":false},{"nombre":"ChocoRoles Frutos Rojos ST 2p 80g CC FLOW MLA","item":"205278","custom":false},{"nombre":"Choco Roles Cereza 2p 80g CC FLOW MLA","item":"205384","custom":false},{"nombre":"Mini Gansito 12p 288g CJ MLA","item":"205291","custom":false},{"nombre":"Mini Pinguino 12p 300g CJ MLA","item":"205292","custom":false},{"nombre":"Mini Choco Roles 12p 336g CJ MLA","item":"205294","custom":false},{"nombre":"GansiPremio DC Cap 1p 50g CP FLOW MLA","item":"205454","custom":false},{"nombre":"Rocko 10p 440g TIRA MLA","item":"205437","custom":false},{"nombre":"Mobi 12p 360g CJ MLA","item":"205448","custom":false},{"nombre":"GansiPremio DC 1p 50g SP FLOW MLA","item":"205455","custom":false}]},{"cat":"GALLETA","items":[{"nombre":"Triki Trakes Nvo 6p 51g MTB MLA","item":"935","custom":false},{"nombre":"Principe 10p 106g prom mtb mla","item":"30532","custom":false},{"nombre":"Canelitas 90g mtb mla","item":"31310","custom":false},{"nombre":"Polvoron 6p 111g mtb mla","item":"31507","custom":false},{"nombre":"Principe Choc Bco 10p 110g Prom MTB MLA","item":"32940","custom":false},{"nombre":"Surtido Fina Variedad 200g CU GBI","item":"33853","custom":false},{"nombre":"Mini barritas fresa 15p 185g mtb mla","item":"37268","custom":false},{"nombre":"Bombonete 55g mtb mla","item":"37358","custom":false},{"nombre":"Principe limon 10p 106g mtb mla","item":"38492","custom":false},{"nombre":"Mini barritas pina 15p 185g mtb mla","item":"39244","custom":false},{"nombre":"Sponch 8p 120g mtb mla","item":"43058","custom":false},{"nombre":"Canelitas 6p 60g MTB MLA","item":"43070","custom":false},{"nombre":"Polvorones 4p 74g MTB MLA","item":"43075","custom":false},{"nombre":"Principe 6p 63g MTB MLA","item":"43230","custom":false},{"nombre":"Principe ave 10p 105g individual mtb mla","item":"150633","custom":false},{"nombre":"Triki 10p 86g prom mtb mla","item":"200277","custom":false},{"nombre":"Mini barrita fresa 222g mtb mla","item":"200333","custom":false},{"nombre":"Mini barrita pina 222g mtb mla","item":"200334","custom":false},{"nombre":"Canelitas Pc 4p 240g Cj CU MLA","item":"201048","custom":false},{"nombre":"Polvorones Pc 4p 296g Cj CU MLA","item":"201052","custom":false},{"nombre":"Suavicremas chocolate 102g mta mla","item":"201091","custom":false},{"nombre":"Suavicremas fresa 102g mta mla","item":"201092","custom":false},{"nombre":"Suavicremas vainilla 102g mta mla","item":"201093","custom":false},{"nombre":"Galleta gansito 2p 43g tira mtb mla","item":"201299","custom":false},{"nombre":"Canelitas rrp 33p 180g tubo cu mla","item":"201420","custom":false},{"nombre":"Polvorones rrp 18p 250g tubo cu mla","item":"201421","custom":false},{"nombre":"Principe rrp 14p 147g tubo cu mla","item":"201422","custom":false},{"nombre":"Triki trakes rrp 20p 170g tubo cu mla","item":"201423","custom":false},{"nombre":"Weikis 1p 40g CU BIM","item":"201450","custom":false},{"nombre":"Mini barritas fresa 8p 98g mtb mla","item":"201469","custom":false},{"nombre":"Suavicremas Chocolate SP 102g MTA MLA","item":"201584","custom":false},{"nombre":"Suavicremas Fresa 102g SP MTA MLA","item":"201585","custom":false},{"nombre":"Suavicremas Vainilla SP 102g MTA MLA","item":"201586","custom":false},{"nombre":"Galleta Pinguino 2p 40g Tira MTB MLA","item":"201619","custom":false},{"nombre":"Barritas fresa 48g mtb mla","item":"201823","custom":false},{"nombre":"Barritas Pina CP 67g MTB MLA","item":"201849","custom":false},{"nombre":"Barritas Fresa CP 67g MTB MLA","item":"201850","custom":false},{"nombre":"Triki Trakes SP 85g MTB MLA","item":"201929","custom":false},{"nombre":"Lors CP 10p 98g MTB MLA","item":"202378","custom":false},{"nombre":"Plativolos CP 10p 90g CU MLA","item":"202379","custom":false},{"nombre":"Barritas Fresa 67g SP MTB MLA","item":"202589","custom":false},{"nombre":"Barritas Pina 67g SP MTB MLA","item":"202591","custom":false},{"nombre":"PrincipeFresa SublimeSP 10p105g Flow MLA","item":"202862","custom":false},{"nombre":"Canelitas Bites SP 1p 80g Bolsa MLA","item":"202999","custom":false},{"nombre":"Canelitas Bites SP 5p 80g Tira MLA","item":"203000","custom":false},{"nombre":"Triki Trakes Bites SP 1p 80g Bolsa MLA","item":"203001","custom":false},{"nombre":"Triki Trakes Bites SP 5p 80g Tira MLA","item":"203002","custom":false},{"nombre":"Maxitubo Lors 1p 215g Tubo MLA","item":"203112","custom":false},{"nombre":"PrincipeAvellana MedKC PC 4p 252g Cj MLA","item":"203202","custom":false},{"nombre":"Principe Choc MedKC PC 4p 252g Cj MLA","item":"203210","custom":false},{"nombre":"Principe Limon MedKC PC 4p 252g Cj MLA","item":"203214","custom":false},{"nombre":"Triki Trakes MedKC PC 4p 204g Cj MLA","item":"203219","custom":false},{"nombre":"Barritas Pina KC PC 4p 268g Cj MLA","item":"203291","custom":false},{"nombre":"Barritas Fresa KC PC 4p 268g Cj MLA","item":"203292","custom":false},{"nombre":"Galleta Pinguinos SP 8p 160g Tubo MLA","item":"203466","custom":false},{"nombre":"PromPrincipe 10p 106g Prom MTB MLA","item":"9930532","custom":false},{"nombre":"Galleta Pinguinos 8p 160g DPY MLA","item":"202824","custom":false},{"nombre":"Canelitas KC PC 4p 240g CJ MLA","item":"203528","custom":false},{"nombre":"Sponch Pina Cool CP 8p 120g FLOW MLA","item":"203798","custom":false},{"nombre":"Principe Chocolate 12p 126g FLOW MLA","item":"203657","custom":false},{"nombre":"Sponch Pina Cool 8p 120g FLOW MLA","item":"203773","custom":false},{"nombre":"Polvorones Chocolate Abuelita 6p 111g FLOW MLA","item":"203772","custom":false},{"nombre":"Principe Avellana 12p 126g FLOW MLA","item":"203658","custom":false},{"nombre":"Principe Limon 12p 126g FLOW MLA","item":"203660","custom":false},{"nombre":"Principe ChocoBlanco EmpBco 12p 126g FLOW MLA","item":"203909","custom":false},{"nombre":"PromBarritas Pina Cp 1p 67g FLOW MLA","item":"99201849","custom":false},{"nombre":"Barritas Fresa 2p 75g FLOW MLA","item":"203787","custom":false},{"nombre":"Barritas Pina 2p 75g FLOW MLA","item":"203788","custom":false},{"nombre":"PromGalleta Pinguino 2p 40g Tira MTB MLA","item":"99201619","custom":false},{"nombre":"PromGalleta Gansito 2p 43g Tira MTB MLA","item":"99201299","custom":false},{"nombre":"Barritas Moras 2p 75g FLOW MLA","item":"203789","custom":false},{"nombre":"Mini Barritas Fresa 4p 49.3g FLOW MLA","item":"204057","custom":false},{"nombre":"Canelitas 12p 120g FLOW MLA","item":"204089","custom":false},{"nombre":"Triki Trakes 1p 85g Prm FLOW MLA","item":"204246","custom":false},{"nombre":"Galleta Pinguinos E limitada 8p 160g TUBO MLA","item":"204198","custom":false},{"nombre":"Galleta Pinguinos Navidad 2p 40g TIRA MLA","item":"204199","custom":false},{"nombre":"Principe Doble Chocolate 1p 126g FLOW MLA","item":"204263","custom":false},{"nombre":"Polvorones 8p 148g FLOW MLA","item":"204288","custom":false},{"nombre":"Suavicremas Vainilla 12p 100g FLOW MLA","item":"204172","custom":false},{"nombre":"Suavicremas Chocolate 12p 100g FLOW MLA","item":"204171","custom":false},{"nombre":"Suavicremas Fresa 12p 100g FLOW MLA","item":"204173","custom":false},{"nombre":"Canelitas NC 12p 120g FLOW MLA","item":"204138","custom":false},{"nombre":"Lors 10p 98g CA FLOW MLA","item":"204011","custom":false},{"nombre":"Canelitas Tentacion 9p 73g FLOW MLA","item":"204368","custom":false},{"nombre":"Barritas Fresa Two Pack 2p 110g CP FLOW MLA","item":"204344","custom":false},{"nombre":"Macarenas 12p 108g FLOW MLA","item":"203854","custom":false},{"nombre":"Polvorones Chocolate Abuelita 4p 74g FLOW MLA","item":"203992","custom":false},{"nombre":"Sponch 8p 120g SP FLOW MLA","item":"204585","custom":false},{"nombre":"Kremas 4p 45g FLOW QE","item":"204340","custom":false},{"nombre":"Sponch Fresa 7p 45g TIRA MLA","item":"204521","custom":false},{"nombre":"Triki Trakes Bombon 10p 85g SP FLOW MLA","item":"204537","custom":false},{"nombre":"Choxs 6p 81g FLOW QE","item":"204008","custom":false},{"nombre":"Hit MoraCoco 6p 52g FLOW QE","item":"204342","custom":false},{"nombre":"Principe Choc Medkc Ca 4p 252g CJ MLA","item":"203209","custom":false},{"nombre":"Qe Bolitas 1p 44g CP FLOW QE","item":"204227","custom":false},{"nombre":"Fruti Sponch 8p 124g FLOW MLA","item":"205010","custom":false},{"nombre":"Principe Reeses 12p 126g FLOW MLA","item":"205214","custom":false},{"nombre":"Choxs 100p 2700g CJA QE","item":"204860","custom":false},{"nombre":"Triki Trakes Bites 5p 285g TIRA MLA","item":"205407","custom":false},{"nombre":"Canelitas Bites 5p 285g TIRA MLA","item":"205408","custom":false},{"nombre":"Canelitas Bites 1p 57g FLOW MLA","item":"205427","custom":false},{"nombre":"Sponch Fresa 7p 315g TIRA MLA","item":"205449","custom":false}]},{"cat":"DULCE","items":[{"nombre":"Little Bites Chips Choco SP 69g MTA BIM","item":"1390","custom":false},{"nombre":"Little bites chisp chocolate 69g mta bim","item":"6000","custom":false},{"nombre":"Duo nito 124g sp mtb bim","item":"30007","custom":false},{"nombre":"Bimbunuelos 6p 99g Prom MTA BIM","item":"31284","custom":false},{"nombre":"Rebanada 2p 55g sp mta bim","item":"32394","custom":false},{"nombre":"Nito 1p 62g sp mtb bim","item":"34054","custom":false},{"nombre":"Madalenas 3p 93g mta bim","item":"36711","custom":false},{"nombre":"Madalenas 3p 93g SP MTA BIM","item":"37006","custom":false},{"nombre":"Conchas Vainilla 2p 120g MTB BIM","item":"39140","custom":false},{"nombre":"Leche nito 236ml bim","item":"41843","custom":false},{"nombre":"Mantecadas nuez 123g mta bim","item":"43118","custom":false},{"nombre":"Roles Canela 6p 365g MTB BIM","item":"43169","custom":false},{"nombre":"Panque marmol 255g mta bim","item":"43174","custom":false},{"nombre":"Roles canela 2p 120g mtb bim","item":"43196","custom":false},{"nombre":"Roles glass 2p 135g mtb bim","item":"43197","custom":false},{"nombre":"Colchones 6p 130g MTA BIM","item":"43198","custom":false},{"nombre":"Panque pasas 255g mta bim","item":"43199","custom":false},{"nombre":"Panque nuez 255g mta bim","item":"43200","custom":false},{"nombre":"Panquecito Gota Choc 2p 140g MTB BIM","item":"43201","custom":false},{"nombre":"Mantecadas vainilla 4p 125g mta bim","item":"43202","custom":false},{"nombre":"Donitas espolvoreadas 6p 105g mtb bim","item":"43203","custom":false},{"nombre":"Donas azucar 4p 105g mta bim","item":"43204","custom":false},{"nombre":"Nito 1p 62g mtb bim","item":"43206","custom":false},{"nombre":"Rebanada 2p 55g mta bim","item":"43207","custom":false},{"nombre":"Bimbunuelos 4p 66g mta bim","item":"43209","custom":false},{"nombre":"Mantecadas vain 6p 188g det prom mta bim","item":"44950","custom":false},{"nombre":"Donas 6p prom mta bim","item":"44951","custom":false},{"nombre":"Mantecadas nuez 6p 184g det prom mta bim","item":"48598","custom":false},{"nombre":"Mantecadas vainilla 2p 62.5g mta bim","item":"200642","custom":false},{"nombre":"Panquecito gota chocolat 3p 210g mta bim","item":"201317","custom":false},{"nombre":"Mantecadas Chisp Choc SP 4p 127g MTA BIM","item":"202066","custom":false},{"nombre":"Mantecadas Chispas Choc 6p 190g MTA BIM","item":"202067","custom":false},{"nombre":"Doners 5p 120g MTB BIM","item":"202097","custom":false},{"nombre":"Little Bites 345g Tira MTA BIM","item":"202179","custom":false},{"nombre":"Donita Espolvorea Prm6Mas2p 140g MTB BIM","item":"202183","custom":false},{"nombre":"Roles Canela 3p 180g MTB BIM","item":"202575","custom":false},{"nombre":"Roles Glass 3p 205g MTB BIM","item":"202576","custom":false},{"nombre":"Crossantines Chocolate CP 32g MTB BIM","item":"202577","custom":false},{"nombre":"Mantechox 4p 161g MTA BIM","item":"202617","custom":false},{"nombre":"DonitaEspolvoreaSP Prm6Mas2p140g MTB BIM","item":"202753","custom":false},{"nombre":"Crossantines Choco 3p 96g Bolsa MTB BIM","item":"202759","custom":false},{"nombre":"Crossantines Choco 7p 224g Tira BIM","item":"203025","custom":false},{"nombre":"Mantechox La Lechera 4p 152g ME BIM","item":"203053","custom":false},{"nombre":"Natura Fresa 5pz 45g Tira BIM","item":"203102","custom":false},{"nombre":"Roles Canela SP 3p 180g Flowpack BIM","item":"203294","custom":false},{"nombre":"Crossantines Cho CP 3p 96g Bolsa MTB BIM","item":"203300","custom":false},{"nombre":"Mantechox SP 4p 161g Flowpack BIM","item":"203408","custom":false},{"nombre":"Mantechox La lechera SP 4p 152g Flowpack BIM","item":"203409","custom":false},{"nombre":"Hotkis 8p 400g Tira BIM","item":"203460","custom":false},{"nombre":"Mantecadas Fiesta 6p 187.5g Bolsa BIM","item":"203444","custom":false},{"nombre":"Donitas Canela 8p 140g FLOW BIM","item":"203675","custom":false},{"nombre":"Mantecadas 2p 62.5g FLOW BIM","item":"203724","custom":false},{"nombre":"Mantecadas Bicolor 6p 187.5g FLOW BIM","item":"203790","custom":false},{"nombre":"Promocaj Mantecada Vaini 8p 264g CJ BIM","item":"203889","custom":false},{"nombre":"Panque Marmol 1p 280g FLOW BIM","item":"203823","custom":false},{"nombre":"Panque Nuez 1p 280g FLOW BIM","item":"203825","custom":false},{"nombre":"Panque Pasas 1p 280g FLOW BIM","item":"203824","custom":false},{"nombre":"FruitGrain Strudel Manzana 1p 65g FLOW BIM","item":"203614","custom":false},{"nombre":"Hotkis Chocolate 1p 50g FLOW BIM","item":"204023","custom":false},{"nombre":"Mantecadas Vainilla 2p 62.5g TIRA BIM","item":"203986","custom":false},{"nombre":"Mantecadas Bites 1p 70g FLOW BIM","item":"203647","custom":false},{"nombre":"Crossantines Chocolate 1p 32g NC FLOW BIM","item":"204165","custom":false},{"nombre":"Donas Azucaradas 7p 52.5g TIRA BIM","item":"204120","custom":false},{"nombre":"Conchas Vainilla NF 2p 130g FLOW BIM","item":"203967","custom":false},{"nombre":"Hotkis Chocolate 1p 50g SP FLOW BIM","item":"204160","custom":false},{"nombre":"Donitas Espolvoreadas 7p 52.5g TIRA BIM","item":"204156","custom":false},{"nombre":"Nito Funk Olocoons 1p 62g FLOW BIM","item":"204148","custom":false},{"nombre":"Concha Chocolate 2p 120g FLOW BIM","item":"203907","custom":false},{"nombre":"Rebanadas Chocolate 1p 55g FLOW BIM","item":"204024","custom":false},{"nombre":"Bimbocao 1p 52g FLOW BIM","item":"204184","custom":false},{"nombre":"Mantecadas Vainilla EE 4p 125g FLOW BIM","item":"204233","custom":false},{"nombre":"Pastelito Bocadin 1p 40g GRNL BOC","item":"204228","custom":false},{"nombre":"Concha Chocolate 2p 120g SP FLOW BIM","item":"204311","custom":false},{"nombre":"Mini Panque Nuez 6p 70g TIRA BIM","item":"204241","custom":false},{"nombre":"Mantecadas Bites 1p 70g SP FLOW BIM","item":"204290","custom":false},{"nombre":"Little Bites Chispas Chocolate 8p 69g CJ BIM","item":"204533","custom":false},{"nombre":"Mantechox 2p 80.6g FLOW BIM","item":"204560","custom":false},{"nombre":"LittleBites ChispasChocolate 6p69gNC FLOW BIM","item":"204756","custom":false},{"nombre":"Concha Vainilla 1p 60g FLOW BIM","item":"204029","custom":false},{"nombre":"Donas 6p 158g NC FLOW BIM","item":"204757","custom":false},{"nombre":"Little Bites Party Cake 6p 69g DYP BIM","item":"204379","custom":false},{"nombre":"Bimbunuelos Canela 6p 99g FLOW BIM","item":"204584","custom":false},{"nombre":"Rebanadas Carlos V 1p 55g FLOW BIM","item":"204944","custom":false},{"nombre":"PanqueChox Choco Avellana 1p 315g SP FLOW BIM","item":"204875","custom":false},{"nombre":"Hotkis Cajeta 8p 38g TIRA BIM","item":"204699","custom":false},{"nombre":"Mantechox Hersheys 2p 80g FLOW BIM","item":"204904","custom":false},{"nombre":"Mantechox Hersheys 4p 160g FLOW BIM","item":"204903","custom":false},{"nombre":"Little Bites Hersheys 6p 69g FLOW BIM","item":"205123","custom":false},{"nombre":"Crossantines Minis Hersheys 4p 240g TIRA BIM","item":"205338","custom":false},{"nombre":"Little Bites Sorpresa 5p 290g TIRA BIM","item":"205344","custom":false},{"nombre":"Rebanada 2p 55g CP FLOW BIM","item":"205322","custom":false},{"nombre":"Little Bites Sorpresa 1p 58g FLOW BIM","item":"205345","custom":false},{"nombre":"Crossantines Minis Hersheys 5p 60g GRNL BIM","item":"205321","custom":false},{"nombre":"Panque Relleno Hersheys 1p 280g FLOW BIM","item":"205013","custom":false},{"nombre":"Hotkis Cajeta 8p 304g TIRA BIM","item":"205359","custom":false},{"nombre":"Hotkis Cajeta 1p 38g GRNL BIM","item":"204698","custom":false},{"nombre":"Mantecadas Vainilla 7p 437.5g TIRA BIM","item":"205340","custom":false},{"nombre":"Mini Panque Nuez 6p 420g TIRA BIM","item":"205341","custom":false},{"nombre":"Donitas Espolvoreadas 7p 367.5g TIRA BIM","item":"205424","custom":false}]},{"cat":"4T","items":[{"nombre":"Tortilla Consumos 24p 612g MTA TR","item":"36524","custom":false},{"nombre":"Tortillas Harina Burreras 6p 300g MTA DH","item":"37932","custom":false},{"nombre":"Tortilla Harina 20p 520g MTA DH","item":"38650","custom":false},{"nombre":"Salmas 5p 90g cjm san","item":"39161","custom":false},{"nombre":"Bollos Carls Jr 5in 1350g TIR BRE","item":"40430","custom":false},{"nombre":"Barra Multigrano Linaza 32g MTA BIM","item":"43023","custom":false},{"nombre":"Tostada Plana 15p 175g MTB MR","item":"43159","custom":false},{"nombre":"Molido 5kg mta bim","item":"43195","custom":false},{"nombre":"Barra Multigrano Nuez 34g MTA BIM","item":"43305","custom":false},{"nombre":"Bollos super ajn 12p 960g mta bim","item":"43350","custom":false},{"nombre":"Totopos 280g mta dh","item":"44829","custom":false},{"nombre":"Bimbollos Super FS 6p 480g MTA BIM","item":"48136","custom":false},{"nombre":"Totopo Chilaquiles 280g MTA MR","item":"48373","custom":false},{"nombre":"Tortillinas 22p 561g mta tr","item":"48996","custom":false},{"nombre":"Tortillinas 12p 306g mta tr","item":"49028","custom":false},{"nombre":"Bran Frut Pina 58g MTB BIM","item":"200384","custom":false},{"nombre":"Bran Frut Fresa 58g MTB BIM","item":"200385","custom":false},{"nombre":"Salmas 8P 144g FP CJM SAN","item":"200784","custom":false},{"nombre":"Tostadas fp 10p 120g cjm san","item":"200992","custom":false},{"nombre":"Tortilla Mazatlan 7p 179g Bolsa MTA DH","item":"201142","custom":false},{"nombre":"Pan molido clasico 210g mtb bim","item":"201617","custom":false},{"nombre":"Empanizador Crujiente RRP 175g CU BIM","item":"201940","custom":false},{"nombre":"Salsa Mora 240g CU DH","item":"202159","custom":false},{"nombre":"Salsa Chile Arbol 240g CU DH","item":"202160","custom":false},{"nombre":"Salsa Verde Asada 240g CU DH","item":"202161","custom":false},{"nombre":"Salsa Chile Arbol SP 240g CU DH","item":"202225","custom":false},{"nombre":"Pan Molido 20pct mas 252g MTB BIM","item":"202344","custom":false},{"nombre":"Totopos Clasicos CP 200g CJM SAN","item":"202422","custom":false},{"nombre":"Totopos Ancestrales CP 200g CJM SAN","item":"202445","custom":false},{"nombre":"Totopos Nopal CP 200g CJM SAN","item":"202446","custom":false},{"nombre":"Tostada Ondulada Tubo NC 30p 360g CU MR","item":"202517","custom":false},{"nombre":"Tortilla 10p 220g Flowpack MTA DH","item":"202754","custom":false},{"nombre":"FruitGrain SalvFresa 5pz 67g Tira MTA BIM","item":"202838","custom":false},{"nombre":"Tostada Marisque Ond 27p324g Bolsa CU MR","item":"202869","custom":false},{"nombre":"Tostada Ondulada Mayoreo NE 27p 324g Bolsa CU MR","item":"202926","custom":false},{"nombre":"Barra Natura Mora 10p 45g DPY BIM","item":"203350","custom":false},{"nombre":"Barra Natura Fresa 10p 45g DPY BIM","item":"203351","custom":false},{"nombre":"Medias Noches Esp BK 7in 1775g TIR SL","item":"8863","custom":false},{"nombre":"Totopo 1Kg MTA DH","item":"6133","custom":false},{"nombre":"Bollos BK 4in 30p 1635g Tn SL","item":"8865","custom":false},{"nombre":"Salsa Tatemada Habanero 1p 240g VASO DH","item":"203440","custom":false},{"nombre":"Harina para Hot Cakes 1p 350g Cj TR","item":"202968","custom":false},{"nombre":"Salsa Verde Asada NC 1p 240g Vaso DH","item":"203571","custom":false},{"nombre":"Salsa Mora NC 1p 240g VASO DH","item":"203572","custom":false},{"nombre":"Salsa Chile Arbol NC 1p 240g Vaso DH","item":"203573","custom":false},{"nombre":"Bollos Bk 5in 20p 1730g BOLSA SL","item":"8864","custom":false},{"nombre":"Barra Multigr Chocolate 1p 34g FLOW BIM","item":"203611","custom":false},{"nombre":"Rosca Reyes 1p 1150g CJA BIM","item":"203856","custom":false},{"nombre":"Prom Tostadas Deshidratadas 20p 180g BOLSA DH","item":"99203562","custom":false},{"nombre":"Tostadas Deshidratadas 20p 180g BOLSA DH","item":"203562","custom":false},{"nombre":"Salmas NC 5p 90g CJ SAN","item":"203794","custom":false},{"nombre":"PMolido PescadoMariscos CP 1p 210g FLOW BIM","item":"203969","custom":false},{"nombre":"PromFp Salmas 8p 144g CJ SAN","item":"99200784","custom":false},{"nombre":"Tostada Occidente 20p 230g BOLSA DH","item":"203895","custom":false},{"nombre":"Galleta Arroz Quinoa 8p 12g Dpy SAN","item":"202994","custom":false},{"nombre":"Tost Maiz Azul Chia Linaza Arr 1p 216g CJ SAN","item":"202948","custom":false},{"nombre":"Tostado Brioche 14p 210g FLOW BIM","item":"204055","custom":false},{"nombre":"Tortillinas Parrilleras 12p 228g BOLSA TR","item":"204099","custom":false},{"nombre":"Bimbollos Parrilleros FS 12p 1032g BOLSA BIM","item":"204127","custom":false},{"nombre":"Tostada Nopal Ajonjoli 8p 216g CJA SAN","item":"203655","custom":false},{"nombre":"Mix Salsas La Tatemada 20p 4.8kg CJA DH","item":"204275","custom":false},{"nombre":"Empanizador sin Gluten 200g CJM SAN","item":"150275","custom":false},{"nombre":"Salsa La Tatemada Taquera 1p 240g VASO DH","item":"204014","custom":false},{"nombre":"Totopos Guakamolero 1p 280g BOLSA DH","item":"204202","custom":false},{"nombre":"Totopo Nacho 1p 280g FLOW DH","item":"204179","custom":false},{"nombre":"Bran Frut Granos Ancestrales 1p 60g FLOW BIM","item":"204285","custom":false},{"nombre":"Tortillinas 10p 200g BOLSA TR","item":"204317","custom":false},{"nombre":"Tostadas Botaneros Ajonjoli 20p 180g BOLSA MR","item":"204143","custom":false},{"nombre":"Salsa Mora LaTatemada 1p 110g VASO DH","item":"204412","custom":false},{"nombre":"Salsa Chile Arbol LaTatemada 1p 110g VASO DH","item":"204413","custom":false},{"nombre":"Totopos Saladitos 1p 320g BOLSA DH","item":"203649","custom":false},{"nombre":"Tostada 18p 220g BOLSA DH","item":"204465","custom":false},{"nombre":"Rosquitas Horneadas 1p 20g TIRA SAN","item":"506069","custom":false},{"nombre":"Tortillas 15p 300g FLOW DH","item":"204209","custom":false},{"nombre":"Bran Frut Mango 1p 58g FLOW BIM","item":"204645","custom":false},{"nombre":"Tostado Clasico 6p 90g Metal FLOW BIM","item":"204386","custom":false},{"nombre":"Bimbollos Brioche FS 12p 930g BOLSA BIM","item":"204051","custom":false},{"nombre":"Rosquitas Horneadas 1p 20g FLOW SAN","item":"506068","custom":false},{"nombre":"Tortillinas 15p 382.5g BOLSA TR","item":"204775","custom":false},{"nombre":"Tortillas 15p 300g CP FLOW DH","item":"204446","custom":false},{"nombre":"Tortillinas 15p 382.5g NC BOLSA TR","item":"204993","custom":false},{"nombre":"Totopo 1p 320g BOLSA TR","item":"204629","custom":false},{"nombre":"Tostada 18p 220g Mty BOLSA DH","item":"204960","custom":false},{"nombre":"Bran Frut Cheesecake 1p 58g FLOW BIM","item":"204798","custom":false},{"nombre":"Medias Noches 7in 24p 1800g Esp Bk BOLSA SL","item":"204725","custom":false},{"nombre":"Tostada Chicharronera 18p 220g BOLSA DH","item":"205174","custom":false},{"nombre":"Tortillinas Burreras 10p 580g BOLSA TR","item":"205105","custom":false},{"nombre":"Totopos 1p 320g N FLOW DH","item":"205089","custom":false},{"nombre":"Tortillinas 22p 561g NC BOLSA TR","item":"205264","custom":false},{"nombre":"Tortillas 15p 300g Prom2 BOLSA DH","item":"205021","custom":false},{"nombre":"Multigrano Nuez 1p 44.2g 30pct FLOW BIM","item":"204854","custom":false},{"nombre":"Pan Molido 20pct Mas 1p 252g NC FLOW BIM","item":"205371","custom":false},{"nombre":"Galleta Arroz Quinoa 1p 14g FLOW SAN","item":"204151","custom":false},{"nombre":"Tostada Clasica 18p 216g BOLSA SAN","item":"205274","custom":false},{"nombre":"Tortillas Harina Burreras 10p 500g BOLSA DH","item":"205342","custom":false},{"nombre":"Tostada Marisque Ond 30p 360g BOLSA MR","item":"205376","custom":false},{"nombre":"Galleta Arroz Quinoa 8p 112g DPY SAN","item":"204890","custom":false},{"nombre":"Tostada 18p 220g NC BOLSA DH","item":"205375","custom":false}]}];
 
 const STORAGE_KEY = 'bimbo_maestro_v5';
 
@@ -1149,7 +349,6 @@ document.getElementById('f-hora').value = new Date().toTimeString().slice(0,5);
 updateFontSize(16);
 updateFontFamily("'Courier New',Courier,monospace");
 
-// Cargar maestro: primero localStorage, si no existe usar el default del Excel
 if (!cargarMaestroGuardado()) {
   maestro = JSON.parse(JSON.stringify(MAESTRO_DEFAULT));
   setPill('📋 Maestro default cargado', true);
@@ -1169,7 +368,6 @@ function updateFontSize(val) {
 function updateFontFamily(val) {
   currentFontFamily = val;
   document.documentElement.style.setProperty('--ff', val);
-  document.querySelectorAll('.thermal, .thermal *').forEach(el => { el.style.fontFamily = val; });
 }
 
 /* ═══ TABS ═══ */
@@ -1320,6 +518,7 @@ function generarTodos() {
   });
   document.getElementById('preview-label').style.display = 'block';
   document.getElementById('btn-print').style.display = 'block';
+  document.getElementById('btn-cat-filter').style.display = 'block';
   document.getElementById('maestro-status').style.display = 'block';
   if (!wrap.children.length)
     wrap.innerHTML = '<div class="placeholder"><span class="big">⚠</span>Sin productos en ese rango</div>';
@@ -1389,7 +588,7 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
     '</div>';
 }
 
-/* ═══ IMPRIMIR ═══ */
+/* ═══ IMPRIMIR TODOS ═══ */
 function imprimirTodos() {
   document.querySelectorAll('.thermal').forEach(el => {
     el.style.fontSize = currentFontPt + 'pt';
@@ -1428,6 +627,174 @@ td:nth-child(2),td:nth-child(3){text-align:right;width:38px;white-space:nowrap;b
 </style></head><body>${html}</body></html>`);
   w.document.close(); w.focus();
   setTimeout(() => { w.print(); w.close(); }, 400);
+}
+
+/* ═══ IMPRIMIR POR CATEGORÍA ═══ */
+const CAT_COLORS = {
+  TRL:'#6366f1', PANES:'#f59e0b', AS:'#0055A4',
+  PASTEL:'#ec4899', GALLETA:'#10b981', DULCE:'#ef4444',
+  '4T':'#8b5cf6', OTROS:'#6b7280'
+};
+
+function toggleCatFilter() {
+  const panel = document.getElementById('cat-filter-panel');
+  const isOpen = panel.classList.toggle('open');
+  if (isOpen) buildCatFilterList();
+}
+
+function buildCatFilterList() {
+  const list = document.getElementById('cat-filter-list');
+  list.innerHTML = '';
+  const cats = [...new Set(maestro.map(c => c.cat))];
+  cats.forEach(cat => {
+    const color = CAT_COLORS[cat] || '#6b7280';
+    const safeId = 'chk-cat-' + cat.replace(/[^a-zA-Z0-9]/g,'_');
+    const item = document.createElement('div');
+    item.className = 'cat-filter-item';
+    item.innerHTML =
+      '<div class="cat-color-dot" style="background:'+color+'"></div>' +
+      '<input type="checkbox" id="'+safeId+'" value="'+escHtml(cat)+'" checked>' +
+      '<label for="'+safeId+'">'+escHtml(cat)+'</label>';
+    // Clicking the row (not the input itself) toggles the checkbox
+    item.addEventListener('click', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
+      const cb = item.querySelector('input[type=checkbox]');
+      cb.checked = !cb.checked;
+      updateCatFilterCount();
+    });
+    item.querySelector('input').addEventListener('change', updateCatFilterCount);
+    list.appendChild(item);
+  });
+  updateCatFilterCount();
+}
+
+function updateCatFilterCount() {
+  const total = document.querySelectorAll('#cat-filter-list input[type=checkbox]').length;
+  const checked = document.querySelectorAll('#cat-filter-list input[type=checkbox]:checked').length;
+  document.getElementById('cat-filter-count').textContent = checked + '/' + total + ' selec.';
+}
+
+function selectAllCats(val) {
+  document.querySelectorAll('#cat-filter-list input[type=checkbox]').forEach(cb => cb.checked = val);
+  updateCatFilterCount();
+}
+
+function getSelectedCats() {
+  return [...document.querySelectorAll('#cat-filter-list input[type=checkbox]:checked')].map(cb => cb.value);
+}
+
+function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCats) {
+  const qtyMap = {};
+  allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Contenedor'])
+    .forEach(r => { qtyMap[r['Producto']||''] = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0}; });
+
+  let body = '';
+  let totalProds = 0;
+
+  if (rutaEdits[ruta]) {
+    rutaEdits[ruta].filter(c => selectedCats.includes(c.cat)).forEach(function(catObj) {
+      const vis = catObj.items.filter(it => !it.hidden);
+      if (!vis.length) return;
+      totalProds += vis.length;
+      body += '<div class="th-sec"><div class="th-sec-t">'+catObj.cat+'</div>';
+      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += '<table class="th-tbl">';
+      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td><td>'+it.t+'</td><td>'+it.p+'</td></tr>'; });
+      body += '</table></div>';
+    });
+  } else {
+    maestro.filter(c => selectedCats.includes(c.cat)).forEach(function(catObj) {
+      const vis = catObj.items.filter(it => it.custom || qtyMap[it.nombre]);
+      if (!vis.length) return;
+      totalProds += vis.length;
+      body += '<div class="th-sec"><div class="th-sec-t">'+catObj.cat+'</div>';
+      body += '<div class="th-cols"><span class="cp">Producto</span><span class="ct">T</span><span class="cpz">Pz</span></div>';
+      body += '<table class="th-tbl">';
+      vis.forEach(it => {
+        const q = it.custom ? {t:0,p:0} : (qtyMap[it.nombre] || {t:0,p:0});
+        body += '<tr><td>'+it.nombre+'</td><td>'+q.t+'</td><td>'+q.p+'</td></tr>';
+      });
+      body += '</table></div>';
+    });
+  }
+
+  if (!body) return null;
+
+  const tt = Object.values(qtyMap).reduce((s,q) => s+q.t, 0);
+  const tp = Object.values(qtyMap).reduce((s,q) => s+q.p, 0);
+  const catLabel = selectedCats.length < maestro.length
+    ? '<div style="font-size:0.75em;margin-top:2px;opacity:0.6;">['+selectedCats.join(', ')+']</div>'
+    : '';
+
+  return '<div class="thermal">' +
+    '<div class="th-hdr">' +
+    '<div class="th-tit">TICKET DE CARGA</div>' +
+    '<div class="th-suc">'+sucursal+'</div>' +
+    '<div class="th-meta"><span>'+fmtF(fecha)+'</span><span>'+hora+'</span></div>' +
+    '<div class="th-rut">RUTA '+ruta+'&nbsp;&nbsp;'+folio+'</div>' +
+    catLabel +
+    '</div>'+body+
+    '<div class="th-ftr">'+totalProds+' prod &middot; '+tt+' tinas &middot; '+tp+' pzas</div>' +
+    '</div>';
+}
+
+function imprimirPorCategoria() {
+  const selectedCats = getSelectedCats();
+  if (!selectedCats.length) { alert('Selecciona al menos una categoría.'); return; }
+
+  const fecha = document.getElementById('sel-fecha').value;
+  const ini = parseInt(document.getElementById('sel-ini').value);
+  const fin = parseInt(document.getElementById('sel-fin').value);
+  const folio = document.getElementById('f-folio').value;
+  const hora = document.getElementById('f-hora').value;
+
+  if (!fecha || !ini || !fin) { alert('Primero genera los tickets (selecciona fecha y rango).'); return; }
+
+  const rutas = rutasEnRango(fecha, ini, fin);
+  const tf = currentFontPt + 'pt';
+  const ff = currentFontFamily;
+  const ffEsc = ff.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+  let ticketsHtml = '';
+  rutas.forEach(function(ruta) {
+    const ag = allData.find(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Agencia']);
+    const sucursal = ag ? (ag['Agencia']||'').replace(/^\d+-/,'').trim() : '';
+    const html = buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCats);
+    if (html) ticketsHtml += '<div class="ticket-page">'+html+'</div>';
+  });
+
+  if (!ticketsHtml) { alert('No hay productos de las categorías seleccionadas en el rango de rutas.'); return; }
+
+  const catNames = selectedCats.join(', ');
+  const printCSS = `
+@page{margin:3mm 4mm;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Courier New',Courier,monospace;}
+.ticket-page{width:72mm;page-break-after:always;break-after:page;}
+.ticket-page:last-child{page-break-after:avoid;break-after:avoid;}
+.thermal{font-family:${ff};font-size:${tf};color:#000;width:100%;padding:2mm 1mm;line-height:1.35;}
+.th-hdr{text-align:center;border-bottom:2px dashed #000;padding-bottom:4px;margin-bottom:4px;}
+.th-tit{font-size:calc(${tf} * 1.3);font-weight:bold;letter-spacing:1px;}
+.th-suc{font-size:${tf};}
+.th-meta{font-size:calc(${tf} * 0.85);display:flex;justify-content:space-between;margin-top:2px;}
+.th-rut{font-size:calc(${tf} * 1.2);font-weight:bold;margin-top:4px;}
+.th-sec{margin-top:4px;}
+.th-sec-t{font-weight:bold;font-size:${tf};text-transform:uppercase;border-top:2px solid #000;border-bottom:1px solid #000;padding:2px 0;margin-bottom:2px;}
+.th-cols{display:flex;font-size:calc(${tf} * 0.82);font-weight:bold;border:1px solid #000;background:#000;color:#fff;padding:2px 3px;}
+.cp{flex:1;}.ct,.cpz{width:38px;text-align:right;border-left:3px solid #fff;}
+table{width:100%;border-collapse:collapse;font-size:${tf};font-family:${ff};}
+td{padding:2px 3px;vertical-align:middle;line-height:1.3;border:1px solid #000;}
+tr:nth-child(even) td{background:#f5f5f5;}
+td:nth-child(2),td:nth-child(3){text-align:right;width:38px;white-space:nowrap;border-left:3px solid #000;}
+.th-ftr{border-top:2px dashed #000;margin-top:4px;padding-top:3px;font-size:calc(${tf} * 0.8);text-align:center;}`;
+
+  const w = window.open('', '_blank', 'width=700,height=900');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tickets \u2014 '+catNames+'</title><style>'+printCSS+'</style></head><body>'+ticketsHtml+'</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); w.close(); }, 500);
+
+  document.getElementById('cat-filter-panel').classList.remove('open');
 }
 
 /* ═══ MODAL EDITAR RUTA ═══ */
