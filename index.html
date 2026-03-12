@@ -898,7 +898,6 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
   const tAltasF = contRowsF.filter(r=>Number(r['Item'])===107).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
   const tBajasF = contRowsF.filter(r=>Number(r['Item'])===106).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
   const tCajasF = contRowsF.filter(r=>Number(r['Item'])===10).reduce((s,r)=>s+parseFloat(r['Piezas']||0),0);
-  const contBlockF = '<div class="th-cont"><table class="th-cont-tbl"><tr><th>T. Altas</th><th>T. Bajas</th><th>Cajas</th></tr><tr><td>'+tAltasF+'</td><td>'+tBajasF+'</td><td>'+tCajasF+'</td></tr></table></div>';
   return '<div class="thermal">' +
     '<div class="th-hdr">' +
     '<div class="th-tit">TICKET DE CARGA</div>' +
