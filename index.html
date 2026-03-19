@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -141,15 +142,6 @@ select:disabled{opacity:.35;}
 .new-cat-row input:focus{outline:none;border-color:var(--azul);}
 .new-cat-row button{padding:6px 11px;background:var(--azul);color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;}
 .prev-label{font-family:"Syne",sans-serif;font-weight:700;font-size:.78rem;color:var(--azul-os);margin-bottom:7px;}
-.maestro-search-wrap{position:relative;margin-bottom:10px;}
-.maestro-search-wrap input{width:100%;padding:7px 10px 7px 32px;border:1.5px solid var(--borde);border-radius:7px;font-family:"DM Sans",sans-serif;font-size:.8rem;background:#fff;color:var(--texto);transition:.15s;}
-.maestro-search-wrap input:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(0,85,164,.1);}
-.maestro-search-wrap .search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none;opacity:.5;}
-.maestro-search-count{font-size:.62rem;color:#9ca3af;margin-top:3px;text-align:right;}
-.cat-block.hidden-search{display:none;}
-.sort-item.hidden-search{display:none;}
-.sort-item.match-search{background:#fef9c3;border-color:#fbbf24;}
-.sort-item.match-search .item-name-inp{font-weight:700;}
 .prev-note{font-size:.66rem;color:#9ca3af;margin-bottom:9px;line-height:1.5;}
 #maestro-preview-box{border:1.5px solid var(--borde);border-radius:8px;overflow:hidden;}
 .thermal{font-family:var(--ff);font-size:var(--tf);color:#000;background:#fff;width:100%;padding:8px 6px;line-height:1.35;font-weight:bold;}
@@ -356,11 +348,6 @@ select:disabled{opacity:.35;}
         Los tickets por ruta heredan este orden — si la ruta no lleva un producto, se omite.<br>
         <strong>⠿ Arrastra</strong> · <strong>➕ Agrega</strong> · <strong>💾 Guarda</strong> permanentemente.
       </div>
-      <div class="maestro-search-wrap">
-        <span class="search-ico">🔍</span>
-        <input type="text" id="maestro-search" placeholder="Buscar producto o categoría..." oninput="filtrarMaestro(this.value)">
-        <div class="maestro-search-count" id="maestro-search-count"></div>
-      </div>
       <div class="toolbar">
         <button class="btn btn-verde" onclick="guardarMaestro()">💾 Guardar</button>
         <button class="btn btn-azul" onclick="aplicarYGenerar()">▶ Aplicar y Generar</button>
@@ -539,7 +526,7 @@ function cambiarTurno(num) {
   if (titEl) titEl.textContent = '📋 Ticket Maestro T'+num+' — Plantilla de Orden';
   const lbl = document.getElementById('maestro-turno-label');
   if (lbl) lbl.textContent = 'T'+num;
-  if (document.getElementById('tab-maestro').classList.contains('active')) { limpiarBusquedaMaestro(); renderMaestro(); }
+  if (document.getElementById('tab-maestro').classList.contains('active')) renderMaestro();
   document.getElementById('tickets-wrap').innerHTML =
     '<div class="placeholder"><span class="big">🗒</span>Turno '+num+' activo — presiona <strong>Generar Tickets</strong></div>';
   document.getElementById('btn-print').style.display = 'none';
@@ -559,6 +546,7 @@ cargarMaestroGuardado();
 const _olaRestored = cargarOLAGuardada();
 cargarAcomodoGuardado();
 if (_olaRestored) {
+  fusionarExcelEnMaestro();
   setPill('💾 OLA + Maestros restaurados', true);
 } else {
   setPill('💾 Maestros cargados (T1/T2)', true);
@@ -586,7 +574,6 @@ function showTab(id) {
   if (id === 'maestro') {
     const tit = document.getElementById('maestro-tab-title');
     if (tit) tit.textContent = '📋 Ticket Maestro T'+turnoActivo+' — Plantilla de Orden';
-    limpiarBusquedaMaestro();
     renderMaestro();
   }
 }
@@ -624,15 +611,14 @@ function setPill(msg, ok) {
   p.className = 'save-pill' + (ok ? ' ok' : '');
 }
 
-/* ═══ CSS IMPRESIÓN — FIX ESPACIOS EN BLANCO ═══ */
+/* ═══ CSS NEGRO MÁXIMO PARA IMPRESIÓN ═══ */
 function getPrintCSS(tf, ff) {
   return `
-@page{margin:0;padding:0;size:72mm auto;}
+@page{margin:0;size:72mm auto;}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:#fff;height:auto!important;min-height:0!important;}
-body{font-family:'Courier New',Courier,monospace;}
-.ticket-page{width:72mm;page-break-after:always;break-after:page;padding:3mm 2mm;page-break-inside:avoid;break-inside:avoid;}
-.ticket-page:last-child{page-break-after:avoid!important;break-after:avoid!important;}
+body{font-family:'Courier New',Courier,monospace;background:#fff;}
+.ticket-page{width:72mm;page-break-after:always;break-after:page;padding:3mm 2mm;}
+.ticket-page:last-child{page-break-after:avoid;break-after:avoid;}
 
 /* ── TODO EL TICKET: fondo blanco, letras negro máximo ── */
 .thermal{
@@ -703,7 +689,7 @@ body{font-family:'Courier New',Courier,monospace;}
   letter-spacing:.3px;
 }
 
-/* ── CABECERA DE COLUMNAS ── */
+/* ── CABECERA DE COLUMNAS: fondo blanco, texto negro, borde grueso ── */
 .th-cols{
   display:flex;
   font-size:calc(${tf} * 0.85);
@@ -717,7 +703,7 @@ body{font-family:'Courier New',Courier,monospace;}
 .cp{flex:1;}
 .ct,.cpz{width:40px;text-align:right;border-left:2px solid #000;}
 
-/* ── TABLA DE PRODUCTOS ── */
+/* ── TABLA DE PRODUCTOS: fondo blanco, texto negro, bordes negros ── */
 table{width:100%;border-collapse:collapse;font-size:${tf};font-family:${ff};background:#fff!important;}
 td{
   padding:3px 3px;
@@ -806,6 +792,7 @@ document.getElementById('file-input').addEventListener('change', function(e) {
     sf.innerHTML = '<option value="">— fecha —</option>' + fechas.map(f => '<option value="'+f+'">'+fmtF(f)+'</option>').join('');
     sf.disabled = false;
     if (fechas.length === 1) { sf.value = fechas[0]; sf.dispatchEvent(new Event('change')); }
+    fusionarExcelEnMaestro();
     rutaEdits = {};
     guardarOLA();
     try {
@@ -854,6 +841,24 @@ function actualizarBadge() {
 function fmtF(iso) { if(!iso) return ''; const[y,m,d]=iso.split('-'); return d+'/'+m+'/'+y; }
 
 /* ═══ FUSIONAR EXCEL OLA EN MAESTRO ═══ */
+function fusionarExcelEnMaestro() {
+  const yaRegNombre = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
+  const yaRegItem   = new Set(maestro.flatMap(c => c.items.map(i => String(i.item||'').trim()).filter(Boolean)));
+  const prodsExcel = new Map();
+  allData.filter(r => r['Contenedor'] && r['Producto'] && r['Item'] && ![10,106,107].includes(Number(r['Item']))).forEach(r => {
+    const itemKey = String(r['Item']).trim();
+    if (!prodsExcel.has(itemKey))
+      prodsExcel.set(itemKey, {nombre: r['Producto']||'', item: itemKey, contenedor: r['Contenedor']||''});
+  });
+  prodsExcel.forEach(({nombre, item, contenedor}) => {
+    if (yaRegItem.has(item) || yaRegNombre.has(nombre)) return;
+    const cat = contenedor.split(' - ')[0].trim().toUpperCase() || 'OTROS';
+    let catObj = maestro.find(c => c.cat === cat);
+    if (!catObj) { catObj = {cat, items:[]}; maestro.push(catObj); }
+    catObj.items.push({nombre, item, custom:false});
+  });
+}
+
 /* ═══ GENERAR TICKETS ═══ */
 function generarTodos() {
   guardarEstadoTurno();
@@ -898,15 +903,11 @@ function crearTicketCard(ruta, fecha, sucursal, folio, hora) {
 }
 
 function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
-  // Contenedores de equipo/canastilla — sus productos NO van en secciones del maestro
-  const CONTENEDORES_EQUIPO = /^(CU|MTA|MTB)\b/i;
   const qtyMap = {};
   const itemQtyMap = {};
   const itemNombreMap = {};
-  allData.filter(r =>
-    r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) &&
-    r['Contenedor'] && !CONTENEDORES_EQUIPO.test((r['Contenedor']||'').trim())
-  ).forEach(r => {
+  allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Contenedor'])
+    .forEach(r => {
       const q = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0};
       qtyMap[r['Producto']||''] = q;
       if (r['Item']) {
@@ -936,12 +937,8 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
       body += '<div class="th-sec"><div class="th-sec-t">'+cat+'</div>';
       body += colHead;
       body += '<table class="th-tbl">';
-        vis.forEach(it => {
-          if (modoImpr === 'tinas'  && (it.t||0) === 0) return;
-          if (modoImpr === 'piezas' && (it.p||0) === 0) return;
-          body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+it.t+'</td>':'')+(showP?'<td>'+it.p+'</td>':'')+'</tr>';
-        });
-              body += '</table></div>';
+      vis.forEach(it => { body += '<tr><td>'+it.nombre+'</td>'+(showT?'<td>'+it.t+'</td>':'')+(showP?'<td>'+it.p+'</td>':'')+'</tr>'; });
+      body += '</table></div>';
     });
   } else {
     maestro.forEach(({cat, items}) => {
@@ -952,6 +949,7 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
       body += '<table class="th-tbl">';
       vis.forEach(it => {
         const q = getQ(it) || {t:0,p:0};
+        // ── NUEVO: omitir fila si la cantidad relevante es cero ──
         if (modoImpr === 'tinas'  && q.t === 0) return;
         if (modoImpr === 'piezas' && q.p === 0) return;
         const nombre = getNombre(it);
@@ -959,29 +957,6 @@ function buildTicketHTML(ruta, fecha, sucursal, folio, hora) {
       });
       body += '</table></div>';
     });
-  }
-  // ═══ SECCIÓN OTROS: productos en OLA no encontrados en el maestro ═══
-  if (!rutaEdits[ruta]) {
-    const maestroItems = new Set(maestro.flatMap(c => c.items.map(i => String(i.item||'').trim()).filter(Boolean)));
-    const maestroNombres = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
-    const otrosRows = allData.filter(r =>
-      r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) &&
-      r['Contenedor'] && !CONTENEDORES_EQUIPO.test((r['Contenedor']||'').trim()) &&
-      r['Item'] && ![10,106,107].includes(Number(r['Item'])) &&
-      !maestroItems.has(String(r['Item']).trim()) && !maestroNombres.has(r['Producto']||'')
-    );
-    if (otrosRows.length) {
-      body += '<div class="th-sec"><div class="th-sec-t">OTROS</div>';
-      body += colHead;
-      body += '<table class="th-tbl">';
-      otrosRows.forEach(r => {
-        const q = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0};
-        if (modoImpr === 'tinas'  && q.t === 0) return;
-        if (modoImpr === 'piezas' && q.p === 0) return;
-        body += '<tr><td>'+(r['Producto']||'')+'</td>'+(showT?'<td>'+q.t+'</td>':'')+(showP?'<td>'+q.p+'</td>':'')+'</tr>';
-      });
-      body += '</table></div>';
-    }
   }
   if (eqRows.length) {
     body += '<div class="th-sec"><div class="th-sec-t">EQUIPO</div>';
@@ -1074,34 +1049,6 @@ function buildCatFilterList() {
     list.appendChild(item);
   });
   const fecha = document.getElementById('sel-fecha').value;
-  // ─ OTROS: productos en OLA no encontrados en maestro ─
-  const tieneOtros = fecha && (() => {
-    const CE = /^(CU|MTA|MTB)\b/i;
-    const maestroItems = new Set(maestro.flatMap(c => c.items.map(i => String(i.item||'').trim()).filter(Boolean)));
-    const maestroNombres = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
-    return allData.some(r =>
-      r['Fecha'] && r['Fecha'].toString().startsWith(fecha) &&
-      r['Contenedor'] && !CE.test((r['Contenedor']||'').trim()) &&
-      r['Item'] && ![10,106,107].includes(Number(r['Item'])) &&
-      !maestroItems.has(String(r['Item']).trim()) && !maestroNombres.has(r['Producto']||'')
-    );
-  })();
-  if (tieneOtros) {
-    const item = document.createElement('div');
-    item.className = 'cat-filter-item';
-    item.innerHTML =
-      '<div class="cat-color-dot" style="background:'+CAT_COLORS['OTROS']+'"></div>' +
-      '<input type="checkbox" id="chk-cat-OTROS" value="OTROS" checked>' +
-      '<label for="chk-cat-OTROS">OTROS</label>';
-    item.addEventListener('click', function(e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') return;
-      const cb = item.querySelector('input[type=checkbox]');
-      cb.checked = !cb.checked;
-      updateCatFilterCount();
-    });
-    item.querySelector('input').addEventListener('change', updateCatFilterCount);
-    list.appendChild(item);
-  }
   const tieneEquipo = fecha && allData.some(r =>
     r['Fecha'] && r['Fecha'].toString().startsWith(fecha) && [10,106,107].includes(Number(r['Item']))
   );
@@ -1140,14 +1087,11 @@ function getSelectedCats() {
 }
 
 function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCats) {
-  const CONTENEDORES_EQUIPO = /^(CU|MTA|MTB)\b/i;
   const qtyMap = {};
   const itemQtyMap = {};
   const itemNombreMap = {};
-  allData.filter(r =>
-    r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) &&
-    r['Contenedor'] && !CONTENEDORES_EQUIPO.test((r['Contenedor']||'').trim())
-  ).forEach(r => {
+  allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && r['Contenedor'])
+    .forEach(r => {
       const q = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0};
       qtyMap[r['Producto']||''] = q;
       if (r['Item']) {
@@ -1190,6 +1134,7 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
       body += '<table class="th-tbl">';
       vis.forEach(it => {
         const q = getQF(it) || {t:0,p:0};
+        // ── NUEVO: omitir fila si la cantidad relevante es cero ──
         if (modoImpr === 'tinas'  && q.t === 0) return;
         if (modoImpr === 'piezas' && q.p === 0) return;
         totalProds++;
@@ -1197,30 +1142,6 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
       });
       body += '</table></div>';
     });
-  }
-  // ═══ SECCIÓN OTROS en versión filtrada ═══
-  if (!rutaEdits[ruta] && selectedCats.includes('OTROS')) {
-    const maestroItemsF = new Set(maestro.flatMap(c => c.items.map(i => String(i.item||'').trim()).filter(Boolean)));
-    const maestroNombresF = new Set(maestro.flatMap(c => c.items.map(i => i.nombre)));
-    const otrosRowsF = allData.filter(r =>
-      r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) &&
-      r['Contenedor'] && !CONTENEDORES_EQUIPO.test((r['Contenedor']||'').trim()) &&
-      r['Item'] && ![10,106,107].includes(Number(r['Item'])) &&
-      !maestroItemsF.has(String(r['Item']).trim()) && !maestroNombresF.has(r['Producto']||'')
-    );
-    if (otrosRowsF.length) {
-      body += '<div class="th-sec"><div class="th-sec-t">OTROS</div>';
-      body += colHead;
-      body += '<table class="th-tbl">';
-      otrosRowsF.forEach(r => {
-        const q = {t: parseFloat(r['Tinas'])||0, p: parseFloat(r['Piezas'])||0};
-        if (modoImpr === 'tinas'  && q.t === 0) return;
-        if (modoImpr === 'piezas' && q.p === 0) return;
-        totalProds++;
-        body += '<tr><td>'+(r['Producto']||'')+'</td>'+(showT?'<td>'+q.t+'</td>':'')+(showP?'<td>'+q.p+'</td>':'')+'</tr>';
-      });
-      body += '</table></div>';
-    }
   }
   const eqRowsF = allData.filter(r => r['Ruta']==ruta && r['Fecha']&&r['Fecha'].toString().startsWith(fecha) && [10,106,107].includes(Number(r['Item'])));
   if (eqRowsF.length && selectedCats.includes('EQUIPO')) {
@@ -1247,10 +1168,9 @@ function buildTicketHTMLFiltered(ruta, fecha, sucursal, folio, hora, selectedCat
       });
     });
   }
-  const catsEnTicket = selectedCats.filter(c => c !== 'EQUIPO' && c !== 'OTROS');
+  const catsEnTicket = selectedCats.filter(c => c !== 'EQUIPO');
   if (eqRowsF.length && selectedCats.includes('EQUIPO')) catsEnTicket.push('EQUIPO');
-  if (selectedCats.includes('OTROS')) catsEnTicket.push('OTROS');
-  const totalCatsDisponibles = maestro.length + (eqRowsF.length ? 1 : 0) + 1; // +1 por OTROS
+  const totalCatsDisponibles = maestro.length + (eqRowsF.length ? 1 : 0);
   const catLabel = catsEnTicket.length < totalCatsDisponibles
     ? '<div style="font-size:0.75em;margin-top:2px;opacity:0.6;">['+catsEnTicket.join(', ')+']</div>'
     : '';
@@ -1518,56 +1438,6 @@ function renderMaestroPreview() {
     '<div class="th-ftr">'+total+' productos · '+maestro.length+' líneas</div></div>';
 }
 function aplicarYGenerar() { guardarMaestro(); showTab('tickets'); if(allData.length&&document.getElementById('sel-fecha').value) setTimeout(generarTodos,120); }
-
-/* ═══ BÚSQUEDA EN MAESTRO ═══ */
-function filtrarMaestro(q) {
-  const term = q.trim().toLowerCase();
-  const container = document.getElementById('maestro-cat-container');
-  if (!container) return;
-  let totalVisible = 0;
-  let totalMatch = 0;
-  container.querySelectorAll('.cat-block').forEach(block => {
-    const catName = (block.querySelector('.cat-name-inp')||{value:''}).value.toLowerCase();
-    const catMatch = term && catName.includes(term);
-    let itemsVisible = 0;
-    block.querySelectorAll('.sort-item').forEach(el => {
-      const inp = el.querySelector('.item-name-inp');
-      const nombre = inp ? inp.value.toLowerCase() : '';
-      if (!term) {
-        el.classList.remove('hidden-search','match-search');
-        itemsVisible++;
-      } else if (catMatch || nombre.includes(term)) {
-        el.classList.remove('hidden-search');
-        el.classList.add('match-search');
-        itemsVisible++;
-        totalMatch++;
-      } else {
-        el.classList.add('hidden-search');
-        el.classList.remove('match-search');
-      }
-    });
-    if (!term) {
-      block.classList.remove('hidden-search');
-      totalVisible++;
-    } else if (catMatch || itemsVisible > 0) {
-      block.classList.remove('hidden-search');
-      totalVisible++;
-    } else {
-      block.classList.add('hidden-search');
-    }
-  });
-  const countEl = document.getElementById('maestro-search-count');
-  if (countEl) {
-    if (!term) { countEl.textContent = ''; }
-    else { countEl.textContent = totalMatch + ' producto' + (totalMatch!==1?'s':'') + ' en ' + totalVisible + ' categoría' + (totalVisible!==1?'s':''); }
-  }
-}
-
-/* Limpiar búsqueda al cambiar de turno o regenerar */
-function limpiarBusquedaMaestro() {
-  const inp = document.getElementById('maestro-search');
-  if (inp) { inp.value = ''; filtrarMaestro(''); }
-}
 
 /* ═══ CARGAR ACOMODO ═══ */
 document.getElementById('acomodo-input').addEventListener('change', function(e) {
